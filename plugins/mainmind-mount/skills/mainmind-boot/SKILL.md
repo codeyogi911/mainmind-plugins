@@ -41,6 +41,24 @@ A checkout is a working copy, not permission. Durable writes go through the
 governed path on either surface: `land_canonical_change`,
 `submit_checkout_change` and the deposit tools.
 
+## Persistent agents and temporary sessions
+
+Follow boot's `identity`, `lifecycle` and `next_action`. A standing agent has
+an ongoing responsibility; a conversation or temporary helper does not create
+a new teammate. `session_kind` is intent, never authentication. Resume an
+existing machine member on restart. For a new standing bot use the authorized
+owner connection and the private host setup described in
+https://mainmind.app/docs/persistent-agents.md; persist its setup key before
+enrollment and retry only the same request. Do not choose new read scopes when
+the organization's role defaults apply. Never copy the owner's token.
+
+An enrolled agent reports `agent_session` contact after boot and while available.
+Use the inbox and linked page discussion for shared work. Save explicit progress
+and retained artifacts; contribute evidenced records and lessons through their
+governed writers. A later session restores those records, not hidden chat state.
+Contact does not renew a work claim; checkpoints do. A Role binding that is still
+pending stays visible as incomplete.
+
 ## Reading
 
 - Route any task through `find_process` first — task language in, the right

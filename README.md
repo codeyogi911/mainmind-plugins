@@ -12,7 +12,7 @@ decides which tools the session ever sees.
 | Harness | How |
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind` |
-| **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy `skills/` into `.agents/skills/` in your repo (or `~/.agents/skills/` for every repo) |
+| **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself |
 | **Grok Build** | `grok mcp add --transport http "mainmind-<organization>" "https://mainmind.app/mcp/<organization>"`; the plugin manifest is `plugins/mainmind-mount/.grok-plugin/plugin.json` |
 | **Cursor** and other [Agent Plugins](https://agent-plugins.org) clients | Point the client at `plugins/mainmind-mount` |
 | **Grok on web, iOS, Android** | Not a plugin: add a custom connector at [grok.com/connectors](https://grok.com/connectors) |
