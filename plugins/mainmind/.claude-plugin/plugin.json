@@ -1,0 +1,15 @@
+{
+  "name": "mainmind",
+  "description": "Mount your Mainmind organization into this session: read the org's knowledge at a named commit, appear on the live run ledger, and put decisions to the Founder as one-link questions. Identity comes from your personal invite code via OAuth — the plugin ships no secrets.",
+  "version": "0.3.0",
+  "author": {
+    "name": "Shashwat Jain",
+    "url": "https://mainmind.app"
+  },
+  "homepage": "https://mainmind.app",
+  "repository": "https://github.com/codeyogi911/mainmind-plugins",
+  "license": "MIT",
+  "mcpServers": "./.mcp.json",
+  "skills": "./skills/",
+  "keywords": ["mainmind", "operating-agent", "mcp", "business", "governance"]
+}

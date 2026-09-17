@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "mainmind": {
+      "type": "http",
+      "url": "https://mainmind.app/mcp"
+    }
+  }
+}
