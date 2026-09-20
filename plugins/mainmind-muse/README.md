@@ -9,9 +9,9 @@ directory listing asks for.
 **Meta publishes no connector manifest format.** The platform page describes a
 three-stage program in prose and links no developer documentation, no schema
 and no submission form. So there is no manifest here and no file shaped like
-one. Muse takes a URL typed into its connector screen, so a JSON file sitting
-beside it would be read by nothing and would only look supported. What this
-directory holds is that URL, the skills for a mount-only surface, and
+one. With no published format, no file in this directory could be the one Muse
+reads: it would be read by nothing and would only look supported. What this
+directory holds is the mount URL, the skills for a mount-only surface, and
 [`SUBMISSION.md`](./SUBMISSION.md), the dossier the review stage asks for. If
 Meta publishes a manifest schema, that is the file to add, and it belongs
 here.
