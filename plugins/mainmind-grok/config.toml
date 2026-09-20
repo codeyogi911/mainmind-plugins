@@ -1,0 +1,22 @@
+# Mainmind on Grok Build.
+#
+# Grok Build has no plugin manifest format. It reads TOML: merge this block
+# into ~/.grok/config.toml for your user, or .grok/config.toml for one
+# project. Merge it — do not replace the file, and do not add a second entry
+# if one for this URL is already there.
+#
+# Equivalent one-liner:
+#   grok mcp add --transport http mainmind https://mainmind.app/mcp
+#
+# Authentication is OAuth, in the browser flow Grok opens on first use. This
+# file carries no token, and none should ever be written into it.
+#
+# The URL below names no organization, so authorization asks which one to
+# mount. If this connection should only ever reach one organization, use the
+# complete form instead and name the entry after it:
+#
+#   [mcp_servers.mainmind-acme]
+#   url = "https://mainmind.app/mcp/acme"
+
+[mcp_servers.mainmind]
+url = "https://mainmind.app/mcp"

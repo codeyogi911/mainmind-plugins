@@ -13,9 +13,9 @@ decides which tools the session ever sees.
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind` |
 | **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself |
-| **Grok Build** | `grok mcp add --transport http "mainmind-<organization>" "https://mainmind.app/mcp/<organization>"`; the plugin manifest is `plugins/mainmind-mount/.grok-plugin/plugin.json` |
 | **Cursor** and other [Agent Plugins](https://agent-plugins.org) clients | Point the client at `plugins/mainmind-mount` |
-| **Grok on web, iOS, Android** | Not a plugin: add a custom connector at [grok.com/connectors](https://grok.com/connectors) |
+| **Grok** — Build, web, iOS, Android, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): four surfaces, four setups, one mount |
+| **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
 
 The canonical mount names no organization, so authorization asks which one to
 mount — that is what lets one published file serve everybody. Configuring by
@@ -77,15 +77,28 @@ skills/                          canonical — edit here, only here
   mainmind-boot/SKILL.md
   morning-brief/SKILL.md
 plugins/
-  mainmind/                      Claude Code
-  mainmind-mount/                Agent Plugins (Cursor) + Grok
+  mainmind/                      Claude Code       .claude-plugin/plugin.json
+  mainmind-mount/                Agent Plugins     plugin.json + mcp.json
+  mainmind-grok/                 Grok              config.toml + mcp.json
+  mainmind-muse/                 Muse              mcp.json + SUBMISSION.md
 .agents/skills/                  Codex convention; copy into your own repo
 .claude-plugin/marketplace.json  Claude Code marketplace entry
 ```
 
+Only two of those four ecosystems have a plugin manifest at all. Claude Code
+has one, and the [Agent Plugins](https://agent-plugins.org) 1.0.0 schema has
+one that carries metadata only — it has no property for skills or MCP servers,
+so the sibling `mcp.json` is how the mount is declared there. **Grok and Muse
+publish no plugin format.** Grok reads `grok mcp add` or an `[mcp_servers.…]`
+table in `~/.grok/config.toml`; Muse takes a connector URL. So those two
+directories carry the files those hosts actually read, and `npm run check`
+fails if a `plugin.json` reappears in either — this repository published an
+inert `.grok-plugin/plugin.json` once, and both this README and Mainmind's own
+harness guide sent people to it.
+
 `SKILL.md` is the same format in every ecosystem, so one source serves all of
-them — but each harness reads its own path, and nothing in the three plugin
-formats lets them share a directory. So the copies are generated:
+them — but each harness reads its own path, and nothing in the plugin formats
+lets them share a directory. So the copies are generated:
 
 ```
 npm run sync     # copy skills/ into every destination

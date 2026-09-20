@@ -6,11 +6,13 @@
   },
   "metadata": {
     "description": "Mainmind — one mount for your whole company: every agent and every human on the same knowledge, the same rules, and the same judgment loop.",
-    "version": "0.3.0"
+    "version": "0.4.0"
   },
   "plugins": [
     {
       "name": "mainmind",
+      "displayName": "Mainmind",
+      "category": "business",
       "source": "./plugins/mainmind",
       "description": "Mount your Mainmind organization: org knowledge at a named commit, the live run ledger, and the decision queue — via your personal OAuth invite code. Adds boot discipline, surface choice and the morning brief.",
       "author": { "name": "Shashwat Jain" },

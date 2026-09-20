@@ -23,6 +23,10 @@ ledger. Everything below is how to behave on it.
 Mainmind cannot tell whether this session has a shell, a filesystem or a Git
 client. You can. Decide once, before you start reading, and say which you took.
 
+If this session has no shell, no filesystem and no Git client — a chat
+surface such as Grok on the web, Muse, Claude chat or ChatGPT — step 1 cannot
+apply to you. You are on the mount. Go to step 2 and say so.
+
 1. **Try a checkout first.** Call `checkout_canonical_repo` (Founder) or
    `checkout_member_repo` (everyone else) and clone what it returns. A checkout
    gives you the whole company file at once, and it gives you the parts the
