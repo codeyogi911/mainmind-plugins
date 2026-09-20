@@ -1,11 +1,12 @@
 #!/usr/bin/env node
-// One canonical skill set, three places that have to carry it.
+// One canonical skill set, and every place that has to carry it.
 //
 // `skills/` is the source. Claude Code reads a plugin's own `skills/`
-// directory, the Agent Plugins and Grok plugin reads its own, and Codex reads
+// directory, the Agent Plugins plugin reads its own, the Grok and Muse
+// packages carry their own for the hosts that can use them, and Codex reads
 // `.agents/skills` at the root of whatever repository it is working in — so
-// the same SKILL.md has to exist in four locations, and nothing about the
-// three plugin formats lets them share one.
+// the same SKILL.md has to exist in every one of those places, and nothing
+// about the formats lets them share a directory.
 //
 // Copying is the honest answer; drift is the risk. `--check` is the gate: it
 // fails when a destination disagrees with the source, so a skill edited in the
@@ -19,6 +20,8 @@ const SOURCE = "skills";
 const DESTINATIONS = [
   "plugins/mainmind/skills",
   "plugins/mainmind-mount/skills",
+  "plugins/mainmind-grok/skills",
+  "plugins/mainmind-muse/skills",
   ".agents/skills",
 ];
 

@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "mainmind": {
-      "type": "http",
+      "type": "streamable-http",
       "url": "https://mainmind.app/mcp"
     }
   }
