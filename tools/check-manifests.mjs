@@ -6,6 +6,9 @@
 //
 // Only files a real client reads are checked here. A file no client reads
 // cannot be kept honest by a gate — it can only be kept, and look supported.
+// Which files those are is decided from each vendor's own published guide and
+// from plugins they already ship, not from what looks consistent across our
+// own directories; the two disagree more often than not.
 import { readFileSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,11 +25,24 @@ const fail = (message) => failures.push(message);
 const marketplace = read(".claude-plugin/marketplace.json");
 const claude = read("plugins/mainmind/.claude-plugin/plugin.json");
 const agentPlugins = read("plugins/mainmind-mount/plugin.json");
+// Read defensively: if this file is missing, the required-files check below is
+// what should say so, not a Node stack trace from this line.
+const GROK_MANIFEST = "plugins/mainmind-grok/.grok-plugin/plugin.json";
+const grok = existsSync(join(root, GROK_MANIFEST)) ? read(GROK_MANIFEST) : null;
 const pkg = read("package.json");
 
-// One version across everything, so "which version am I running" has one answer.
+// One version across everything, so "which version am I running" has one
+// answer. Claude Code carries it on the PLUGIN ENTRY: `metadata` documents only
+// `pluginRoot`, so a version parked there pins nothing and is ignored.
+// https://code.claude.com/docs/en/plugin-marketplaces
+const marketplaceEntry = (marketplace.plugins || []).find((entry) => entry.name === "mainmind");
+if (!marketplaceEntry) fail(".claude-plugin/marketplace.json: no plugins[] entry named mainmind");
+if (marketplace.metadata && "version" in marketplace.metadata) {
+  fail(".claude-plugin/marketplace.json: metadata.version pins nothing — it belongs on the plugin entry");
+}
 const versions = new Set([
-  marketplace.metadata?.version, claude.version, agentPlugins.version, pkg.version,
+  marketplaceEntry?.version, claude.version, agentPlugins.version, pkg.version,
+  ...(grok ? [grok.version] : []),
 ]);
 if (versions.size !== 1) fail(`versions disagree: ${[...versions].join(", ")}`);
 
@@ -36,6 +52,7 @@ if (versions.size !== 1) fail(`versions disagree: ${[...versions].join(", ")}`);
 for (const [label, manifest] of [
   ["plugins/mainmind", claude],
   ["plugins/mainmind-mount (agent-plugins)", agentPlugins],
+  ...(grok ? [["plugins/mainmind-grok (grok)", grok]] : []),
 ]) {
   if (manifest.license !== "MIT") fail(`${label}: license is ${JSON.stringify(manifest.license)}, expected "MIT"`);
   if (manifest.repository !== REPOSITORY) fail(`${label}: repository is ${JSON.stringify(manifest.repository)}, expected ${REPOSITORY}`);
@@ -49,13 +66,18 @@ if (!agentPlugins.$schema?.startsWith("https://agent-plugins.org/schemas/")) {
   fail("plugins/mainmind-mount: $schema must name an agent-plugins.org schema; it is required by that spec");
 }
 
-// Every JSON spelling of the same server. Change one, change them all.
-// Claude Code wants "http"; the Agent Plugins schema and the plain MCP config
-// that Grok and Muse take want "streamable-http". Same server either way.
+// Every JSON spelling of the same server, and they are NOT interchangeable.
+// The Agent Plugins mcp schema enumerates `stdio | streamable-http | sse` and
+// rejects "http" outright. Claude Code takes "http", and so does the `.mcp.json`
+// Grok reads at a plugin root — that keyword is not stated on any xAI page, so
+// it follows the plugin xAI already ships in its own catalogue
+// (getsentry/plugin-grok). Note the filenames: Grok's carries a leading dot and
+// the Agent Plugins one does not, which is exactly why they are separate
+// directories rather than one.
 const transports = [
   ["plugins/mainmind/.mcp.json", "http"],
   ["plugins/mainmind-mount/mcp.json", "streamable-http"],
-  ["plugins/mainmind-grok/mcp.json", "streamable-http"],
+  ["plugins/mainmind-grok/.mcp.json", "http"],
   ["plugins/mainmind-muse/mcp.json", "streamable-http"],
 ];
 for (const [path, expected] of transports) {
@@ -85,17 +107,40 @@ if (!existsSync(join(root, "plugins/mainmind-muse/SUBMISSION.md"))) {
   fail("plugins/mainmind-muse: no SUBMISSION.md; the directory listing is the point of that package");
 }
 
-// Neither Grok nor Muse publishes a plugin manifest format. Inventing one puts
-// a file in front of users that their client will never read, which is exactly
-// the failure this repository already shipped once.
+// Grok's manifest is metadata only: it declares no server, no skill and no
+// command, because Grok discovers those by convention from `.mcp.json` and
+// `skills/<name>/SKILL.md` at the plugin root. A declaration key here is
+// silently ignored, which is worse than rejected.
+// https://github.com/xai-org/plugin-marketplace/blob/main/CONTRIBUTING.md
+for (const key of ["mcpServers", "mcp", "skills", "commands", "agents", "hooks"]) {
+  if (grok && key in grok) {
+    fail(`plugins/mainmind-grok/.grok-plugin/plugin.json: "${key}" is ignored — Grok discovers that by convention, it is not declared`);
+  }
+}
+
+// Manifest formats no host publishes. A file like this puts a route in front of
+// users that their client never reads, which is a failure this repository has
+// shipped in both directions now: once by inventing a manifest, once by
+// deleting a real one on the belief that it was invented.
 for (const invented of [
   "plugins/mainmind-mount/.grok-plugin/plugin.json",
   "plugins/mainmind-grok/plugin.json",
+  "plugins/mainmind-grok/mcp.json",
   "plugins/mainmind-muse/plugin.json",
   "plugins/mainmind-muse/connector.json",
 ]) {
   if (existsSync(join(root, invented))) {
-    fail(`${invented} exists: no such manifest format is published for that host — see plugins/${invented.split("/")[1]}/README.md`);
+    fail(`${invented} exists: no client reads that path — see plugins/${invented.split("/")[1]}/README.md`);
+  }
+}
+
+// xAI's contributing guide states the two files a local plugin must carry.
+for (const required of [
+  "plugins/mainmind-grok/.grok-plugin/plugin.json",
+  "plugins/mainmind-grok/README.md",
+]) {
+  if (!existsSync(join(root, required))) {
+    fail(`${required} is missing: xAI's marketplace requires a README.md and a valid .grok-plugin/plugin.json`);
   }
 }
 
