@@ -48,11 +48,12 @@ are invisible from here — not absent.
 
 [`SUBMISSION.md`](./SUBMISSION.md) answers the three stages the platform page
 names: describe the product, pass functional, security and legal review with
-end-to-end testing, appear in the directory. It also carries the one open
-question that the submission cannot answer from public sources — whether the
-listed path can run Mainmind's OAuth flow, or whether a listed connector must
-authenticate with a static bearer, which would change whose identity the
-connector carries.
+end-to-end testing, appear in the directory. It also records what the form is
+reported to ask for — connection type, endpoint, authentication, listing
+assets — clearly marked as third-party reporting rather than Meta-published
+spec, since none exists. Three things are still missing before it can be sent,
+listed at the end of that file; one of them is that only Shashwat can open the
+form.
 
 ## Sources
 

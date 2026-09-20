@@ -71,26 +71,46 @@ third-party marks.
 - **Support:** https://mainmind.app
 - **Connector URL:** https://mainmind.app/mcp
 
-## Open question — settle before sending
+## What the form asks for
 
-**Can a directory-listed connector complete Mainmind's OAuth flow?**
+**Everything in this section is third-party reported, not Meta-published.** The
+platform page carries no spec, no SDK and no developer documentation;
+`docs.muse.ai` does not resolve, and every developer path redirects to a Meta
+login, so the form itself cannot be read without an account. Two independent
+parties who reached it describe the same shape. Treat it as a good prior for
+what to prepare, and confirm each field against the real form before relying on
+it.
 
-Mainmind authenticates people with OAuth, and that is what makes the mount
-serve each person their own role. Public reporting on Muse describes a
-credentials store that injects bearer tokens and API-key headers, and says
-OAuth services need additional configuration; Meta publishes no developer
-documentation that settles it either way.
+- **Connection type:** "Raw API" or "Existing MCP". Mainmind is the second.
+- **Endpoint:** HTTPS only — `https://mainmind.app/mcp`.
+- **OpenAPI URL:** optional, and not applicable to an MCP connection.
+- **Authentication**, multi-select: "OAuth with PKCE" or "API keys".
+- **Listing assets:** a 512×512 icon, and privacy, terms and support URLs.
 
-It decides what the listing can honestly promise:
+**This answers the question this file used to end on.** Mainmind's mount is an
+OAuth 2.1 provider with PKCE and dynamic client registration — the OAuth
+machinery is described at `src/auth.js:10` and its policy at
+`src/oauth-policy.js` — so if the form offers OAuth with PKCE, the connector
+authenticates each person as themselves and the per-person role claim in
+section 2 stands as written. Tick OAuth with PKCE, not API keys: an API key
+would make the listing one machine identity, and section 2 would have to be
+narrowed to say so.
 
-- **If OAuth runs on the listed path**, the connector above is complete and the
-  submission stands as written — every person authorizes as themselves and
-  carries their own role.
-- **If a listed connector must present a static bearer**, then the listing
-  carries one machine identity, not a person's. That is a different product:
-  it needs its own scoped machine member (`invite_member` with
-  `kind: machine`), the listing must say that it reads as that identity, and
-  the per-person role claim above has to come out.
+Confirm that option exists on the real form before submitting. If it does not,
+stop and re-read section 2 rather than submitting under a claim the connection
+cannot keep.
 
-Do not submit under the first reading without confirming it. The second is
-still worth listing; it is just a narrower claim.
+## What is still needed before sending
+
+1. **Shashwat has to open the form.** It is behind a Meta login; nobody else
+   can reach it.
+2. **A 512×512 icon**, which this repository does not carry.
+3. **Privacy, terms and support URLs.** `https://mainmind.app` is the support
+   URL; the other two need pages that exist at stable addresses.
+
+Meta's own security writeup describes launch connectors as a joint engagement —
+"we worked closely with the service provider to integrate their API, and we've
+written and iterated on SKILLs" — so expect the review to be a conversation
+rather than a form submission. The skills in `skills/` are the portable
+`SKILL.md` files this repository already publishes for every other harness,
+which is the artifact that engagement asks for.
