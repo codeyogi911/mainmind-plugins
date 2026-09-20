@@ -8,23 +8,28 @@ directory listing asks for.
 
 **Meta publishes no connector manifest format.** The platform page describes a
 three-stage program in prose and links no developer documentation, no schema
-and no submission form. So there is nothing here pretending to be a Muse
-manifest: [`mcp.json`](./mcp.json) is an ordinary MCP client entry, which is
-what Muse consumes, and [`SUBMISSION.md`](./SUBMISSION.md) is the dossier the
-review stage asks for. If Meta publishes a manifest schema, that is the file
-to add, and it belongs here.
+and no submission form. So there is no manifest here and no file shaped like
+one. Muse takes a URL typed into its connector screen, so a JSON file sitting
+beside it would be read by nothing and would only look supported. What this
+directory holds is that URL, the skills for a mount-only surface, and
+[`SUBMISSION.md`](./SUBMISSION.md), the dossier the review stage asks for. If
+Meta publishes a manifest schema, that is the file to add, and it belongs
+here.
 
 ## Add it yourself today
 
 You do not have to wait for the directory. Muse takes custom connectors from
-users directly: give it the mount URL and complete Mainmind's authorization.
+users directly: give it the mount URL.
 
 ```text
 https://mainmind.app/mcp
 ```
 
-That URL names no organization, so authorization asks which one to mount. If
-the connection should only ever reach one organization, use the complete form,
+The mount is an OAuth 2.1 server, so connecting means completing a browser
+authorization. Meta documents nothing about what its connector screen
+supports, so treat that step as unverified until you have done it once. It
+should ask which organization to mount, because that URL names none. If the
+connection is only ever meant to reach one, use the complete form,
 `https://mainmind.app/mcp/<organization>`, which fixes it before authorization
 begins.
 
