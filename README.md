@@ -79,22 +79,34 @@ skills/                          canonical — edit here, only here
 plugins/
   mainmind/                      Claude Code       .claude-plugin/plugin.json
   mainmind-mount/                Agent Plugins     plugin.json + mcp.json
-  mainmind-grok/                 Grok              config.toml + mcp.json
+  mainmind-grok/                 Grok              .grok-plugin/plugin.json + .mcp.json + config.toml
   mainmind-muse/                 Muse              mcp.json + SUBMISSION.md
 .agents/skills/                  Codex convention; copy into your own repo
 .claude-plugin/marketplace.json  Claude Code marketplace entry
 ```
 
-Only two of those four ecosystems have a plugin manifest at all. Claude Code
-has one, and the [Agent Plugins](https://agent-plugins.org) 1.0.0 schema has
-one that carries metadata only — it has no property for skills or MCP servers,
-so the sibling `mcp.json` is how the mount is declared there. **Grok and Muse
-publish no plugin format.** Grok reads `grok mcp add` or an `[mcp_servers.…]`
-table in `~/.grok/config.toml`; Muse takes a connector URL. So those two
-directories carry the files those hosts actually read, and `npm run check`
-fails if a `plugin.json` reappears in either — this repository published an
-inert `.grok-plugin/plugin.json` once, and both this README and Mainmind's own
-harness guide sent people to it.
+Three of those four ecosystems have a plugin manifest, and all three are
+metadata only — none of them declares a skill or a server, because every one of
+them discovers those by convention. Claude Code's is
+`.claude-plugin/plugin.json`. The [Agent Plugins](https://agent-plugins.org)
+1.0.0 schema's is `plugin.json`, validated and `additionalProperties: false`,
+with the mount in the sibling `mcp.json`. Grok's is `.grok-plugin/plugin.json`,
+with the mount in `.mcp.json` at the plugin root — xAI's marketplace guide says
+*"local plugins include a `README.md` and a valid `.grok-plugin/plugin.json`
+manifest"*, and the plugins xAI already lists ship that layout. **Muse is the
+one with no plugin format**: it takes a connector URL through a submission form.
+
+This repository has now got that wrong in both directions — it published an
+inert manifest once, then deleted a real one on the belief that it was invented
+— so `npm run check` pins each file to the vendor page or shipped example that
+justifies it, and fails both ways: a manifest that no host reads, and a missing
+one that a host requires.
+
+The trap worth knowing: Grok's `.mcp.json` and Agent Plugins' `mcp.json` are
+filenames separated by one dot, and their `type` values **must not match**. The
+Agent Plugins schema enumerates `stdio | streamable-http | sse` and rejects
+`"http"`; Grok's takes `"http"`. That is why they are separate directories, and
+why the check asserts each spelling rather than asserting they agree.
 
 `SKILL.md` is the same format in every ecosystem, so one source serves all of
 them — but each harness reads its own path, and nothing in the plugin formats

@@ -4,16 +4,35 @@ Three surfaces, three setups, one mount. Grok reaches Mainmind the way it
 reaches any connector: as a remote MCP server over the public internet, with
 authorization completed in a browser. Nothing here ships a secret.
 
-**There is no Grok plugin manifest.** xAI documents connectors and MCP server
-entries, not a plugin package format, so this directory carries the two files
-Grok actually reads and the steps for the surface that has no file at all. An
-earlier version of this repository published a `.grok-plugin/plugin.json`; no
-Grok surface read it, and it named no server, so it has been removed rather
-than left to look like a supported route.
+**The manifest is metadata only, and it is still required.** An earlier version
+of this repository removed `.grok-plugin/plugin.json` on the reading that no
+Grok surface read it. That was half right and wrong where it counted: the
+manifest genuinely declares nothing — no server, no skill, no command, because
+Grok finds those by convention — but xAI's marketplace guide states that *"local
+plugins include a `README.md` and a valid `.grok-plugin/plugin.json` manifest"*,
+and the plugins xAI already lists ship exactly that. Without it there is no
+catalogue listing. It is back.
 
-## Grok on web, iOS and Android
+So the layout here is the one xAI's own catalogue uses:
 
-No file. Open **[grok.com/connectors](https://grok.com/connectors)**, choose
+| Path | What Grok does with it |
+|---|---|
+| `.grok-plugin/plugin.json` | metadata — name, version, author, licence |
+| `.mcp.json` | the mount, at the plugin root. The leading dot matters |
+| `skills/<name>/SKILL.md` | discovered by convention; nothing declares them |
+| `config.toml` | Grok Build's own TOML route, for people not installing a plugin |
+
+`mcp.json` without the dot is the Agent Plugins name, and it is what
+`plugins/mainmind-mount` next door uses — with `"type": "streamable-http"`,
+because that schema rejects `"http"`. Grok's takes `"http"`. Two filenames
+separated by one dot, carrying values that must not match, is why these are two
+directories and not one, and `npm run check` asserts both.
+
+## Grok on the web
+
+No file. xAI documents this screen for the web; whether the iOS and Android apps
+expose the same one is not something its docs state, so this file does not claim
+it. Open **[grok.com/connectors](https://grok.com/connectors)**, choose
 **New Connector**, then **Custom**, enter the mount URL, and complete
 Mainmind's authorization in the flow Grok opens.
 
@@ -51,14 +70,18 @@ mount alone cannot tell it that. See the repository README for why.
 
 ## A bot you build on the xAI API
 
-The xAI API's remote MCP tool takes `server_url`, `server_label` and a static
-`authorization` bearer. That surface runs no OAuth, so a plugin is the wrong
-shape for it and neither file here applies.
+The xAI API's remote MCP tool takes `server_url`, `server_label` and
+`authorization`. That last field takes the **raw** credential, not a header
+value: xAI writes the `Authorization` header itself, so a value beginning
+`Bearer ` arrives doubled and the mount refuses it. That surface runs no OAuth,
+so a plugin is the wrong shape for it and no file here applies.
 
 Register a machine member instead — `invite_member` with `kind: machine` — and
 give the runner that member's own credential. Never Mainmind's deployment
-credential, and never a person's token. Start with `allowed_tools` naming the
-read set and widen it once the bot behaves.
+credential, and never a person's token. Start by naming the read set and widen
+it once the bot behaves — that field is `allowed_tools` on the
+OpenAI-compatible Responses API shape and `allowed_tool_names` in xAI's own
+SDK, so check which one your client speaks rather than assuming.
 
 ## Verifying it works
 
@@ -71,3 +94,17 @@ success; a verified identity and a named commit are.
 - [Connector management](https://docs.x.ai/grok/connector-management)
 - [Grok Build MCP servers](https://docs.x.ai/build/features/mcp-servers)
 - [xAI remote MCP tool](https://docs.x.ai/developers/tools/remote-mcp)
+- [Skills, plugins and marketplaces](https://docs.x.ai/build/features/skills-plugins-marketplaces)
+- [xai-org/plugin-marketplace contributing guide](https://github.com/xai-org/plugin-marketplace/blob/main/CONTRIBUTING.md)
+- [getsentry/plugin-grok](https://github.com/getsentry/plugin-grok), a plugin xAI already lists, for the layout
+
+## Listing it in xAI's catalogue
+
+Not submitted yet, and one decision comes first. A catalogue entry is either
+`source.url` pointing at a public repository with a full 40-character commit
+`sha` pinned — **no path component, so a plugin in a subdirectory has no remote
+form** — or `{ "type": "local", "path": "./external_plugins/<name>" }` with the
+files vendored into xAI's own repository. This plugin is a subdirectory of
+`codeyogi911/mainmind-plugins`, so it needs either the vendored route or its own
+small repository that this one generates into, keeping `skills/` single-sourced
+here. Worth deciding before submitting rather than after a rejection.
