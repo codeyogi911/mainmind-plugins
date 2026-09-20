@@ -134,6 +134,13 @@ for (const invented of [
   }
 }
 
+// The other half of the one-dot trap: the file can be named right and filed
+// wrong. Grok reads `.mcp.json` at the plugin root, not inside `.grok-plugin/`,
+// which holds the catalogue file.
+if (existsSync(join(root, "plugins/mainmind-grok/.grok-plugin/.mcp.json"))) {
+  fail("plugins/mainmind-grok/.grok-plugin/.mcp.json exists: .mcp.json belongs at the plugin root — .grok-plugin/ holds the catalogue file");
+}
+
 // xAI's contributing guide states the two files a local plugin must carry.
 for (const required of [
   "plugins/mainmind-grok/.grok-plugin/plugin.json",
