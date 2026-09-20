@@ -78,7 +78,6 @@ const transports = [
   ["plugins/mainmind/.mcp.json", "http"],
   ["plugins/mainmind-mount/mcp.json", "streamable-http"],
   ["plugins/mainmind-grok/.mcp.json", "http"],
-  ["plugins/mainmind-muse/mcp.json", "streamable-http"],
 ];
 for (const [path, expected] of transports) {
   const server = read(path).mcpServers?.mainmind;
@@ -89,12 +88,14 @@ for (const [path, expected] of transports) {
 
 // Grok Build reads TOML, not a manifest. The entry has to be there and it has
 // to name the same mount, or the file teaches a wrong setup by example.
+// Read the table, not the file: a `url` line anywhere in a TOML document
+// satisfies a whole-file match while belonging to some other server.
 const grokToml = text("plugins/mainmind-grok/config.toml");
-if (!/^\[mcp_servers\.mainmind\]$/m.test(grokToml)) {
+const grokTable = grokToml.split(/^\[/m).find((block) => block.startsWith("mcp_servers.mainmind]"));
+if (!grokTable) {
   fail("plugins/mainmind-grok/config.toml: no [mcp_servers.mainmind] table");
-}
-if (!new RegExp(`^url = "${MOUNT_URL}"$`, "m").test(grokToml)) {
-  fail(`plugins/mainmind-grok/config.toml: no url = "${MOUNT_URL}" line`);
+} else if (!grokTable.split("\n").slice(1).some((line) => line.trim() === `url = "${MOUNT_URL}"`)) {
+  fail(`plugins/mainmind-grok/config.toml: [mcp_servers.mainmind] has no url = "${MOUNT_URL}" line`);
 }
 
 // A published surface nobody can follow is worse than one we did not publish.
@@ -128,9 +129,10 @@ for (const invented of [
   "plugins/mainmind-grok/mcp.json",
   "plugins/mainmind-muse/plugin.json",
   "plugins/mainmind-muse/connector.json",
+  "plugins/mainmind-muse/mcp.json",
 ]) {
   if (existsSync(join(root, invented))) {
-    fail(`${invented} exists: no client reads that path — see plugins/${invented.split("/")[1]}/README.md`);
+    fail(`${invented} exists: no client reads that path — see the Layout section of README.md`);
   }
 }
 
