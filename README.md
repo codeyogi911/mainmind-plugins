@@ -11,10 +11,10 @@ decides which tools the session ever sees.
 
 | Harness | How |
 |---|---|
-| **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind` |
+| **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
 | **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself |
-| **Cursor** and other [Agent Plugins](https://agent-plugins.org) clients | Point the client at `plugins/mainmind-mount` |
-| **Grok** — Build, web, iOS, Android, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three setups, one mount |
+| **Cursor** and other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` declares the Agent Plugins 1.0.0 schema, so a client implementing that standard can load it as a plugin; [agent-plugins.org](https://agent-plugins.org) has the install route |
+| **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one mount. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state |
 | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
 
 The canonical mount names no organization, so authorization asks which one to
