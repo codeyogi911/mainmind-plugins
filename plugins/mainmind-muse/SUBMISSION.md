@@ -104,9 +104,17 @@ cannot keep.
 
 1. **Shashwat has to open the form.** It is behind a Meta login; nobody else
    can reach it.
-2. **A 512×512 icon**, which this repository does not carry.
-3. **Privacy, terms and support URLs.** `https://mainmind.app` is the support
-   URL; the other two need pages that exist at stable addresses.
+2. **Privacy and terms pages.** `https://mainmind.app` is the support URL and
+   the icon is settled (below); these two are the remaining assets, and they
+   need to exist at stable addresses before the listing can name them.
+
+The **512×512 icon** is already deployed: `public/icon-512.png` in the
+mainmind repository is a genuine 512×512 PNG, and `wrangler.jsonc` serves
+`./public` as the asset directory with ordinary static files answered before
+the Worker, so it is reachable at `https://mainmind.app/icon-512.png`. That
+last step is read from the configuration, not fetched — the sandbox this was
+written in cannot reach mainmind.app — so confirm the URL in a browser before
+pasting it into the form.
 
 Meta's own security writeup describes launch connectors as a joint engagement —
 "we worked closely with the service provider to integrate their API, and we've

@@ -80,7 +80,7 @@ plugins/
   mainmind/                      Claude Code       .claude-plugin/plugin.json
   mainmind-mount/                Agent Plugins     plugin.json + mcp.json
   mainmind-grok/                 Grok              .grok-plugin/plugin.json + .mcp.json + config.toml
-  mainmind-muse/                 Muse              mcp.json + SUBMISSION.md
+  mainmind-muse/                 Muse              no manifest: README.md + SUBMISSION.md
 .agents/skills/                  Codex convention; copy into your own repo
 .claude-plugin/marketplace.json  Claude Code marketplace entry
 ```
