@@ -100,11 +100,26 @@ success; a verified identity and a named commit are.
 
 ## Listing it in xAI's catalogue
 
-Not submitted yet, and one decision comes first. A catalogue entry is either
-`source.url` pointing at a public repository with a full 40-character commit
-`sha` pinned — **no path component, so a plugin in a subdirectory has no remote
-form** — or `{ "type": "local", "path": "./external_plugins/<name>" }` with the
-files vendored into xAI's own repository. This plugin is a subdirectory of
-`codeyogi911/mainmind-plugins`, so it needs either the vendored route or its own
-small repository that this one generates into, keeping `skills/` single-sourced
-here. Worth deciding before submitting rather than after a rejection.
+Not submitted yet, but nothing about this directory's position is in the way.
+A catalogue entry names `source.url` with a full 40-character commit `sha`
+pinned, and may add a `path` naming the directory inside that repository which
+holds the plugin. Several entries listed today are exactly that shape, one of
+them a plugin under `plugins/<name>` in a multi-plugin repository. So the entry
+for this one points at `codeyogi911/mainmind-plugins` with
+`"path": "plugins/mainmind-grok"` and a pinned commit, and `skills/` stays
+single-sourced in the repository root with nothing generated, copied or
+vendored anywhere for the listing's sake.
+
+That `path` key is not in xAI's written schema: the README documents `path`
+only under local, vendored sources, and CONTRIBUTING.md is silent on it. It is
+nonetheless a first-class field — `scripts/validate-catalog.py` validates it
+for url sources and `scripts/generate-plugin-index.py` roots the fetched tree
+at it — and the live entries using it are the evidence. If a reviewer ever
+rejects the shape, the fallback is vendoring a copy under
+`external_plugins/`, which would drift from this directory on every change
+here with nothing to catch it.
+
+One thing is worth settling before submitting, and it is not the path.
+CONTRIBUTING.md asks that a branded plugin be sourced from its own
+organization rather than a personal account, and `codeyogi911` is a personal
+account. Every remote entry listed today is sourced from an organization.
