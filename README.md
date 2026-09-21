@@ -117,6 +117,21 @@ npm run sync     # copy skills/ into every destination
 npm run check    # fail if any copy has drifted, or the manifests disagree
 ```
 
+One ecosystem needs more than a copy. An xAI catalogue entry names a
+repository root pinned to a commit and carries **no path component**, so
+`plugins/mainmind-grok` cannot be listed from inside this repository. It gets a
+repository of its own, `codeyogi911/mainmind-grok`, generated from this one:
+
+```
+node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok
+node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok --check
+```
+
+Eight files, nothing authored there, and `--check` fails on drift. The
+alternative xAI offers is vendoring a copy into its own marketplace
+repository, which would drift from this one on every change with nothing to
+catch it. That repository is not published yet.
+
 `npm run check` runs in CI on every push and pull request. Edit a copy instead
 of the source and it fails — which is the point, because a skill edited in one
 harness's copy and nowhere else is exactly the drift this layout invites.

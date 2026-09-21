@@ -100,11 +100,28 @@ success; a verified identity and a named commit are.
 
 ## Listing it in xAI's catalogue
 
-Not submitted yet, and one decision comes first. A catalogue entry is either
-`source.url` pointing at a public repository with a full 40-character commit
-`sha` pinned — **no path component, so a plugin in a subdirectory has no remote
-form** — or `{ "type": "local", "path": "./external_plugins/<name>" }` with the
-files vendored into xAI's own repository. This plugin is a subdirectory of
-`codeyogi911/mainmind-plugins`, so it needs either the vendored route or its own
-small repository that this one generates into, keeping `skills/` single-sourced
-here. Worth deciding before submitting rather than after a rejection.
+**Decided: a dedicated repository, `codeyogi911/mainmind-grok`.**
+
+A catalogue entry is either `source.url` pointing at a public repository with a
+full 40-character commit `sha` pinned — **no path component, so a plugin in a
+subdirectory has no remote form** — or `{ "type": "local", "path":
+"./external_plugins/<name>" }` with the files vendored into xAI's own
+repository. This plugin is a subdirectory of `codeyogi911/mainmind-plugins`, so
+neither works as it stands.
+
+Vendoring was rejected: a copy inside xAI's repository drifts from this one on
+every change here, and nothing would catch it. The dedicated repository is
+generated instead, by `tools/build-grok-plugin-repo.mjs` in the repository
+root, from this directory and the canonical `skills/`. Eight files, nothing
+authored there, and `--check` fails when the generated tree has drifted — so
+`skills/` stays single-sourced here and a hand edit over there is found rather
+than silently overwritten.
+
+```sh
+node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok
+node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok --check
+```
+
+Not submitted yet: the repository has still to be created. The catalogue entry
+pins the commit that the generated tree lands on, so it is regenerated, pushed
+and re-pinned on each release rather than tracking a branch.
