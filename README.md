@@ -117,20 +117,17 @@ npm run sync     # copy skills/ into every destination
 npm run check    # fail if any copy has drifted, or the manifests disagree
 ```
 
-One ecosystem needs more than a copy. An xAI catalogue entry names a
-repository root pinned to a commit and carries **no path component**, so
-`plugins/mainmind-grok` cannot be listed from inside this repository. It gets a
-repository of its own, `codeyogi911/mainmind-grok`, generated from this one:
-
-```
-node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok
-node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok --check
-```
-
-Eight files, nothing authored there, and `--check` fails on drift. The
-alternative xAI offers is vendoring a copy into its own marketplace
-repository, which would drift from this one on every change with nothing to
-catch it. That repository is not published yet.
+A copy is all any of them needs, xAI's catalogue included. An entry in
+[xai-org/plugin-marketplace](https://github.com/xai-org/plugin-marketplace)
+names a repository and a full 40-character commit `sha`, and may add a `path`
+naming the directory inside it that holds the plugin. Several live entries do
+exactly that, one of them a plugin under `plugins/<name>` in a multi-plugin
+repository — this layout. So `plugins/mainmind-grok` is listable from here,
+with no second repository and no copy vendored into xAI's own. That key is
+absent from xAI's written schema, which shows `path` only for vendored
+entries; it is validated by `scripts/validate-catalog.py` and honoured by
+`scripts/generate-plugin-index.py`, and the live entries are the evidence.
+Not submitted yet.
 
 `npm run check` runs in CI on every push and pull request. Edit a copy instead
 of the source and it fails — which is the point, because a skill edited in one

@@ -100,28 +100,26 @@ success; a verified identity and a named commit are.
 
 ## Listing it in xAI's catalogue
 
-**Decided: a dedicated repository, `codeyogi911/mainmind-grok`.**
+Not submitted yet, but nothing about this directory's position is in the way.
+A catalogue entry names `source.url` with a full 40-character commit `sha`
+pinned, and may add a `path` naming the directory inside that repository which
+holds the plugin. Several entries listed today are exactly that shape, one of
+them a plugin under `plugins/<name>` in a multi-plugin repository. So the entry
+for this one points at `codeyogi911/mainmind-plugins` with
+`"path": "plugins/mainmind-grok"` and a pinned commit, and `skills/` stays
+single-sourced in the repository root with nothing generated, copied or
+vendored anywhere for the listing's sake.
 
-A catalogue entry is either `source.url` pointing at a public repository with a
-full 40-character commit `sha` pinned — **no path component, so a plugin in a
-subdirectory has no remote form** — or `{ "type": "local", "path":
-"./external_plugins/<name>" }` with the files vendored into xAI's own
-repository. This plugin is a subdirectory of `codeyogi911/mainmind-plugins`, so
-neither works as it stands.
+That `path` key is not in xAI's written schema: the README documents `path`
+only under local, vendored sources, and CONTRIBUTING.md is silent on it. It is
+nonetheless a first-class field — `scripts/validate-catalog.py` validates it
+for url sources and `scripts/generate-plugin-index.py` roots the fetched tree
+at it — and the live entries using it are the evidence. If a reviewer ever
+rejects the shape, the fallback is vendoring a copy under
+`external_plugins/`, which would drift from this directory on every change
+here with nothing to catch it.
 
-Vendoring was rejected: a copy inside xAI's repository drifts from this one on
-every change here, and nothing would catch it. The dedicated repository is
-generated instead, by `tools/build-grok-plugin-repo.mjs` in the repository
-root, from this directory and the canonical `skills/`. Eight files, nothing
-authored there, and `--check` fails when the generated tree has drifted — so
-`skills/` stays single-sourced here and a hand edit over there is found rather
-than silently overwritten.
-
-```sh
-node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok
-node tools/build-grok-plugin-repo.mjs --out ../mainmind-grok --check
-```
-
-Not submitted yet: the repository has still to be created. The catalogue entry
-pins the commit that the generated tree lands on, so it is regenerated, pushed
-and re-pinned on each release rather than tracking a branch.
+One thing is worth settling before submitting, and it is not the path.
+CONTRIBUTING.md asks that a branded plugin be sourced from its own
+organization rather than a personal account, and `codeyogi911` is a personal
+account. Every remote entry listed today is sourced from an organization.
