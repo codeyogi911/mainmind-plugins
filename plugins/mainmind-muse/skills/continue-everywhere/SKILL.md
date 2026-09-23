@@ -84,10 +84,21 @@ Proceed only on a yes. If they drop an item, drop it.
    `claude-ai`, `codex`, `cursor`, `grok-bot`; any other app is `byo`).
 2. If `agents_you_can_resume` has an agent with this name, ask once whether to
    move into that one or make a new one. Reuse is the default.
-3. Otherwise `register_agent` with `name`, a one-sentence `charter`, and a
+3. For a Founder, boot also lists `agents_you_can_take_over`: agents already in
+   the organization that no one has taken over, with their jobs. If one
+   plainly does this agent's job, even under a slightly different name, ask
+   once whether to use it; on yes, `adopt_agent` with its `agent` and
+   `agent_epoch`. Moving a whole team in, ask once for all the matches
+   together, not one question per agent.
+4. Otherwise `register_agent` with `name`, a one-sentence `charter`, and a
    UUID v4 `registration_key` chosen before the call. Retry only with that
-   same key and details; never register again on a restart.
-4. `boot` again with `agent: <slug>`; pass `agent` on every call that accepts
+   same key and details; never register again on a restart. If it answers
+   that an agent with this name already exists, take that one (as above)
+   rather than choosing another name. Only a Founder can take one over: if
+   the answer says to ask a Founder, or that someone else's agent has the
+   name, stop and tell the person in one plain line, for example "Inbound
+   already belongs to someone else here; a Founder can sort that out."
+5. `boot` again with `agent: <slug>`; pass `agent` on every call that accepts
    it from here on.
 
 ## 3. Copy the working files
