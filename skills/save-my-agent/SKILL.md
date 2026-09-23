@@ -74,6 +74,9 @@ Before saying anything is saved:
 - A receipt of `refused` or `uncertain`, or a read-back that does not match,
   is not saved. Retry `uncertain` once with the same `idempotency_key`; it
   returns `recovered` when the write had landed.
+- A refusal marked `retry: true` means Mainmind was catching up with another
+  change and nothing was saved. Wait a few seconds and send the same call
+  with the same `idempotency_key` once more.
 - Count the agent's active memories from the fresh index. If the index is
   marked truncated, the count is "at least" that number.
 
