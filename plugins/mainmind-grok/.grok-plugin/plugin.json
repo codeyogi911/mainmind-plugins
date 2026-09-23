@@ -1,6 +1,6 @@
 {
   "name": "mainmind",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Mount your company file: the organization's own processes, records, decisions and lessons at a named commit, plus its live run ledger. You sign in as yourself; the plugin ships no secrets.",
   "author": {
     "name": "Shashwat Jain",
