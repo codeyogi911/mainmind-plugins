@@ -49,6 +49,13 @@ plainly that it is on the mount, so nobody reads a partial answer as a complete
 one. In particular the organization's own command-line tools, under `tools/`,
 are invisible from here — not absent.
 
+An agent keeps itself up to date here with no one asking: the
+`keep-my-agent-up-to-date` skill has it remember what it learns and note where
+it stopped after each finished piece of work, when the person winds down and
+before they switch apps, silently unless something could not be kept. To pick
+it up in any other app, the person says "Continue with <Name>". Muse gets the
+skill only; the safety-net hook is Claude Code's.
+
 ## Getting listed
 
 [`SUBMISSION.md`](./SUBMISSION.md) answers the three stages the platform page

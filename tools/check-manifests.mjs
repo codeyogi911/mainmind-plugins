@@ -9,7 +9,7 @@
 // Which files those are is decided from each vendor's own published guide and
 // from plugins they already ship, not from what looks consistent across our
 // own directories; the two disagree more often than not.
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -164,6 +164,45 @@ for (const entry of marketplace.plugins || []) {
 // to stop.
 if (claude.skills !== "./skills/") fail(`plugins/mainmind: skills is ${JSON.stringify(claude.skills)}, expected "./skills/"`);
 if (!existsSync(join(root, "plugins/mainmind/skills"))) fail("plugins/mainmind/skills does not exist; run npm run sync");
+
+// The Stop hook that keeps an agent up to date when the model forgets to.
+// Claude Code discovers `hooks/hooks.json` at the plugin root by convention;
+// naming that same file again in plugin.json's `hooks` field would register it
+// twice. https://code.claude.com/docs/en/plugins-reference#hooks
+const HOOKS = "plugins/mainmind/hooks/hooks.json";
+const HOOK_SCRIPT = "plugins/mainmind/hooks/keep-up-to-date.mjs";
+if ("hooks" in claude) fail(`plugins/mainmind: plugin.json declares "hooks"; ${HOOKS} is discovered by convention and would load twice`);
+if (!existsSync(join(root, HOOK_SCRIPT))) fail(`${HOOK_SCRIPT} is missing`);
+if (!existsSync(join(root, HOOKS))) {
+  fail(`${HOOKS} is missing: without it an agent in Claude Code is only kept up to date when the model remembers`);
+} else {
+  const stop = (read(HOOKS).hooks?.Stop || []).flatMap((group) => group.hooks || []);
+  if (!stop.some((hook) => hook.type === "command" && hook.command?.includes("${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs"))) {
+    fail(`${HOOKS}: no Stop command running \${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs`);
+  }
+}
+
+// The agent skills were renamed to the words people say. A stale copy under an
+// old name would load beside the new one and teach the old words.
+for (const retired of ["save-my-agent", "bring-back-my-agent", "move-my-agent-in"]) {
+  for (const base of ["skills", ".agents/skills", "plugins/mainmind/skills", "plugins/mainmind-mount/skills",
+    "plugins/mainmind-grok/skills", "plugins/mainmind-muse/skills"]) {
+    if (existsSync(join(root, base, retired))) fail(`${base}/${retired} exists: that skill was renamed`);
+  }
+}
+
+// Keeping an agent up to date is the agent's job. Nothing people read may tell
+// them to ask for it.
+const peopleRead = ["README.md", "plugins/mainmind-grok/README.md", "plugins/mainmind-muse/README.md",
+  "plugins/mainmind-muse/SUBMISSION.md",
+  ...readdirSync(join(root, "skills")).map((name) => `skills/${name}/SKILL.md`)];
+for (const path of peopleRead) {
+  // "say" then a quoted save or bring-back phrase, in any quote style; "Never
+  // say" is the rule itself, and "says" is a trigger the skill listens for.
+  if (existsSync(join(root, path)) && /(?<!never\s)\bsay\s+\\?["“'‘](?:save|bring)\b/i.test(text(path))) {
+    fail(`${path} tells people to say save or bring back; the agent keeps itself up to date`);
+  }
+}
 
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);

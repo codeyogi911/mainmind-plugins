@@ -1,0 +1,16 @@
+{
+  "description": "Keeps a Mainmind agent up to date: before a session that booted as an agent stops, asks the model once to hand off where it stopped if it has not lately.",
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs\"",
+            "timeout": 15
+          }
+        ]
+      }
+    ]
+  }
+}

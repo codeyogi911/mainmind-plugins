@@ -12,7 +12,7 @@ decides which tools the session ever sees.
 | Harness | How |
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
-| **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself |
+| **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself. If you copied them before 0.7.0, delete the renamed folders `save-my-agent`, `bring-back-my-agent` and `move-my-agent-in` from yours |
 | **Cursor** and other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` declares the Agent Plugins 1.0.0 schema, so a client implementing that standard can load it as a plugin; [agent-plugins.org](https://agent-plugins.org) has the install route |
 | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one mount. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state |
 | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
@@ -39,18 +39,31 @@ Six skills, in `skills/`:
 - **`make-an-agent`** — "make me an agent that…": three plain questions, then
   a registered agent with proposed instructions, limits and schedule, shown as
   one summary card.
-- **`save-my-agent`** — "save my agent", "I'm switching apps": saves what the
-  agent learned and where it stopped, reads both back, answers in one line.
-- **`bring-back-my-agent`** — "bring back Job Hunter": the agent carries on in
-  this app with its instructions, what it remembers and where it stopped; also
-  "what do you remember about me?" and "forget that".
-- **`move-my-agent-in`** — "move my agent into Mainmind": turns an existing
-  setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom GPT)
-  into a Mainmind agent after a preview of what moves and what stays behind.
+- **`continue-with-my-agent`** — "Continue with Job Hunter", in any app: the
+  agent picks up where you left off, with its instructions and what it
+  remembers; also "what do you remember about me?" and "forget that".
+- **`keep-my-agent-up-to-date`** — nobody asks for this one. The agent loads it
+  itself: it remembers what it learns as it learns it, and notes where it
+  stopped after each finished piece of work, when you wind down and before you
+  switch apps. It says nothing about it unless something could not be kept; at
+  a goodbye, at most "All up to date."
+- **`continue-everywhere`** — "Continue with Job Hunter everywhere": turns an
+  existing setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom
+  GPT) into a Mainmind agent after a preview of what comes along and what stays
+  behind.
 
 The four agent skills follow Mainmind's agent-portability design: the agent's
 home lives in the organization's knowledge, and each app's own format is a
 translation of it, never the source.
+
+**An agent keeps itself up to date; nobody has to ask.** On every host the
+skills tell it when. In Claude Code the plugin adds a safety net for when the
+model forgets: a Stop hook (`plugins/mainmind/hooks/`) that, only in a session
+that booted as an agent, asks the model once to hand off quietly before it
+stops — when there is no handoff yet after six or more tool calls of work, or
+the last one is over thirty minutes old and work has happened since. It never
+asks twice in a row and lets the session stop on any doubt. Codex, Cursor, Grok
+and Muse have the skills only.
 
 ## Why this ships skills at all
 
@@ -92,11 +105,11 @@ skills/                          canonical — edit here, only here
   mainmind-boot/SKILL.md
   morning-brief/SKILL.md
   make-an-agent/SKILL.md
-  save-my-agent/SKILL.md
-  bring-back-my-agent/SKILL.md
-  move-my-agent-in/SKILL.md
+  continue-with-my-agent/SKILL.md
+  keep-my-agent-up-to-date/SKILL.md
+  continue-everywhere/SKILL.md
 plugins/
-  mainmind/                      Claude Code       .claude-plugin/plugin.json
+  mainmind/                      Claude Code       .claude-plugin/plugin.json + hooks/hooks.json
   mainmind-mount/                Agent Plugins     plugin.json + mcp.json
   mainmind-grok/                 Grok              .grok-plugin/plugin.json + .mcp.json + config.toml
   mainmind-muse/                 Muse              no manifest: README.md + SUBMISSION.md
@@ -133,7 +146,7 @@ lets them share a directory. So the copies are generated:
 
 ```
 npm run sync     # copy skills/ into every destination
-npm run check    # fail if any copy has drifted, or the manifests disagree
+npm run check    # fail if any copy has drifted, the manifests disagree, or the hook tests fail
 ```
 
 A copy is all any of them needs, xAI's catalogue included. An entry in
