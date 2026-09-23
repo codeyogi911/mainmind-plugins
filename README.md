@@ -29,13 +29,28 @@ for one — a plugin is the wrong shape. Register a machine member instead
 
 ## What it ships
 
-Two skills, in `skills/`:
+Six skills, in `skills/`:
 
 - **`mainmind-boot`** — how to behave on a mount. Boot before answering,
   route through `find_process`, cite the path and the projection commit, and
   put Founder decisions through `ask_founder` as one question.
 - **`morning-brief`** — a start-of-day digest built entirely from mount reads:
   what needs you, what is in motion, what landed.
+- **`make-an-agent`** — "make me an agent that…": three plain questions, then
+  a registered agent with proposed instructions, limits and schedule, shown as
+  one summary card.
+- **`save-my-agent`** — "save my agent", "I'm switching apps": saves what the
+  agent learned and where it stopped, reads both back, answers in one line.
+- **`bring-back-my-agent`** — "bring back Job Hunter": the agent carries on in
+  this app with its instructions, what it remembers and where it stopped; also
+  "what do you remember about me?" and "forget that".
+- **`move-my-agent-in`** — "move my agent into Mainmind": turns an existing
+  setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom GPT)
+  into a Mainmind agent after a preview of what moves and what stays behind.
+
+The four agent skills follow Mainmind's agent-portability design: the agent's
+home lives in the organization's knowledge, and each app's own format is a
+translation of it, never the source.
 
 ## Why this ships skills at all
 
@@ -76,6 +91,10 @@ held a client that would have got it right.
 skills/                          canonical — edit here, only here
   mainmind-boot/SKILL.md
   morning-brief/SKILL.md
+  make-an-agent/SKILL.md
+  save-my-agent/SKILL.md
+  bring-back-my-agent/SKILL.md
+  move-my-agent-in/SKILL.md
 plugins/
   mainmind/                      Claude Code       .claude-plugin/plugin.json
   mainmind-mount/                Agent Plugins     plugin.json + mcp.json
