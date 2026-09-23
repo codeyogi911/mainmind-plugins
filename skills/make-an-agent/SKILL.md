@@ -47,7 +47,9 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    it as `agent` on every call that accepts it from here on. If it answers
    that an agent with this name already exists, do not pick a new name to get
    round it: continue with yours, or, when it says to take one over, ask once
-   and `adopt_agent` with the agent and agent_epoch it names.
+   and `adopt_agent` with the agent and agent_epoch it names. Only a Founder
+   can take one over: if the answer says to ask a Founder, or that someone
+   else's agent has the name, stop and tell the person in one plain line.
 4. **`boot`** again with `agent: <slug>` and the same `harness`. Read the
    `agent_home` section. `missing: ["no_home"]` or `["no_agent_md"]` is
    expected for a new agent.

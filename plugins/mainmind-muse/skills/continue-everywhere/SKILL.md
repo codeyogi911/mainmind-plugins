@@ -94,7 +94,10 @@ Proceed only on a yes. If they drop an item, drop it.
    UUID v4 `registration_key` chosen before the call. Retry only with that
    same key and details; never register again on a restart. If it answers
    that an agent with this name already exists, take that one (as above)
-   rather than choosing another name.
+   rather than choosing another name. Only a Founder can take one over: if
+   the answer says to ask a Founder, or that someone else's agent has the
+   name, stop and tell the person in one plain line, for example "Inbound
+   already belongs to someone else here; a Founder can sort that out."
 5. `boot` again with `agent: <slug>`; pass `agent` on every call that accepts
    it from here on.
 
