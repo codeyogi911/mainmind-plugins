@@ -1,11 +1,11 @@
 ---
 name: make-an-agent
-description: Make a new standing agent that lives in Mainmind and can be brought back in any AI app. Load when the person says "make me an agent that…", "create an agent", "set up a bot for…", "I want an assistant that…", "build me an agent", or any request for a new agent with its own job, limits or schedule.
+description: Make a new standing agent that lives in Mainmind and that the person can continue with in any AI app. Load when the person says "make me an agent that…", "create an agent", "set up a bot for…", "I want an assistant that…", "build me an agent", or any request for a new agent with its own job, limits or schedule.
 ---
 
 # Make an agent
 
-**Talk to the person in plain words. Never name tools, files, folders, IDs, commits or settings. Say "I remember", "where I stopped", "my instructions", "my schedule", "saved".**
+**Talk to the person in plain words. Never name tools, files, folders, IDs, commits or settings. Say "I remember", "where we left off", "my instructions", "my schedule", "up to date". Never say "save", "saved", "bring back" or "restore".**
 
 Everything below the questions is your work, not theirs. The person answers at
 most three questions and sees one summary. They never see a slug, a path, a
@@ -60,9 +60,9 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    `many_files`, `once` or `recurring` (recurring when it has a schedule).
 7. **`agent_home`** `remember` for anything the person told you about
    themselves or the job that is a fact or preference, not an instruction
-   (see "Saving what they told you"). Nothing to save is fine; skip it.
+   (see "Keeping what they told you"). Nothing to keep is fine; skip it.
 8. Read back: `read_node` each memory the receipt names, and confirm the
-   proposal came back with a decision link. Do not report anything as saved
+   proposal came back with a decision link. Do not report anything as done
    that you have not read back.
 
 ## AGENT.md template
@@ -124,7 +124,7 @@ write-class: conserved
 At most 20 schedules. Add `needs:` as a scalar list when the routine needs a
 connection.
 
-## Saving what they told you
+## Keeping what they told you
 
 `agent_home` with `action: "remember"`, `agent: <slug>`, `harness`,
 `idempotency_key` (8 to 100 characters, letters, digits and hyphens; reuse it
@@ -138,7 +138,7 @@ on a retry), and `memories`: 1 to 20 items of
 - Instructions ("always write formally") belong in `AGENT.md`, not memory.
   Facts and preferences ("I'm based in Pune", "never Bangalore roles") belong
   in memory.
-- Never save passwords, keys or tokens. The server refuses them too.
+- Never keep passwords, keys or tokens. The server refuses them too.
 
 ## 3. Show one summary card
 
@@ -152,7 +152,10 @@ One short block, nothing before it:
 
 Then say, exactly:
 
-> <Name> is ready. Say "bring back <Name>" in any app to carry on.
+> <Name> is ready. Say "Continue with <Name>" in any app.
+
+From here on <Name> keeps itself up to date (keep-my-agent-up-to-date); never
+tell the person they have to do anything for that.
 
 If the app can show a card or a button, use it; the Yes is the decision link.
 Anything you chose for them (the name, a default limit, a time zone) is on the
@@ -162,11 +165,12 @@ anything is stored.
 ## When something is not available
 
 - If this connection has no `agent_home` tool yet, still register and propose,
-  and tell the person in one line: "I couldn't save what you told me to <Name>
-  from this app yet; I've put it in <Name>'s instructions instead" (and do so,
-  where it is an instruction), or that it was not saved.
+  and tell the person in one line: "I couldn't keep what you told me with
+  <Name> from this app yet; I've put it in <Name>'s instructions instead" (and
+  do so, where it is an instruction), or that it was not kept.
 - If a call refuses an argument this skill names (for example `harness` on
   `boot`, or `agent` on `propose_change`), retry once without it. Tell the
   person only what they lose, in plain words, if anything.
-- A refusal or an uncertain result is never reported as done. Say what was
-  kept and the one thing to do next.
+- A refusal or an uncertain result is never reported as done. Retry it
+  yourself; if it still fails, say plainly what was not kept and that you will
+  try again. Never ask the person to do anything to keep it.

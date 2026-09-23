@@ -13,7 +13,7 @@
       "displayName": "Mainmind",
       "category": "business",
       "source": "./plugins/mainmind",
-      "version": "0.6.0",
+      "version": "0.7.0",
       "description": "Mount your Mainmind organization: org knowledge at a named commit, the live run ledger, and the decision queue — via your personal OAuth invite code. Adds boot discipline, surface choice and the morning brief.",
       "author": {
         "name": "Shashwat Jain"

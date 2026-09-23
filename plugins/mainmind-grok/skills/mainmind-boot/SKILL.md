@@ -64,10 +64,13 @@ Contact does not renew a work claim; checkpoints do. A Role binding that is stil
 pending stays visible as incomplete.
 
 A person's own agent has its own skills; use them instead of improvising:
-"make me an agent that…" is `make-an-agent`; "bring back <name>", "carry on as
-<name>", "what do you remember about me?" and "forget that" are
-`bring-back-my-agent`; "save my agent" or "I'm switching apps" is
-`save-my-agent`; "move my agent into Mainmind" is `move-my-agent-in`.
+"make me an agent that…" is `make-an-agent`; "continue with <name>", "carry on
+as <name>", "bring back <name>", "what do you remember about me?" and "forget
+that" are `continue-with-my-agent`; "continue with <name> everywhere" or "move
+my agent into Mainmind" is `continue-everywhere`. While acting as an agent,
+load `keep-my-agent-up-to-date` yourself, silently, after each finished piece
+of work, when the person winds down and before switching apps; never wait to
+be asked, and never ask the person to do it.
 
 ## Reading
 

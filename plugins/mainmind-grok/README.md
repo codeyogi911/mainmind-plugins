@@ -68,6 +68,13 @@ This is the surface where the skills in [`skills/`](./skills) earn their place:
 Grok Build has a shell and a filesystem, so it can hold a checkout, and the
 mount alone cannot tell it that. See the repository README for why.
 
+An agent keeps itself up to date here with no one asking: the
+`keep-my-agent-up-to-date` skill has it remember what it learns and note where
+it stopped after each finished piece of work, when the person winds down and
+before they switch apps, silently unless something could not be kept. To pick
+it up in any other app, the person says "Continue with <Name>". Grok gets the
+skill only; the safety-net hook is Claude Code's.
+
 ## A bot you build on the xAI API
 
 The xAI API's remote MCP tool takes `server_url`, `server_label` and
