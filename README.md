@@ -46,7 +46,7 @@ Six skills, in `skills/`:
   itself: it remembers what it learns as it learns it, and notes where it
   stopped after each finished piece of work, when you wind down and before you
   switch apps. It says nothing about it unless something could not be kept; at
-  a goodbye, at most "You're up to date."
+  a goodbye, at most "All up to date."
 - **`continue-everywhere`** — "Continue with Job Hunter everywhere": turns an
   existing setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom
   GPT) into a Mainmind agent after a preview of what comes along and what stays

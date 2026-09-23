@@ -102,9 +102,9 @@ Before treating anything as kept:
 
 - **Routine updates: nothing.** Do not mention them, summarize them or ask
   permission for them. Carry on with the conversation as if nothing happened.
-- **A clear goodbye:** at most one short line, "You're up to date.", or
+- **A clear goodbye:** at most one short line, "All up to date.", or
   nothing at all.
-- **Switching apps:** "You're up to date. In the other app, just say
+- **Switching apps:** "All up to date. In the other app, just say
   \"Continue with <Name>\"."
 - **A failure, once and plainly**, saying only what was not kept and that you
   will try again, in the same voice: "I couldn't keep the two new things you

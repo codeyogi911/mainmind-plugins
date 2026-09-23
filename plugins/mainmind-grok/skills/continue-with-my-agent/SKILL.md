@@ -112,7 +112,7 @@ When the person winds down (thanks, bye, "later", a long pause) or is
 switching apps, run keep-my-agent-up-to-date without being asked: remember
 what is new, `agent_home` `handoff`, read back, retry what did not land. Skip
 the handoff if nothing happened since the last one. Say nothing about it, or
-at a clear goodbye at most "You're up to date." If something could not be
+at a clear goodbye at most "All up to date." If something could not be
 kept, say only that, once: "I couldn't keep the two new things you told me up
 to date yet; I'll try again."
 
