@@ -63,6 +63,12 @@ governed writers. A later session restores those records, not hidden chat state.
 Contact does not renew a work claim; checkpoints do. A Role binding that is still
 pending stays visible as incomplete.
 
+A person's own agent has its own skills; use them instead of improvising:
+"make me an agent that…" is `make-an-agent`; "bring back <name>", "carry on as
+<name>", "what do you remember about me?" and "forget that" are
+`bring-back-my-agent`; "save my agent" or "I'm switching apps" is
+`save-my-agent`; "move my agent into Mainmind" is `move-my-agent-in`.
+
 ## Reading
 
 - Route any task through `find_process` first — task language in, the right
