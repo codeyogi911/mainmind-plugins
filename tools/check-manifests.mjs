@@ -197,8 +197,10 @@ const peopleRead = ["README.md", "plugins/mainmind-grok/README.md", "plugins/mai
   "plugins/mainmind-muse/SUBMISSION.md",
   ...readdirSync(join(root, "skills")).map((name) => `skills/${name}/SKILL.md`)];
 for (const path of peopleRead) {
-  if (existsSync(join(root, path)) && /say\s+\\?["“]save my agent/i.test(text(path))) {
-    fail(`${path} tells people to ask for "save my agent"; the agent keeps itself up to date`);
+  // "say" then a quoted save or bring-back phrase, in any quote style; "Never
+  // say" is the rule itself, and "says" is a trigger the skill listens for.
+  if (existsSync(join(root, path)) && /(?<!never\s)\bsay\s+\\?["“'‘](?:save|bring)\b/i.test(text(path))) {
+    fail(`${path} tells people to say save or bring back; the agent keeps itself up to date`);
   }
 }
 

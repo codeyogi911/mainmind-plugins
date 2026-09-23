@@ -18,7 +18,7 @@
 // stdin carries `session_id`, `transcript_path` and `stop_hook_active`; stdout
 // `{"decision":"block","reason":…}` keeps Claude working with `reason` as its
 // instruction. No dependencies, so it runs from the installed plugin as is.
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 
@@ -32,10 +32,23 @@ const STALE_AFTER_MS = 30 * 60 * 1000;
 // Calls that are the agent looking after itself, not work for the person.
 const HOUSEKEEPING = /__(boot|agent_home|agent_session|whoami|release_notes)$/;
 const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "ToolSearch"]);
+// The skill reads a handoff back to check it landed; reads straight after a
+// handoff are that check, not new work.
+const READ_BACK = /__read_node$/;
 
 const quietExit = () => { process.exitCode = 0; };
 process.on("uncaughtException", quietExit);
 process.on("unhandledRejection", quietExit);
+
+function resultText(content) {
+  if (typeof content === "string") return content;
+  if (!Array.isArray(content)) return "";
+  return content.map((part) => (typeof part?.text === "string" ? part.text : "")).join("\n");
+}
+
+// A handoff the server refused comes back as an ordinary result whose receipt
+// says so, not only as an error.
+const REFUSED = /"state"\s*:\s*"refused"/;
 
 function toolCalls(transcript) {
   const calls = [];
@@ -49,7 +62,8 @@ function toolCalls(transcript) {
     for (const part of content) {
       if (part?.type === "tool_use" && typeof part.name === "string") {
         calls.push({ id: part.id, name: part.name, input: part.input || {}, at: Date.parse(entry.timestamp) });
-      } else if (part?.type === "tool_result" && part.is_error === true) {
+      } else if (part?.type === "tool_result"
+        && (part.is_error === true || REFUSED.test(resultText(part.content)))) {
         failed.add(part.tool_use_id);
       }
     }
@@ -61,8 +75,12 @@ function toolCalls(transcript) {
 // to remind about, or null to let the session stop.
 function needsHandoff(transcript, now) {
   const calls = toolCalls(transcript);
-  const bootIndex = calls.findIndex((call) =>
-    /__boot$/.test(call.name) && typeof call.input.agent === "string" && call.input.agent.trim());
+  // The agent this session is acting as now: after "Continue with A" and then
+  // "Continue with B", that is B.
+  let bootIndex = -1;
+  calls.forEach((call, i) => {
+    if (/__boot$/.test(call.name) && typeof call.input.agent === "string" && call.input.agent.trim()) bootIndex = i;
+  });
   if (bootIndex < 0) return null;
   const agent = calls[bootIndex].input.agent.trim();
 
@@ -73,8 +91,14 @@ function needsHandoff(transcript, now) {
   }
 
   const since = handoffIndex < 0 ? bootIndex : handoffIndex;
-  const work = calls.slice(since + 1)
-    .filter((call) => !HOUSEKEEPING.test(call.name) && !HOUSEKEEPING_TOOLS.has(call.name)).length;
+  const housekeeping = (call) => HOUSEKEEPING.test(call.name) || HOUSEKEEPING_TOOLS.has(call.name);
+  let after = calls.slice(since + 1);
+  if (handoffIndex >= 0) {
+    let checked = 0;
+    while (checked < after.length && (READ_BACK.test(after[checked].name) || housekeeping(after[checked]))) checked += 1;
+    after = after.slice(checked);
+  }
+  const work = after.filter((call) => !housekeeping(call)).length;
 
   if (handoffIndex < 0) return work >= FIRST_HANDOFF_AFTER ? agent : null;
   const handedOffAt = calls[handoffIndex].at;
@@ -92,10 +116,20 @@ function reasonFor(agent) {
 
 function stateFile(sessionId) {
   if (typeof sessionId !== "string" || !sessionId) return null;
+  const file = `${sessionId.replace(/[^A-Za-z0-9_-]/g, "_")}.json`;
   const dir = process.env.MAINMIND_HOOK_STATE_DIR
-    || (process.env.CLAUDE_PLUGIN_DATA ? join(process.env.CLAUDE_PLUGIN_DATA, "keep-up-to-date")
-      : join(tmpdir(), "mainmind-keep-up-to-date"));
-  return { dir, path: join(dir, `${sessionId.replace(/[^A-Za-z0-9_-]/g, "_")}.json`) };
+    || (process.env.CLAUDE_PLUGIN_DATA && join(process.env.CLAUDE_PLUGIN_DATA, "keep-up-to-date"));
+  if (dir) return { dir, path: join(dir, file) };
+  // The shared temp folder is a last resort: keep a folder per user, and trust
+  // it only if this user owns it, so no one else can plant a note that
+  // silences the reminder.
+  const uid = typeof process.getuid === "function" ? process.getuid() : null;
+  const shared = join(tmpdir(), `mainmind-keep-up-to-date-${uid ?? "user"}`);
+  try {
+    mkdirSync(shared, { recursive: true, mode: 0o700 });
+    if (uid !== null && statSync(shared).uid !== uid) return null;
+  } catch { return null; }
+  return { dir: shared, path: join(shared, file) };
 }
 
 function main() {

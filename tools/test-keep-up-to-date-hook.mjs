@@ -74,11 +74,14 @@ test("under the threshold of work since boot", () => expect(run({ fixture: "few-
 test("only the agent looking after itself", () => expect(run({ fixture: "housekeeping-only.jsonl" }), ALLOWS));
 test("enough work since boot and no handoff", () => expect(run({ fixture: "no-handoff-yet.jsonl" }), BLOCKS));
 test("a handoff that failed does not count", () => expect(run({ fixture: "failed-handoff.jsonl" }), BLOCKS));
+test("a handoff the server refused does not count", () => expect(run({ fixture: "refused-handoff.jsonl" }), BLOCKS));
+test("the agent booted last is the one reminded", () => expect(run({ fixture: "switched-agent.jsonl" }), BLOCKS));
 test("malformed transcript lines are skipped", () => expect(run({ fixture: "malformed-lines.jsonl" }), BLOCKS));
 
 // A handoff already written.
 test("recent handoff, work since", () => expect(run({ fixture: "recent-handoff.jsonl" }), ALLOWS));
 test("old handoff, no work since", () => expect(run({ fixture: "stale-handoff-idle.jsonl" }), ALLOWS));
+test("old handoff, only its read-back since", () => expect(run({ fixture: "stale-handoff-read-back.jsonl" }), ALLOWS));
 test("old handoff, work since", () => expect(run({ fixture: "stale-handoff.jsonl" }), BLOCKS));
 
 // At most once per window in one session, even across turns.

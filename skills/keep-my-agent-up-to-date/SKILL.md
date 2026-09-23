@@ -108,7 +108,7 @@ Before treating anything as kept:
   \"Continue with <Name>\"."
 - **A failure, once and plainly**, saying only what was not kept and that you
   will try again, in the same voice: "I couldn't keep the two new things you
-  told me up to date yet; I'll try again." Never tell the person to do
+  told me yet; I'll try again." Never tell the person to do
   anything about it, and do not repeat the line for the same failure.
 - If this connection has no way to keep the agent up to date at all, say so
   once: "I can't keep <Name> up to date from this app yet, so what we do here
