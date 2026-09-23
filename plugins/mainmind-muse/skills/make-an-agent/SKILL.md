@@ -31,7 +31,12 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
 2. **Reuse before you register.** If `agents_you_can_resume` already lists an
    agent with this name (or one that plainly does this job), ask once: "You
    already have <Name>. Change that one, or make a new one?" Reuse means
-   carrying on with its slug; skip to step 4.
+   carrying on with its slug; skip to step 4. For a Founder, boot also lists
+   `agents_you_can_take_over`: agents already in the organization that no one
+   has taken over, with their jobs. If one of them plainly does this job, even
+   under a slightly different name (Books Steward for Books), ask once: "<Old
+   name> already does this job. Use it?" On yes, `adopt_agent` with its
+   `agent` and `agent_epoch`, keep that slug and skip to step 4.
 3. **`register_agent`** with `name`, a one-sentence `charter` (the job, in the
    person's words), and a `registration_key` that is a fresh UUID v4 you choose
    *before* the call. Keep that key and the exact name and charter for the rest
@@ -39,7 +44,10 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    same key and the same details, never a new key. Never register again on a
    restart or in a later session: a later session finds the agent through
    `agents_you_can_resume` and reuses it. Keep the returned profile slug; pass
-   it as `agent` on every call that accepts it from here on.
+   it as `agent` on every call that accepts it from here on. If it answers
+   that an agent with this name already exists, do not pick a new name to get
+   round it: continue with yours, or, when it says to take one over, ask once
+   and `adopt_agent` with the agent and agent_epoch it names.
 4. **`boot`** again with `agent: <slug>` and the same `harness`. Read the
    `agent_home` section. `missing: ["no_home"]` or `["no_agent_md"]` is
    expected for a new agent.
