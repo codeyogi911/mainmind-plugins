@@ -1,6 +1,18 @@
 {
-  "description": "Keeps a Mainmind agent up to date: before a session that booted as an agent stops, asks the model once to hand off where it stopped if it has not lately.",
+  "description": "Keeps a Mainmind agent synced: before a session acting as an agent stops, asks the model once to sync where it stopped if it has not lately; at the start of a session in a folder that last ran as an agent, says which one.",
   "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|clear|compact",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/last-agent-here.mjs\" 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
     "Stop": [
       {
         "hooks": [

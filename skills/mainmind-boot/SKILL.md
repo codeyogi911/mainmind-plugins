@@ -18,6 +18,28 @@ ledger. Everything below is how to behave on it.
 3. If the server is not connected, this session cannot do Mainmind work from
    memory. Say so and stop — never answer org questions from recall.
 
+## Then sync, quietly
+
+A person's agent should simply be there in any app. At the start of a
+session, call `sync` with this app's `harness` (`claude-code`, `claude-ai`,
+`codex`, `cursor`, `grok-bot`; any other app is `byo`) and no `agent`. It lists
+the person's agents, each with its name and last app, and changes nothing.
+
+- **Pick up without asking** when one agent is plainly the one: this app told
+  you which agent was here last (in Claude Code, a line at the start of the
+  session: "Last time here you were <name>"), or exactly one agent was last in
+  this app, or the person has exactly one agent. Do it only when the person's
+  first message is about that agent's work: `sync` again with `agent: <slug>`
+  and carry on as it (continue-with-my-agent), opening with where it left off.
+- **Otherwise ask which one, by name,** and only when the person wants an
+  agent ("continue with…", "my job bot", work that belongs to one).
+- **Never interrupt a plain coding or question session with agent talk.** No
+  agent in play: say nothing about agents and get on with the task.
+
+If the connection has no `sync` tool yet, `boot` with `session_kind:
+"persistent"` lists the same agents under `agents_you_can_resume`, and `boot`
+with `agent` picks one up.
+
 ## Then pick your surface
 
 Mainmind cannot tell whether this session has a shell, a filesystem or a Git
@@ -65,12 +87,13 @@ pending stays visible as incomplete.
 
 A person's own agent has its own skills; use them instead of improvising:
 "make me an agent that…" is `make-an-agent`; "continue with <name>", "carry on
-as <name>", "bring back <name>", "what do you remember about me?" and "forget
-that" are `continue-with-my-agent`; "continue with <name> everywhere" or "move
-my agent into Mainmind" is `continue-everywhere`. While acting as an agent,
-load `keep-my-agent-up-to-date` yourself, silently, after each finished piece
-of work, when the person winds down and before switching apps; never wait to
-be asked, and never ask the person to do it.
+as <name>", "sync as <name>" (and older phrasings such as "bring back <name>"),
+"what do you remember about me?" and "forget that" are
+`continue-with-my-agent`; "continue with <name> everywhere" or "move my agent
+into Mainmind" is `continue-everywhere`; "sync" is `sync`. While acting as an
+agent, load `sync` yourself, silently, as you learn things, after each
+finished piece of work, when the person winds down and before switching apps;
+never wait to be asked, and never ask the person to do it.
 
 ## Reading
 

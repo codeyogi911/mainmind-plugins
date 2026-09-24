@@ -196,26 +196,41 @@ if (!existsSync(join(root, "plugins/mainmind-mount/skills"))) fail("plugins/main
 if (claude.skills !== "./skills/") fail(`plugins/mainmind: skills is ${JSON.stringify(claude.skills)}, expected "./skills/"`);
 if (!existsSync(join(root, "plugins/mainmind/skills"))) fail("plugins/mainmind/skills does not exist; run npm run sync");
 
-// The Stop hook that keeps an agent up to date when the model forgets to.
-// Claude Code discovers `hooks/hooks.json` at the plugin root by convention;
-// naming that same file again in plugin.json's `hooks` field would register it
-// twice. https://code.claude.com/docs/en/plugins-reference#hooks
+// The hooks that keep an agent synced when the model forgets to: a Stop hook
+// that asks the model to sync before it stops, and a SessionStart hook that
+// names the agent a folder last ran as. Claude Code discovers
+// `hooks/hooks.json` at the plugin root by convention; naming that same file
+// again in plugin.json's `hooks` field would register it twice.
+// https://code.claude.com/docs/en/plugins-reference#hooks
 const HOOKS = "plugins/mainmind/hooks/hooks.json";
-const HOOK_SCRIPT = "plugins/mainmind/hooks/keep-up-to-date.mjs";
+const HOOK_SCRIPTS = {
+  Stop: "keep-up-to-date.mjs",
+  SessionStart: "last-agent-here.mjs",
+};
 if ("hooks" in claude) fail(`plugins/mainmind: plugin.json declares "hooks"; ${HOOKS} is discovered by convention and would load twice`);
-if (!existsSync(join(root, HOOK_SCRIPT))) fail(`${HOOK_SCRIPT} is missing`);
+for (const script of [...Object.values(HOOK_SCRIPTS), "state.mjs"]) {
+  if (!existsSync(join(root, "plugins/mainmind/hooks", script))) fail(`plugins/mainmind/hooks/${script} is missing`);
+}
 if (!existsSync(join(root, HOOKS))) {
-  fail(`${HOOKS} is missing: without it an agent in Claude Code is only kept up to date when the model remembers`);
+  fail(`${HOOKS} is missing: without it an agent in Claude Code is only kept synced when the model remembers`);
 } else {
-  const stop = (read(HOOKS).hooks?.Stop || []).flatMap((group) => group.hooks || []);
-  if (!stop.some((hook) => hook.type === "command" && hook.command?.includes("${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs"))) {
-    fail(`${HOOKS}: no Stop command running \${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs`);
+  const hooks = read(HOOKS).hooks || {};
+  for (const [event, script] of Object.entries(HOOK_SCRIPTS)) {
+    const commands = (hooks[event] || []).flatMap((group) => group.hooks || []);
+    const command = commands.find((hook) => hook.type === "command" && hook.command?.includes(`\${CLAUDE_PLUGIN_ROOT}/hooks/${script}`));
+    if (!command) { fail(`${HOOKS}: no ${event} command running \${CLAUDE_PLUGIN_ROOT}/hooks/${script}`); continue; }
+    // A host without node must start and stop sessions as if no hook existed.
+    if (!command.command.startsWith("command -v node >/dev/null 2>&1 || exit 0;")) {
+      fail(`${HOOKS}: the ${event} command does not exit 0 when node is missing`);
+    }
   }
+  const start = (hooks.SessionStart || []).flatMap((group) => group.hooks || []);
+  if (start.some((hook) => !(hook.timeout <= 10))) fail(`${HOOKS}: a SessionStart hook must time out within 10 seconds; it runs before the person can type`);
 }
 
 // The agent skills were renamed to the words people say. A stale copy under an
 // old name would load beside the new one and teach the old words.
-for (const retired of ["save-my-agent", "bring-back-my-agent", "move-my-agent-in"]) {
+for (const retired of ["save-my-agent", "bring-back-my-agent", "move-my-agent-in", "keep-my-agent-up-to-date"]) {
   for (const base of ["skills", ".agents/skills", "plugins/mainmind/skills", "plugins/mainmind-mount/skills",
     "plugins/mainmind-grok/skills", "plugins/mainmind-muse/skills"]) {
     if (existsSync(join(root, base, retired))) fail(`${base}/${retired} exists: that skill was renamed`);
@@ -231,8 +246,32 @@ for (const path of peopleRead) {
   // "say" then a quoted save or bring-back phrase, in any quote style; "Never
   // say" is the rule itself, and "says" is a trigger the skill listens for.
   if (existsSync(join(root, path)) && /(?<!never\s)\bsay\s+\\?["“'‘](?:save|bring)\b/i.test(text(path))) {
-    fail(`${path} tells people to say save or bring back; the agent keeps itself up to date`);
+    fail(`${path} tells people to say save or bring back; the agent syncs itself`);
   }
+  // Sync is the one word now; a page naming the old skill teaches the old one.
+  if (existsSync(join(root, path)) && text(path).includes("keep-my-agent-up-to-date")) {
+    fail(`${path} names keep-my-agent-up-to-date; that skill is now sync`);
+  }
+}
+
+// Listing descriptions are what a person reads before installing. They speak
+// the person's words (EXPERIENCE.md at the Mainmind repository root), never
+// the plumbing.
+const PLUMBING = /\b(commits?|git|checkouts?|projections?|ledgers?|boot|OAuth|mount(ed|s)?|harness(es)?)\b/i;
+for (const [label, description] of [
+  [".claude-plugin/marketplace.json metadata", marketplace.metadata?.description],
+  [".claude-plugin/marketplace.json mainmind entry", marketplaceEntry?.description],
+  ["plugins/mainmind", claude.description],
+  ["plugins/mainmind-mount (agent-plugins)", agentPlugins.description],
+  ...(grok ? [["plugins/mainmind-grok (grok)", grok.description]] : []),
+  ...(cursor ? [["plugins/mainmind-mount (cursor)", cursor.description]] : []),
+  ...(cursorMarketplace ? [
+    [`${CURSOR_MARKETPLACE} metadata`, cursorMarketplace.metadata?.description],
+    ...(cursorMarketplace.plugins || []).map((entry) => [`${CURSOR_MARKETPLACE} ${entry.name} entry`, entry.description]),
+  ] : []),
+]) {
+  const word = typeof description === "string" && description.match(PLUMBING)?.[0];
+  if (word) fail(`${label}: description says "${word}"; people read it, so say what they get instead`);
 }
 
 if (failures.length) {
