@@ -254,6 +254,26 @@ for (const path of peopleRead) {
   }
 }
 
+// Listing descriptions are what a person reads before installing. They speak
+// the person's words (EXPERIENCE.md at the Mainmind repository root), never
+// the plumbing.
+const PLUMBING = /\b(commits?|git|checkouts?|projections?|ledgers?|boot|OAuth|mount(ed|s)?|harness(es)?)\b/i;
+for (const [label, description] of [
+  [".claude-plugin/marketplace.json metadata", marketplace.metadata?.description],
+  [".claude-plugin/marketplace.json mainmind entry", marketplaceEntry?.description],
+  ["plugins/mainmind", claude.description],
+  ["plugins/mainmind-mount (agent-plugins)", agentPlugins.description],
+  ...(grok ? [["plugins/mainmind-grok (grok)", grok.description]] : []),
+  ...(cursor ? [["plugins/mainmind-mount (cursor)", cursor.description]] : []),
+  ...(cursorMarketplace ? [
+    [`${CURSOR_MARKETPLACE} metadata`, cursorMarketplace.metadata?.description],
+    ...(cursorMarketplace.plugins || []).map((entry) => [`${CURSOR_MARKETPLACE} ${entry.name} entry`, entry.description]),
+  ] : []),
+]) {
+  const word = typeof description === "string" && description.match(PLUMBING)?.[0];
+  if (word) fail(`${label}: description says "${word}"; people read it, so say what they get instead`);
+}
+
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);
   process.exit(1);

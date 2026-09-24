@@ -2,7 +2,7 @@
   "name": "mainmind",
   "displayName": "Mainmind",
   "version": "0.8.0",
-  "description": "Connect a Mainmind space, whether it holds a company, a job hunt or anything else: its own processes, records, decisions and lessons at a named commit, plus its live run ledger. You sign in as yourself; the plugin ships no secrets.",
+  "description": "Your agents and your space's knowledge, synced in every app. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
   "author": {
     "name": "Shashwat Jain",
     "url": "https://mainmind.app"

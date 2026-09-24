@@ -9,13 +9,12 @@ bottom before sending it.
 
 ## 1. Describe your product
 
-**What it is.** Mainmind is a person's or a team's own working knowledge,
-served to an assistant. A space can hold a company, a job hunt, research or
-anything else. It connects one space: its processes, records, decisions,
-lessons and role charters — as a projection at a named commit, plus the live
-ledger of work in progress. The assistant reads the space's own rules
-instead of guessing them, and every material claim can be cited back to a path
-and a commit.
+**What it is.** Mainmind keeps a person's agents and their space's knowledge
+synced in every AI app. A space can hold a company, a job hunt, research or
+anything else: its processes, records, decisions, lessons and the jobs on its
+team, plus the work in progress right now. The assistant reads the space's own
+rules instead of guessing them, and every answer can point to where it came
+from.
 
 **What users do with it.** A person asks Muse a question about their work
 and gets an answer drawn from their own knowledge rather than from the
