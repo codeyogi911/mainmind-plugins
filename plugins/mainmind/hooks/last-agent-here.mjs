@@ -30,7 +30,8 @@ function main() {
   if (!input || typeof input !== "object") return;
   if (input.source === "resume") return;
 
-  const note = folderNote(input.cwd || process.env.CLAUDE_PROJECT_DIR);
+  // The same folder the Stop hook noted: the project, then the session's cwd.
+  const note = folderNote(process.env.CLAUDE_PROJECT_DIR || input.cwd);
   if (!note) return;
   let last;
   try { last = JSON.parse(readFileSync(note.path, "utf8")); } catch { return; }

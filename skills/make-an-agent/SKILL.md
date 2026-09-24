@@ -139,7 +139,7 @@ connection.
 
 ## Keeping what they told you
 
-`sync` with `agent: <slug>`, `harness`, `idempotency_key` (8 to 100
+`sync` with `agent: <slug>`, `harness`, `idempotency_key` (8 to 96
 characters, letters, digits and hyphens; reuse it on a retry), and `memories`:
 1 to 20 items of `{name, description, memory_kind, body}`.
 

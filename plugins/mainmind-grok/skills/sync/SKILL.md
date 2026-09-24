@@ -53,7 +53,7 @@ other app, including ChatGPT and Muse, is `byo`. Use the same value every time.
 ## 1. Sync
 
 `sync` with `agent: <slug>`, `harness`, and, whenever you send anything,
-`idempotency_key` (8 to 100 characters, letters, digits and hyphens; reuse the
+`idempotency_key` (8 to 96 characters, letters, digits and hyphens; reuse the
 same key if you retry this exact call). Send any of these together; Mainmind
 keeps them in this order:
 

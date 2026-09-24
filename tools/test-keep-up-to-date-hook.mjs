@@ -29,7 +29,7 @@ function run({ fixture, stdin, stopHookActive = false, sessionId, now = NOW }) {
   const result = spawnSync(process.execPath, [HOOK], {
     input,
     encoding: "utf8",
-    env: { ...process.env, MAINMIND_HOOK_NOW: now, MAINMIND_HOOK_STATE_DIR: stateDir },
+    env: { ...process.env, CLAUDE_PROJECT_DIR: "", MAINMIND_HOOK_NOW: now, MAINMIND_HOOK_STATE_DIR: stateDir },
     timeout: 15000,
   });
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
@@ -102,6 +102,11 @@ test("a sync with only memories is not where it stopped", () => expect(run({ fix
 test("recent sync with stopped, work since", () => expect(run({ fixture: "sync-stopped-recent.jsonl" }), ALLOWS));
 test("old sync with stopped, work since", () => expect(run({ fixture: "sync-stopped-stale.jsonl" }), BLOCKS));
 test("a sync that did not keep where it stopped does not count", () => expect(run({ fixture: "sync-stopped-not-kept.jsonl" }), BLOCKS));
+test("\"Not synced\" is not kept", () => expect(run({ fixture: "sync-not-synced.jsonl" }), BLOCKS));
+test("a refused memory beside a kept stopped is kept", () => expect(run({ fixture: "sync-memory-refused-stopped-kept.jsonl" }), ALLOWS));
+test("receipts: stopped saved, memory refused, is kept", () => expect(run({ fixture: "sync-structured-stopped-kept.jsonl" }), ALLOWS));
+test("receipts: stopped uncertain is not kept, whatever the text says", () => expect(run({ fixture: "sync-structured-stopped-uncertain.jsonl" }), BLOCKS));
+test("receipts: no home read back is not kept", () => expect(run({ fixture: "sync-structured-not-synced.jsonl" }), BLOCKS));
 test("a sync without an agent is no agent", () => expect(run({ fixture: "sync-without-agent.jsonl" }), ALLOWS));
 
 let failures = 0;

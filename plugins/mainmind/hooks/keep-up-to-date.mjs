@@ -49,15 +49,56 @@ function resultText(content) {
   return content.map((part) => (typeof part?.text === "string" ? part.text : "")).join("\n");
 }
 
-// A write the server refused comes back as an ordinary result whose receipt
-// says so, not only as an error. A sync that kept only part of what it was
-// sent says "Synced, except: …"; where it stopped may be the part it did not
-// keep, so it does not count.
-const REFUSED = /"state"\s*:\s*"refused"|^\s*Synced, except\b/m;
+// An agent_home write the server refused comes back as an ordinary result
+// whose receipt says so, not only as an error.
+const REFUSED = /"state"\s*:\s*"refused"/;
+
+// sync's structured answer, `{synced_at, sent: [receipts], agent_home}`, where
+// the transcript carries it: on the entry's `toolUseResult`, on the result
+// part, or as a JSON text block. Null when it is not there; the text is read
+// instead.
+function syncStructured(entry, part) {
+  const candidates = [
+    entry?.toolUseResult?.structuredContent, entry?.toolUseResult?.structured_content, entry?.toolUseResult,
+    part?.structuredContent, part?.structured_content,
+  ];
+  if (Array.isArray(part?.content)) {
+    for (const block of part.content) {
+      if (typeof block?.text !== "string" || !block.text.trimStart().startsWith("{")) continue;
+      try { candidates.push(JSON.parse(block.text)); } catch { /* not JSON */ }
+    }
+  }
+  return candidates.find((value) => value && typeof value === "object" && Array.isArray(value.sent)) || null;
+}
+
+// Receipt states that mean the write is kept (src/agent-sync.js `kept`).
+const KEPT = new Set(["saved", "recovered"]);
+
+// Did this sync keep where the agent stopped? Only that receipt matters: a
+// refused memory beside a kept `stopped` still leaves a journal entry, and
+// asking for another would write a duplicate.
+function stoppedKept(result) {
+  if (!result || result.isError) return false;
+  const structured = result.structured;
+  if (structured) {
+    if (structured.agent_home === null) return false; // "Not synced": the home could not be read
+    const receipt = structured.sent.find((item) => item?.kind === "stopped"
+      || (typeof item?.idempotency_key === "string" && item.idempotency_key.endsWith("-h")));
+    return Boolean(receipt && KEPT.has(receipt.state));
+  }
+  const first = result.text.trimStart().split("\n", 1)[0];
+  if (/^Not synced\b/.test(first)) return false;
+  if (/^Synced\.(\s|$)/.test(first)) return true;
+  // "Synced, except: a, b and c." names each thing not kept by its label;
+  // where it stopped is labelled "where you stopped".
+  const except = first.match(/^Synced, except:\s*(.*)$/);
+  if (except) return !/\bwhere you stopped\b/i.test(except[1]);
+  return false;
+}
 
 function toolCalls(transcript) {
   const calls = [];
-  const failed = new Set();
+  const results = new Map();
   for (const line of transcript.split("\n")) {
     if (!line.trim()) continue;
     let entry;
@@ -68,13 +109,14 @@ function toolCalls(transcript) {
       if (part?.type === "tool_use" && typeof part.name === "string") {
         const input = part.input && typeof part.input === "object" ? part.input : {};
         calls.push({ id: part.id, name: part.name, input, at: Date.parse(entry.timestamp) });
-      } else if (part?.type === "tool_result"
-        && (part.is_error === true || REFUSED.test(resultText(part.content)))) {
-        failed.add(part.tool_use_id);
+      } else if (part?.type === "tool_result") {
+        results.set(part.tool_use_id, {
+          isError: part.is_error === true, text: resultText(part.content), structured: syncStructured(entry, part),
+        });
       }
     }
   }
-  return calls.map((call) => ({ ...call, failed: failed.has(call.id) }));
+  return calls.map((call) => ({ ...call, result: results.get(call.id) || null }));
 }
 
 // The agent a call picks up as: `boot` or `sync` with `agent`.
@@ -84,12 +126,15 @@ function pickedUpAs(call) {
   return agent || null;
 }
 
-// A call that syncs where the agent stopped: `sync` with `stopped`, or the
-// older `agent_home` handoff. One that failed or was refused does not count.
+// A call that synced where the agent stopped: `sync` with `stopped` whose
+// answer kept it, or the older `agent_home` handoff that was not refused. A
+// sync with no answer in the transcript is not known to be kept.
 function syncsWhereItStopped(call) {
-  if (call.failed) return false;
-  if (/__sync$/.test(call.name)) return Boolean(call.input.stopped && typeof call.input.stopped === "object");
-  return /__agent_home$/.test(call.name) && call.input.action === "handoff";
+  if (/__sync$/.test(call.name)) {
+    return Boolean(call.input.stopped && typeof call.input.stopped === "object") && stoppedKept(call.result);
+  }
+  if (!/__agent_home$/.test(call.name) || call.input.action !== "handoff") return false;
+  return !call.result || (!call.result.isError && !REFUSED.test(call.result.text));
 }
 
 const housekeeping = (call) => HOUSEKEEPING.test(call.name) || HOUSEKEEPING_TOOLS.has(call.name);
@@ -168,7 +213,8 @@ function main() {
   if (!Number.isFinite(now)) return;
   const calls = toolCalls(transcript);
   const acting = actingAs(calls);
-  noteFolder(input.cwd, calls, acting.agent, now);
+  // The project folder, not wherever the session has cd'd to, is "here".
+  noteFolder(process.env.CLAUDE_PROJECT_DIR || input.cwd, calls, acting.agent, now);
 
   const agent = needsSync(calls, acting, now);
   if (!agent) return;

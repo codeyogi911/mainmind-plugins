@@ -33,7 +33,7 @@ function spawn(script, input, stateDir, extraEnv = {}) {
   const result = spawnSync(process.execPath, [script], {
     input: typeof input === "string" ? input : JSON.stringify(input),
     encoding: "utf8",
-    env: { ...process.env, MAINMIND_HOOK_NOW: NOW, MAINMIND_HOOK_STATE_DIR: stateDir, ...extraEnv },
+    env: { ...process.env, CLAUDE_PROJECT_DIR: "", MAINMIND_HOOK_NOW: NOW, MAINMIND_HOOK_STATE_DIR: stateDir, ...extraEnv },
     timeout: 15000,
   });
   const ms = Number(process.hrtime.bigint() - started) / 1e6;
@@ -42,15 +42,15 @@ function spawn(script, input, stateDir, extraEnv = {}) {
   return { stdout: result.stdout, ms };
 }
 
-const stop = ({ stateDir, folder }, fixture) => spawn(STOP, {
-  session_id: `stop-${n}`, transcript_path: join(FIXTURES, fixture), cwd: folder,
+const stop = ({ stateDir, folder }, fixture, env = {}, cwd = folder) => spawn(STOP, {
+  session_id: `stop-${n}`, transcript_path: join(FIXTURES, fixture), cwd,
   hook_event_name: "Stop", stop_hook_active: false, last_assistant_message: "Done.",
-}, stateDir);
+}, stateDir, env);
 
-const start = ({ stateDir, folder }, source = "startup", overrides = {}) => spawn(START, {
+const start = ({ stateDir, folder }, source = "startup", overrides = {}, env = {}) => spawn(START, {
   session_id: `start-${n}`, transcript_path: join(scratch, "new.jsonl"), cwd: folder,
   hook_event_name: "SessionStart", source, model: "claude-opus-5-5", ...overrides,
-}, stateDir);
+}, stateDir, env);
 
 function silent(result) {
   if (result.stdout !== "") throw new Error(`expected no output, got ${JSON.stringify(result.stdout)}`);
@@ -84,6 +84,15 @@ test("the agent picked up last is the one named", () => { const c = fresh(); sto
 test("another folder's agent is not this folder's", () => {
   const c = fresh(); stop(c, "no-handoff-yet.jsonl");
   silent(start({ stateDir: c.stateDir, folder: join(scratch, "elsewhere") }));
+});
+test("the project folder is here, wherever the session cd'd to", () => {
+  const c = fresh();
+  const project = { CLAUDE_PROJECT_DIR: c.folder };
+  // Stopped in a subfolder of the project; starts in another one.
+  stop(c, "no-handoff-yet.jsonl", project, join(c.folder, "src"));
+  names(start({ stateDir: c.stateDir, folder: join(c.folder, "docs") }, "startup", {}, project), "job-hunter");
+  // Without the project folder, a different cwd is a different folder.
+  silent(start({ stateDir: c.stateDir, folder: join(c.folder, "docs") }));
 });
 test("a session without an agent never writes a note", () => { const c = fresh(); stop(c, "sync-without-agent.jsonl"); silent(start(c)); });
 test("real work here as no agent: the folder no longer last ran as one", () => {
