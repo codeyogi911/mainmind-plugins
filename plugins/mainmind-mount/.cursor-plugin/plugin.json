@@ -1,0 +1,21 @@
+{
+  "name": "mainmind",
+  "displayName": "Mainmind",
+  "version": "0.7.2",
+  "description": "Connect a Mainmind space, whether it holds a company, a job hunt or anything else: its own processes, records, decisions and lessons at a named commit, plus its live run ledger. You sign in as yourself; the plugin ships no secrets.",
+  "author": {
+    "name": "Shashwat Jain",
+    "url": "https://mainmind.app"
+  },
+  "homepage": "https://mainmind.app",
+  "repository": "https://github.com/codeyogi911/mainmind-plugins",
+  "license": "MIT",
+  "keywords": [
+    "mainmind",
+    "mcp",
+    "space",
+    "knowledge",
+    "governance"
+  ],
+  "logo": "assets/logo.svg"
+}

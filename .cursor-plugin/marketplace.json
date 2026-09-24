@@ -1,0 +1,17 @@
+{
+  "name": "mainmind",
+  "owner": {
+    "name": "Shashwat Jain",
+    "url": "https://mainmind.app"
+  },
+  "metadata": {
+    "description": "Mainmind — one connection for a whole space, whether it holds a company, a job hunt or anything else: every agent and every human on the same knowledge, the same rules, and the same judgment loop."
+  },
+  "plugins": [
+    {
+      "name": "mainmind",
+      "source": "./plugins/mainmind-mount",
+      "description": "Connect a Mainmind space in Cursor and its Grok Bot: its knowledge at a named commit, the live run ledger, and the skills that tell an agent how to work with it. You sign in as yourself."
+    }
+  ]
+}
