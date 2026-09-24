@@ -1,12 +1,12 @@
 ---
 name: mainmind-boot
-description: Mount discipline for Mainmind work. Load BEFORE answering any question about the business or starting any organization task in this session — first business question, "boot", "start work", "connect to mainmind", or any request that will read org knowledge or touch the run ledger.
+description: Mount discipline for Mainmind work. Load BEFORE answering any question about what a Mainmind space holds (a business, a job hunt, research or anything else) or starting any task in one in this session — the first such question, "boot", "start work", "connect to mainmind", or any request that will read the space's knowledge or touch the run ledger.
 ---
 
 # Boot the Mainmind mount
 
-You are entering an organization, not a toolbox. The `mainmind` MCP server serves a
-projection of the org's durable knowledge at a named commit, plus the live run
+You are entering a space (a company, a job hunt, a project: whatever it holds), not a toolbox. The `mainmind` MCP server serves a
+projection of the space's durable knowledge at a named commit, plus the live run
 ledger. Everything below is how to behave on it.
 
 ## First, boot
@@ -29,16 +29,16 @@ apply to you. You are on the mount. Go to step 2 and say so.
 
 1. **Try a checkout first.** Call `checkout_canonical_repo` (Founder) or
    `checkout_member_repo` (everyone else) and clone what it returns. A checkout
-   gives you the whole company file at once, and it gives you the parts the
+   gives you the whole space's knowledge at once, and it gives you the parts the
    mount does not carry at all: **the projection serves Markdown under
-   `knowledge/` and nothing else, so the organization's own command-line tools,
+   `knowledge/` and nothing else, so the space's own command-line tools,
    under `tools/`, exist only in a checkout.**
 2. **If you cannot, work on the mount.** No shell, no disk, or the clone fails:
    use `read_node`, `search` and `call_provider`. That is a supported way to
    work, not a lesser one — say plainly that you are on the mount, so nobody
    reads a partial answer as a complete one.
 
-Never tell anyone this organization has no tool for something while you are on
+Never tell anyone this space has no tool for something while you are on
 the mount. You cannot see `tools/` from there; not finding it is not evidence.
 
 A checkout is a working copy, not permission. Durable writes go through the
@@ -54,7 +54,7 @@ existing machine member on restart. For a new standing bot use the authorized
 owner connection and the private host setup described in
 https://mainmind.app/docs/persistent-agents.md; persist its setup key before
 enrollment and retry only the same request. Do not choose new read scopes when
-the organization's role defaults apply. Never copy the owner's token.
+the space's role defaults apply. Never copy the owner's token.
 
 An enrolled agent reports `agent_session` contact after boot and while available.
 Use the inbox and linked page discussion for shared work. Save explicit progress
@@ -84,7 +84,7 @@ be asked, and never ask the person to do it.
 
 ## Working
 
-- **Holding a checkout? Use the organization's own tools before
+- **Holding a checkout? Use the space's own tools before
   `call_provider`.** Read `tools/README.md` and the tool's own `AGENTS.md` or
   `README.md` first. A vetted client knows what a raw API call cannot: the
   payload shapes that actually work, which writes are safe to replay, and where
@@ -96,7 +96,7 @@ be asked, and never ask the person to do it.
   an untyped body may answer success without applying it.
 - Knowledge reads and granted provider calls need no task declaration. Omit
   `run_id` from provider discovery, calls and local tool permits for independent
-  operations. Keep each returned receipt; verify the provider's business state.
+  operations. Keep each returned receipt; verify the provider's own state.
 - Before an independent direct provider write, choose a unique `operation_key`.
   A retry with that key returns its prior receipt locator without sending again;
   it is recovery information, not the original response or proof of success.
@@ -118,8 +118,8 @@ be asked, and never ask the person to do it.
 - Before writing anything the Founder will read, `read_node` on `voice.md`
   and follow it.
 - Before writing durable knowledge, `read_node` on `AUTHORING.md` when boot
-  names it, and follow it. Boot skips the file when the organization has
-  none. That file is how this organization writes knowledge; do not treat
+  names it, and follow it. Boot skips the file when the space has
+  none. That file is how this space writes knowledge; do not treat
   the Worker as a write gate.
 - This skill owns transport and routing only. If it disagrees with what
   `boot` returns, the mount wins.

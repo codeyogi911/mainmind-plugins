@@ -1,7 +1,7 @@
 {
   "name": "mainmind",
-  "version": "0.7.1",
-  "description": "Mount your company file: the organization's own processes, records, decisions and lessons at a named commit, plus its live run ledger. You sign in as yourself; the plugin ships no secrets.",
+  "version": "0.7.2",
+  "description": "Connect a Mainmind space, whether it holds a company, a job hunt or anything else: its own processes, records, decisions and lessons at a named commit, plus its live run ledger. You sign in as yourself; the plugin ships no secrets.",
   "author": {
     "name": "Shashwat Jain",
     "url": "https://mainmind.app"
@@ -11,8 +11,8 @@
   "license": "MIT",
   "keywords": [
     "mainmind",
-    "company file",
-    "mainmind organization",
+    "knowledge",
+    "mainmind space",
     "mainmind mount",
     "mcp"
   ]

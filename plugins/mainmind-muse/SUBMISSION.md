@@ -9,35 +9,37 @@ bottom before sending it.
 
 ## 1. Describe your product
 
-**What it is.** Mainmind is a company's own operating knowledge, served to an
-assistant. It mounts one organization — its processes, records, decisions,
+**What it is.** Mainmind is a person's or a team's own working knowledge,
+served to an assistant. A space can hold a company, a job hunt, research or
+anything else. It connects one space: its processes, records, decisions,
 lessons and role charters — as a projection at a named commit, plus the live
-ledger of work in progress. The assistant reads the organization's own rules
+ledger of work in progress. The assistant reads the space's own rules
 instead of guessing them, and every material claim can be cited back to a path
 and a commit.
 
-**What users do with it.** A person asks Muse a question about their business
-and gets an answer drawn from the company's own file rather than from the
+**What users do with it.** A person asks Muse a question about their work
+and gets an answer drawn from their own knowledge rather than from the
 model's memory: what a process says to do, what was decided and why, what is
-open right now, what needs them today. They can put a decision to the founder
+open right now, what needs them today. They can put a decision to the space's owner
 as a single question, record work that happened, and deposit what was learned
 so the next session starts from it.
 
-**Who it is for.** Small companies where the founder is the bottleneck, and the
-knowledge that would unblock everyone else is in one person's head or scattered
-across documents nobody re-reads.
+**Who it is for.** Anyone whose AI assistants should remember the same things:
+a founder running a small company, someone in a job hunt, a team whose
+knowledge is in one person's head or scattered across documents nobody
+re-reads.
 
 **What it does not do.** It is not another assistant, and not a scheduler. It
-serves knowledge and records work. It does not act on the business by itself.
+serves knowledge and records work. It does not act on anything by itself.
 
 ## 2. Review
 
 **Functional.** The connector is a remote MCP server over streamable HTTP at
 `https://mainmind.app/mcp`, reachable on the public internet. It advertises its
 tools on connection; a reviewer can exercise the whole read surface end to end
-with `whoami` (identity and freshness), `boot` (the organization's entry
+with `whoami` (identity and freshness), `boot` (the space's entry
 documents and the projection commit), `search` and `read_node`. Those four are
-read-only and need no business state to demonstrate.
+read-only and need no saved work to demonstrate.
 
 Reads are safe to repeat. Writes are separately governed: they require the live
 role to allow them, and a provider write takes an `operation_key`, so a retry
@@ -47,12 +49,12 @@ returns the prior receipt instead of sending twice.
 conversation. A person authorizes as themselves and the mount serves only what
 their live role allows; the role is the boundary, not the tool list. Provider
 credentials stay on Mainmind's server and are never returned to the assistant.
-The organization's own command-line tools are not served to this surface at
+The space's own command-line tools are not served to this surface at
 all — the projection carries Markdown and nothing else.
 
-A connection that names no organization asks which one to mount at
+A connection that names no space asks which one to mount at
 authorization time, and it serves one at a time. A connection made to
-`https://mainmind.app/mcp/<organization>` is fixed to that organization before
+`https://mainmind.app/mcp/<space>` is fixed to that space before
 authorization begins.
 
 **Legal.** The connector — this repository — is MIT licensed and public at
@@ -64,8 +66,8 @@ third-party marks.
 ## 3. Directory listing
 
 - **Name:** Mainmind
-- **One line:** Your company's own processes, records and decisions, mounted —
-  so the answer comes from your file, not from memory.
+- **One line:** Your own processes, records and decisions, for a company, a job
+  hunt or anything else, so the answer comes from what you keep, not from memory.
 - **Homepage:** https://mainmind.app
 - **Source:** https://github.com/codeyogi911/mainmind-plugins (MIT)
 - **Support:** https://mainmind.app

@@ -85,7 +85,7 @@ Proceed only on a yes. If they drop an item, drop it.
 2. If `agents_you_can_resume` has an agent with this name, ask once whether to
    move into that one or make a new one. Reuse is the default.
 3. For a Founder, boot also lists `agents_you_can_take_over`: agents already in
-   the organization that no one has taken over, with their jobs. If one
+   the space that no one has taken over, with their jobs. If one
    plainly does this agent's job, even under a slightly different name, ask
    once whether to use it; on yes, `adopt_agent` with its `agent` and
    `agent_epoch`. Moving a whole team in, ask once for all the matches
