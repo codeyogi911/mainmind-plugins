@@ -5,11 +5,14 @@ description: Make a new standing agent that lives in Mainmind and that the perso
 
 # Make an agent
 
-**Talk to the person in plain words. Never name tools, files, folders, IDs, commits or settings. Say "I remember", "where we left off", "my instructions", "my schedule", "up to date". Never say "save", "saved", "bring back" or "restore".**
+**Talk to the person in plain words. Never name tools, files, folders, IDs, commits or settings. The one word for keeping an agent the same in every app is "sync": say "Synced", "All synced.", "I remember", "where we left off", "my instructions", "my schedule". Never say "save", "saved", "get your agent", "bring back", "restore", "export", "handoff", "commit", "branch", "push", "pull" or "Git".**
 
 Everything below the questions is your work, not theirs. The person answers at
 most three questions and sees one summary. They never see a slug, a path, a
 proposal or a tool.
+
+If the connection has no `sync` tool yet, use `boot` with `agent` where this
+says to pick up and `agent_home` `remember` where it says to sync memories.
 
 ## 1. Ask at most three questions
 
@@ -50,9 +53,9 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    and `adopt_agent` with the agent and agent_epoch it names. Only a Founder
    can take one over: if the answer says to ask a Founder, or that someone
    else's agent has the name, stop and tell the person in one plain line.
-4. **`boot`** again with `agent: <slug>` and the same `harness`. Read the
-   `agent_home` section. `missing: ["no_home"]` or `["no_agent_md"]` is
-   expected for a new agent.
+4. **`sync`** with `agent: <slug>` and the same `harness` to pick the agent
+   up. Read the home it returns. `missing: ["no_home"]` or `["no_agent_md"]`
+   is expected for a new agent.
 5. **`run_start`** with `agent`, `harness`, and `task` such as "Write
    <Name>'s instructions and schedule for its owner's yes". Keep the
    `run_id` and the private `control_key`.
@@ -68,12 +71,12 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    code or identifiers), `becomes` (what will be true), and `blast_radius`
    with exactly one of each pair: `reversible`, `no_money`, `one_file` or
    `many_files`, `once` or `recurring` (recurring when it has a schedule).
-7. **`agent_home`** `remember` for anything the person told you about
+7. **`sync`** with `memories` for anything the person told you about
    themselves or the job that is a fact or preference, not an instruction
    (see "Keeping what they told you"). Nothing to keep is fine; skip it.
-8. Read back: `read_node` each memory the receipt names, and confirm the
-   proposal came back with a decision link. Do not report anything as done
-   that you have not read back.
+8. Read back: check each memory is in the home `sync` returned ("Synced."
+   with no "except"), and confirm the proposal came back with a decision link.
+   Do not report anything as done that you have not read back.
 
 ## AGENT.md template
 
@@ -136,10 +139,9 @@ connection.
 
 ## Keeping what they told you
 
-`agent_home` with `action: "remember"`, `agent: <slug>`, `harness`,
-`idempotency_key` (8 to 100 characters, letters, digits and hyphens; reuse it
-on a retry), and `memories`: 1 to 20 items of
-`{name, description, memory_kind, body}`.
+`sync` with `agent: <slug>`, `harness`, `idempotency_key` (8 to 96
+characters, letters, digits and hyphens; reuse it on a retry), and `memories`:
+1 to 20 items of `{name, description, memory_kind, body}`.
 
 - One fact per memory. `name` kebab-case, at most 60 characters. `description`
   one line, at most 200 characters. `memory_kind` is `preference`, `fact`,
@@ -164,8 +166,8 @@ Then say, exactly:
 
 > <Name> is ready. Say "Continue with <Name>" in any app.
 
-From here on <Name> keeps itself up to date (keep-my-agent-up-to-date); never
-tell the person they have to do anything for that.
+From here on <Name> syncs on its own (the sync skill); never tell the person
+they have to do anything for that.
 
 If the app can show a card or a button, use it; the Yes is the decision link.
 Anything you chose for them (the name, a default limit, a time zone) is on the
@@ -174,10 +176,10 @@ anything is stored.
 
 ## When something is not available
 
-- If this connection has no `agent_home` tool yet, still register and propose,
-  and tell the person in one line: "I couldn't keep what you told me with
-  <Name> from this app yet; I've put it in <Name>'s instructions instead" (and
-  do so, where it is an instruction), or that it was not kept.
+- If this connection has neither `sync` nor `agent_home` yet, still register
+  and propose, and tell the person in one line: "I couldn't sync what you told
+  me to <Name> from this app yet; I've put it in <Name>'s instructions
+  instead" (and do so, where it is an instruction), or that it did not sync.
 - If a call refuses an argument this skill names (for example `harness` on
   `boot`, or `agent` on `propose_change`), retry once without it. Tell the
   person only what they lose, in plain words, if anything.

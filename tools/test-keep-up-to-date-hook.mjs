@@ -29,7 +29,7 @@ function run({ fixture, stdin, stopHookActive = false, sessionId, now = NOW }) {
   const result = spawnSync(process.execPath, [HOOK], {
     input,
     encoding: "utf8",
-    env: { ...process.env, MAINMIND_HOOK_NOW: now, MAINMIND_HOOK_STATE_DIR: stateDir },
+    env: { ...process.env, CLAUDE_PROJECT_DIR: "", MAINMIND_HOOK_NOW: now, MAINMIND_HOOK_STATE_DIR: stateDir },
     timeout: 15000,
   });
   return { status: result.status, stdout: result.stdout, stderr: result.stderr };
@@ -50,8 +50,13 @@ function expect(result, outcome) {
   let decision;
   try { decision = JSON.parse(result.stdout); } catch { throw new Error(`expected a JSON decision, got ${JSON.stringify(result.stdout)}`); }
   if (decision.decision !== "block") throw new Error(`expected decision block, got ${decision.decision}`);
-  if (!/keep-my-agent-up-to-date/.test(decision.reason) || !/job-hunter/.test(decision.reason)) {
-    throw new Error(`reason does not name the steps and the agent: ${decision.reason}`);
+  if (!/\bsync skill\b/.test(decision.reason) || !/\bcall sync as job-hunter\b/.test(decision.reason)) {
+    throw new Error(`reason does not name the sync skill, the sync tool and the agent: ${decision.reason}`);
+  }
+  if (!/\bagent_home\b/.test(decision.reason)) throw new Error("reason gives no way to sync where the sync tool is not served yet");
+  // The reason shows in the person's transcript, so it speaks the same words.
+  if (/\b(save|saved|handoff|hand off|bring back|restore|export|commit|git)\b/i.test(decision.reason)) {
+    throw new Error(`reason uses a word people no longer read: ${decision.reason}`);
   }
   if (!/Do not tell the person/.test(decision.reason)) throw new Error("reason does not keep the update quiet");
 }
@@ -90,6 +95,19 @@ test("asks once per session window, then lets it stop", () => {
   expect(run({ fixture: "no-handoff-yet.jsonl", sessionId: "repeat" }), ALLOWS);
   expect(run({ fixture: "no-handoff-yet.jsonl", sessionId: "repeat", now: "2026-09-23T12:31:00Z" }), BLOCKS);
 });
+
+// The same, through the sync tool.
+test("picked up with sync, enough work and nothing stopped", () => expect(run({ fixture: "sync-nothing-stopped-yet.jsonl" }), BLOCKS));
+test("a sync with only memories is not where it stopped", () => expect(run({ fixture: "sync-memories-only.jsonl" }), BLOCKS));
+test("recent sync with stopped, work since", () => expect(run({ fixture: "sync-stopped-recent.jsonl" }), ALLOWS));
+test("old sync with stopped, work since", () => expect(run({ fixture: "sync-stopped-stale.jsonl" }), BLOCKS));
+test("a sync that did not keep where it stopped does not count", () => expect(run({ fixture: "sync-stopped-not-kept.jsonl" }), BLOCKS));
+test("\"Not synced\" is not kept", () => expect(run({ fixture: "sync-not-synced.jsonl" }), BLOCKS));
+test("a refused memory beside a kept stopped is kept", () => expect(run({ fixture: "sync-memory-refused-stopped-kept.jsonl" }), ALLOWS));
+test("receipts: stopped saved, memory refused, is kept", () => expect(run({ fixture: "sync-structured-stopped-kept.jsonl" }), ALLOWS));
+test("receipts: stopped uncertain is not kept, whatever the text says", () => expect(run({ fixture: "sync-structured-stopped-uncertain.jsonl" }), BLOCKS));
+test("receipts: no home read back is not kept", () => expect(run({ fixture: "sync-structured-not-synced.jsonl" }), BLOCKS));
+test("a sync without an agent is no agent", () => expect(run({ fixture: "sync-without-agent.jsonl" }), ALLOWS));
 
 let failures = 0;
 for (const [name, fn] of cases) {

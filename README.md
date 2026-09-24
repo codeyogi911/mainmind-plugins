@@ -43,11 +43,12 @@ Six skills, in `skills/`:
 - **`continue-with-my-agent`** — "Continue with Job Hunter", in any app: the
   agent picks up where you left off, with its instructions and what it
   remembers; also "what do you remember about me?" and "forget that".
-- **`keep-my-agent-up-to-date`** — nobody asks for this one. The agent loads it
-  itself: it remembers what it learns as it learns it, and notes where it
-  stopped after each finished piece of work, when you wind down and before you
-  switch apps. It says nothing about it unless something could not be kept; at
-  a goodbye, at most "All up to date."
+- **`sync`** — nobody has to ask for this one. The agent syncs itself: what it
+  learns as it learns it, and where it stopped after each finished piece of
+  work, when you wind down and before you switch apps. Each sync also brings
+  the agent's latest home back, so every app carries on from the newest
+  version. It says nothing about it unless something could not sync; at a
+  goodbye, at most "All synced." Saying "sync" in any app syncs right away.
 - **`continue-everywhere`** — "Continue with Job Hunter everywhere": turns an
   existing setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom
   GPT) into a Mainmind agent after a preview of what comes along and what stays
@@ -57,14 +58,23 @@ The four agent skills follow Mainmind's agent-portability design: the agent's
 home lives in the space's knowledge, and each app's own format is a
 translation of it, never the source.
 
-**An agent keeps itself up to date; nobody has to ask.** On every host the
-skills tell it when. In Claude Code the plugin adds a safety net for when the
-model forgets: a Stop hook (`plugins/mainmind/hooks/`) that, only in a session
-that booted as an agent, asks the model once to hand off quietly before it
-stops — when there is no handoff yet after six or more tool calls of work, or
-the last one is over thirty minutes old and work has happened since. It never
-asks twice in a row and lets the session stop on any doubt. Codex, Cursor, Grok
-and Muse have the skills only.
+**An agent syncs itself; nobody has to ask.** On every host the skills tell it
+when, and `mainmind-boot` has a session sync at the start so a person's agent is
+simply there. In Claude Code the plugin adds two hooks (`plugins/mainmind/hooks/`):
+
+- **Stop**, a safety net for when the model forgets: only in a session acting as
+  an agent, it asks the model once to sync where it stopped before it stops —
+  when nothing has been synced as stopped after six or more tool calls of work,
+  or the last one is over thirty minutes old and work has happened since. It
+  never asks twice in a row and lets the session stop on any doubt. It also
+  notes which agent the folder last ran as.
+- **SessionStart**: in a folder that last ran as an agent, one line of context
+  for the model: "Last time here you were job-hunter. Sync as job-hunter and
+  pick up where you left off." Silent otherwise, and on a resumed session. It
+  reads one small local file, never the network, and exits 0 on any doubt or
+  when `node` is missing.
+
+Codex, Cursor, Grok and Muse have the skills only.
 
 ## Why this ships skills at all
 
@@ -107,7 +117,7 @@ skills/                          canonical — edit here, only here
   morning-brief/SKILL.md
   make-an-agent/SKILL.md
   continue-with-my-agent/SKILL.md
-  keep-my-agent-up-to-date/SKILL.md
+  sync/SKILL.md
   continue-everywhere/SKILL.md
 plugins/
   mainmind/                      Claude Code       .claude-plugin/plugin.json + hooks/hooks.json
