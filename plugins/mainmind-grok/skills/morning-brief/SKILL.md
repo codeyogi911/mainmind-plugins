@@ -1,6 +1,6 @@
 ---
 name: morning-brief
-description: Start-of-day digest over the Mainmind mount. Load when the founder or a teammate opens with "what needs my attention", "morning brief", "how are we doing", "anything urgent", "what's happening", or any start-of-day status check.
+description: Start-of-day digest over the Mainmind mount. Load when the owner or a teammate opens with "what needs my attention", "morning brief", "how are we doing", "anything urgent", "what's happening", or any start-of-day status check.
 ---
 
 # Morning brief

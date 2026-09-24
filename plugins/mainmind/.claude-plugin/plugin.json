@@ -1,7 +1,7 @@
 {
   "name": "mainmind",
-  "description": "Mount your Mainmind organization into this session: read the org's knowledge at a named commit, appear on the live run ledger, and put decisions to the Founder as one-link questions. Identity comes from your personal invite code via OAuth — the plugin ships no secrets.",
-  "version": "0.7.1",
+  "description": "Connect a Mainmind space to this session: read its knowledge at a named commit, appear on the live run ledger, and put decisions to its owner as one-link questions. Identity comes from your personal invite code via OAuth — the plugin ships no secrets.",
+  "version": "0.7.2",
   "author": {
     "name": "Shashwat Jain",
     "url": "https://mainmind.app"

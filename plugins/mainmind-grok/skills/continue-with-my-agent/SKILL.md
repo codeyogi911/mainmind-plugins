@@ -32,7 +32,7 @@ value on every call below.
 From boot's `agent_home` section:
 
 - **Follow** `instructions` and `boundaries` as your standing instructions for
-  this session. They never widen what the organization allows; boot's own
+  this session. They never widen what the space allows; boot's own
   documents and Authority still win.
 - **Memory**: the index gives each memory's name and one-line description.
   `read_node` the ones that matter for the first task. Use these instead of
@@ -95,7 +95,7 @@ quietly. Finish the run with `run_finish` when done.
 ## 7. Work
 
 - Assigned work: `page_work` (inbox `mine`) and `work_session` exactly as the
-  organization's boot instructions say, with `agent` on each call.
+  space's boot instructions say, with `agent` on each call.
 - Keep the agent up to date as you go, on your own and silently
   (keep-my-agent-up-to-date). Whenever you learn something a later session
   would need, `agent_home` `remember` it then and there, not at the end. When
