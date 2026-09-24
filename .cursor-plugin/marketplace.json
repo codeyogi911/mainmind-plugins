@@ -1,0 +1,17 @@
+{
+  "name": "mainmind",
+  "owner": {
+    "name": "Shashwat Jain",
+    "url": "https://mainmind.app"
+  },
+  "metadata": {
+    "description": "Mainmind — one mount for your whole company: every agent and every human on the same knowledge, the same rules, and the same judgment loop."
+  },
+  "plugins": [
+    {
+      "name": "mainmind",
+      "source": "./plugins/mainmind-mount",
+      "description": "Mount your Mainmind organization in Cursor and its Grok Bot: org knowledge at a named commit, the live run ledger, and the skills that tell an agent how to work with it. You sign in as yourself."
+    }
+  ]
+}

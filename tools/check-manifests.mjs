@@ -30,6 +30,13 @@ const agentPlugins = read("plugins/mainmind-mount/plugin.json");
 const GROK_MANIFEST = "plugins/mainmind-grok/.grok-plugin/plugin.json";
 const grok = existsSync(join(root, GROK_MANIFEST)) ? read(GROK_MANIFEST) : null;
 const pkg = read("package.json");
+// Cursor lists a plugin from its own marketplace file, and its template's
+// validator requires each listed directory to carry `.cursor-plugin/plugin.json`
+// whose name matches the entry. https://github.com/cursor/plugin-template
+const CURSOR_MARKETPLACE = ".cursor-plugin/marketplace.json";
+const CURSOR_MANIFEST = "plugins/mainmind-mount/.cursor-plugin/plugin.json";
+const cursorMarketplace = existsSync(join(root, CURSOR_MARKETPLACE)) ? read(CURSOR_MARKETPLACE) : null;
+const cursor = existsSync(join(root, CURSOR_MANIFEST)) ? read(CURSOR_MANIFEST) : null;
 
 // One version across everything, so "which version am I running" has one
 // answer. Claude Code carries it on the PLUGIN ENTRY: `metadata` documents only
@@ -42,7 +49,7 @@ if (marketplace.metadata && "version" in marketplace.metadata) {
 }
 const versions = new Set([
   marketplaceEntry?.version, claude.version, agentPlugins.version, pkg.version,
-  ...(grok ? [grok.version] : []),
+  ...(grok ? [grok.version] : []), ...(cursor ? [cursor.version] : []),
 ]);
 if (versions.size !== 1) fail(`versions disagree: ${[...versions].join(", ")}`);
 
@@ -53,6 +60,7 @@ for (const [label, manifest] of [
   ["plugins/mainmind", claude],
   ["plugins/mainmind-mount (agent-plugins)", agentPlugins],
   ...(grok ? [["plugins/mainmind-grok (grok)", grok]] : []),
+  ...(cursor ? [["plugins/mainmind-mount (cursor)", cursor]] : []),
 ]) {
   if (manifest.license !== "MIT") fail(`${label}: license is ${JSON.stringify(manifest.license)}, expected "MIT"`);
   if (manifest.repository !== REPOSITORY) fail(`${label}: repository is ${JSON.stringify(manifest.repository)}, expected ${REPOSITORY}`);
@@ -158,6 +166,29 @@ for (const entry of marketplace.plugins || []) {
   const manifest = join(entry.source.replace(/^\.\//, ""), ".claude-plugin/plugin.json");
   if (!existsSync(join(root, manifest))) fail(`marketplace entry ${entry.name}: ${manifest} does not exist`);
 }
+
+// Cursor, and Cursor's Grok Bot, find Mainmind through this file: an admin's
+// Import from Repo reads it, and so does a Cursor Marketplace submission.
+if (!cursorMarketplace) fail(`${CURSOR_MARKETPLACE} is missing: Cursor cannot import this repository without it`);
+if (!cursor) fail(`${CURSOR_MANIFEST} is missing: Cursor lists only a plugin directory that carries it`);
+if (cursorMarketplace) {
+  if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(cursorMarketplace.name || "")) fail(`${CURSOR_MARKETPLACE}: name must be lowercase kebab-case`);
+  if (!cursorMarketplace.owner?.name) fail(`${CURSOR_MARKETPLACE}: owner.name is required`);
+  const entries = cursorMarketplace.plugins || [];
+  if (entries.length !== 1 || entries[0].source !== "./plugins/mainmind-mount") {
+    fail(`${CURSOR_MARKETPLACE}: expected one entry with source ./plugins/mainmind-mount`);
+  }
+  for (const entry of entries) {
+    const manifest = join(String(entry.source).replace(/^\.\//, ""), ".cursor-plugin/plugin.json");
+    if (!existsSync(join(root, manifest))) { fail(`cursor marketplace entry ${entry.name}: ${manifest} does not exist`); continue; }
+    const listed = read(manifest);
+    if (listed.name !== entry.name) fail(`cursor marketplace entry ${entry.name}: ${manifest} is named ${JSON.stringify(listed.name)}`);
+  }
+}
+if (cursor?.logo && !existsSync(join(root, "plugins/mainmind-mount", cursor.logo))) {
+  fail(`${CURSOR_MANIFEST}: logo ${cursor.logo} does not exist`);
+}
+if (!existsSync(join(root, "plugins/mainmind-mount/skills"))) fail("plugins/mainmind-mount/skills does not exist; run npm run sync");
 
 // Claude Code loads a plugin's skills from this path; if it is wrong the plugin
 // installs and silently teaches nothing, which is the failure this repo exists

@@ -51,7 +51,23 @@ being signed in — every person still authorizes as themselves.
 
 ## Grok Build, the coding agent
 
-Either add it on the command line:
+**The plugin is the better route**, because it brings the skills as well as the
+connection. Grok Build loads plugins from `~/.grok/plugins/`
+([xAI's plugins guide](https://docs.x.ai/build/features/skills-plugins-marketplaces)),
+so put this directory there under the name `mainmind`:
+
+```sh
+git clone --depth 1 https://github.com/codeyogi911/mainmind-plugins /tmp/mainmind-plugins && mkdir -p ~/.grok/plugins && cp -R /tmp/mainmind-plugins/plugins/mainmind-grok ~/.grok/plugins/mainmind
+```
+
+Restart Grok Build, check that `/plugins` lists **mainmind** as enabled, then
+open `/mcps`, choose **mainmind** and sign in. If `~/.grok/plugins/mainmind`
+already exists, leave it: updating means deleting it and copying again. Grok
+Build also reads Claude Code plugins, so if you installed Mainmind's Claude
+Code plugin on this computer, `/plugins` may already show it and you need
+nothing more.
+
+Only the connection, without the skills? Add it on the command line:
 
 ```sh
 grok mcp add --transport http mainmind https://mainmind.app/mcp
