@@ -1,0 +1,1 @@
+{"hook_event_name":"PostToolUse","tool_name":"TaskCreate","tool_input":{"subject":"Draft the release notes"},"tool_response":{"task":{"id":"task-1","subject":"Draft the release notes"}},"tool_use_id":"toolu_task_a"}

@@ -70,7 +70,8 @@ simply there. In Claude Code the plugin adds three hooks (`plugins/mainmind/hook
   notes which agent the folder last ran as.
 - **PostToolUse**, on Claude Code's own task list (`TodoWrite`, `TaskCreate`,
   `TaskUpdate`): notes the list for this folder and session in one small local
-  file, each task as a title, todo, doing or done, and a stable id. When the
+  file, each task as a title, todo, doing or done, and a stable id made from
+  its title (never the app's own id, which restarts every session). When the
   Stop hook reminds an agent and that list has changed since its last
   reminder, the reminder adds one line asking the agent to sync it as `tasks`,
   with done ones marked done. It prints nothing and exits 0 on any doubt.

@@ -6,7 +6,8 @@
 // must add its one task line when the list changed since its last reminder,
 // and not when it did not.
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, mkdirSync, rmSync, readFileSync, existsSync, readdirSync } from "node:fs";
+import { mkdtempSync, mkdirSync, rmSync, readFileSync, existsSync, readdirSync, utimesSync, writeFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join, dirname } from "node:path";
 import { tmpdir } from "node:os";
 import { fileURLToPath } from "node:url";
@@ -45,6 +46,7 @@ function spawn(script, input, stateDir, now = NOW) {
 
 // One tool call through the task hook. It never prints.
 function tool(ctx, fixture, overrides = {}) {
+  // Overrides replace whole top-level fields of the fixture.
   const input = typeof fixture === "string" && fixture.endsWith(".json")
     ? JSON.stringify({ session_id: ctx.session, cwd: ctx.folder, ...JSON.parse(readFileSync(join(FIXTURES, fixture), "utf8")), ...overrides })
     : fixture;
@@ -105,12 +107,12 @@ test("a later TodoWrite replaces the list", () => {
   tool(ctx, "todowrite-changed.json");
   same(rows(ctx).map((row) => row.status), ["done", "done", "doing"]);
 });
-test("the app's id is kept only when it is a real id; a counter or junk becomes the title's slug", () => {
+test("the synced id is always the title's slug, never the app's own id", () => {
   const ctx = fresh();
   tool(ctx, "todowrite-host-ids.json");
   same(rows(ctx), [
     { id: "fix-the-flaky-login-test", title: "Fix the flaky login test", status: "todo" },
-    { id: "cover-letter", title: "Draft the cover letter", status: "doing" },
+    { id: "draft-the-cover-letter", title: "Draft the cover letter", status: "doing" },
     { id: "book-the-interview", title: "Book the interview", status: "done" },
     { id: "line-one", title: "Line one", status: "todo" },
   ]);
@@ -130,6 +132,77 @@ test("TaskCreate and TaskUpdate follow one task by the app's id", () => {
   same(rows(ctx)[0], { id: "write-the-launch-post", title: "Write and post the launch post", status: "done" });
   tool(ctx, "taskupdate-deleted.json");
   same(rows(ctx).map((row) => row.id), ["write-the-launch-post"]);
+});
+test("two sessions' task-1 sync under different ids, and each session still finds its own", () => {
+  const a = fresh();
+  const b = { ...a, session: `${a.session}-b` };
+  tool(a, "taskcreate-task-1-release-notes.json");
+  tool(b, "taskcreate-task-1-venue.json");
+  tool(b, "taskupdate-task-1-done.json");
+  const lists = readdirSync(join(a.stateDir, "tasks")).filter((name) => name.endsWith(".json"))
+    .map((name) => JSON.parse(readFileSync(join(a.stateDir, "tasks", name), "utf8")))
+    .sort((x, y) => x.session.localeCompare(y.session))
+    .map((saved) => saved.tasks.map(({ id, status }) => ({ id, status })));
+  same(lists, [[{ id: "draft-the-release-notes", status: "todo" }], [{ id: "book-the-venue", status: "done" }]]);
+});
+test("a title that is only digits gets a word in front", () => {
+  const ctx = fresh();
+  tool(ctx, "taskcreate-digits.json");
+  same(rows(ctx), [{ id: "task-2024", title: "2024", status: "todo" }]);
+});
+test("a title with no Latin letters or digits is kept, under a short hash of itself", () => {
+  const ctx = fresh();
+  tool(ctx, "taskcreate-non-latin.json");
+  const hash = createHash("sha1").update("書類を送る").digest("hex").slice(0, 8);
+  same(rows(ctx), [{ id: `task-${hash}`, title: "書類を送る", status: "todo" }]);
+});
+test("a task made without an id the hook can see is found again by its title", () => {
+  const ctx = fresh();
+  tool(ctx, "taskcreate-no-id.json");
+  tool(ctx, "taskupdate-by-subject.json");
+  same(rows(ctx), [{ id: "update-the-changelog", title: "Update the changelog", status: "done" }]);
+  // From then on the app's id finds it too.
+  tool(ctx, "taskupdate-doing.json", { tool_input: { taskId: "7", status: "in_progress" } });
+  same(rows(ctx)[0].status, "doing");
+});
+test("a later duplicate keeps its -2 when the earlier one goes (by the app's id)", () => {
+  const ctx = fresh();
+  tool(ctx, "taskcreate-write-tests-1.json");
+  tool(ctx, "taskcreate-write-tests-2.json");
+  same(rows(ctx).map((row) => row.id), ["write-tests", "write-tests-2"]);
+  tool(ctx, "taskupdate-1-deleted.json");
+  same(rows(ctx).map((row) => row.id), ["write-tests-2"]);
+  tool(ctx, "taskcreate-write-tests-1.json", { tool_response: { task: { id: "3" } } });
+  same(rows(ctx).map((row) => row.id), ["write-tests-2", "write-tests"]);
+});
+test("a later duplicate keeps its -2 when the earlier one goes (TodoWrite, no ids)", () => {
+  const ctx = fresh();
+  tool(ctx, "todowrite-duplicates.json");
+  same(rows(ctx).map(({ id, status }) => `${id} ${status}`), ["write-tests todo", "write-tests-2 doing"]);
+  tool(ctx, "todowrite-duplicates-one-left.json");
+  same(rows(ctx).map(({ id, status }) => `${id} ${status}`), ["write-tests-2 doing", "write-docs todo"]);
+});
+test("a subagent's list is ignored", () => {
+  const ctx = fresh();
+  tool(ctx, "todowrite.json");
+  const before = JSON.stringify(note(ctx));
+  tool(ctx, "todowrite-changed.json", { agent_id: "agent-1", agent_type: "general-purpose" });
+  tool(ctx, "taskcreate.json", { agent_type: "Explore" });
+  same(JSON.stringify(note(ctx)), before);
+});
+test("a lock left behind by a killed hook is taken over, and nothing of it is left", () => {
+  const ctx = fresh();
+  tool(ctx, "todowrite.json");
+  const dir = join(ctx.stateDir, "tasks");
+  const [file] = readdirSync(dir);
+  const lock = join(dir, `${file}.lock`);
+  mkdirSync(lock);
+  writeFileSync(join(lock, "holder"), "killed");
+  const old = new Date(Date.now() - 60_000);
+  utimesSync(lock, old, old);
+  tool(ctx, "todowrite-changed.json");
+  same(rows(ctx).map((row) => row.status), ["done", "done", "doing"]);
+  same(readdirSync(dir), [file]);
 });
 test("an update to a task never seen, with no title, changes nothing", () => {
   const ctx = fresh();

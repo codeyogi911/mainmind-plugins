@@ -1,0 +1,1 @@
+{"hook_event_name":"PostToolUse","tool_name":"TodoWrite","tool_input":{"todos":[{"content":"Write tests","status":"pending"},{"content":"Write tests","status":"in_progress"}]},"tool_use_id":"toolu_todo_5"}
