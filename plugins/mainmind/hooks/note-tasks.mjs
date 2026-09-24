@@ -15,7 +15,8 @@
 // It must be fast and never get in the way: no network, one small file, no
 // output at all, and every doubt, error or unexpected input ends in a silent
 // exit 0 that leaves the note as it was. A subagent's own list (input with
-// `agent_id` or `agent_type`) is not the session's and is ignored.
+// `agent_id`) is not the session's and is ignored. `agent_type` alone is a
+// session started with --agent, which is still the session.
 //
 // Input follows https://code.claude.com/docs/en/hooks (PostToolUse): stdin
 // carries `session_id`, `cwd`, `tool_name`, `tool_input` and `tool_response`.
@@ -230,7 +231,7 @@ function main() {
   try { input = JSON.parse(readFileSync(0, "utf8")); } catch { return; }
   if (!input || typeof input !== "object" || !TOOLS.has(input.tool_name)) return;
   // A subagent keeps its own list; it is not the session's.
-  if (input.agent_id != null || input.agent_type != null) return;
+  if (input.agent_id != null) return;
   const toolInput = input.tool_input;
   if (!toolInput || typeof toolInput !== "object" || Array.isArray(toolInput)) return;
 

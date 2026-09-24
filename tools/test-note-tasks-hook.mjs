@@ -187,8 +187,13 @@ test("a subagent's list is ignored", () => {
   tool(ctx, "todowrite.json");
   const before = JSON.stringify(note(ctx));
   tool(ctx, "todowrite-changed.json", { agent_id: "agent-1", agent_type: "general-purpose" });
-  tool(ctx, "taskcreate.json", { agent_type: "Explore" });
+  tool(ctx, "taskcreate.json", { agent_id: "agent-2", agent_type: "Explore" });
   same(JSON.stringify(note(ctx)), before);
+});
+test("a session started with --agent still notes its list", () => {
+  const ctx = fresh();
+  tool(ctx, "todowrite.json", { agent_type: "books-steward" });
+  same(rows(ctx).length > 0, true);
 });
 test("a lock left behind by a killed hook is taken over, and nothing of it is left", () => {
   const ctx = fresh();
