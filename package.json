@@ -1,13 +1,13 @@
 {
   "name": "mainmind-plugins",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "private": true,
   "description": "Mainmind plugins and skills for Claude Code, Codex, Grok and Agent Plugins clients.",
   "license": "MIT",
   "type": "module",
   "scripts": {
     "sync": "node tools/sync-skills.mjs",
-    "check": "node tools/sync-skills.mjs --check && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs",
+    "check": "node tools/sync-skills.mjs --check && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs && node tools/test-note-tasks-hook.mjs",
     "test": "npm run check"
   }
 }

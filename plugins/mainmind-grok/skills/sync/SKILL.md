@@ -1,6 +1,6 @@
 ---
 name: sync
-description: Sync a Mainmind agent, so the person finds it the same in every app. One call sends what it learned and where it stopped, and brings its latest home back. Load this yourself, without being asked, whenever you are acting as a Mainmind agent and you have just learned something a later session needs, a piece of work has just finished, the person is winding down ("thanks", "bye", "later", "that's all for today", "we're done for now", "wrap up", a long pause), the person is switching apps ("I'm switching apps", "I'm moving to another app"), or this app reminds you that the agent is not synced. Also load it when the person says "sync", "sync my agent", "sync now", or the older "save my agent", "save progress", "save where we are" or "keep my agent up to date".
+description: Sync a Mainmind agent, so the person finds it the same in every app. One call sends what it learned, its tasks and where it stopped, and brings its latest home back. Load this yourself, without being asked, whenever you are acting as a Mainmind agent and you have just learned something a later session needs, a piece of work has just finished, the person is winding down ("thanks", "bye", "later", "that's all for today", "we're done for now", "wrap up", a long pause), the person is switching apps ("I'm switching apps", "I'm moving to another app"), or this app reminds you that the agent is not synced. Also load it when the person says "sync", "sync my agent", "sync now", or the older "save my agent", "save progress", "save where we are" or "keep my agent up to date".
 ---
 
 # Sync
@@ -19,9 +19,16 @@ If the connection has no `sync` tool yet, do the same with `agent_home`
 
 ## When
 
+- **The first sync in a session that already has work** (you were busy
+  before you picked up the agent, or this app already keeps a task list):
+  bring that work in, in the same call: `tasks` for what you are on, what is
+  next and what is done, and `memories` for the key facts.
 - **As soon as you learn something durable** (a fact, preference, lesson or
   reference a later session would need): sync it with `memories`, then and
   there. Do not hold it for the end.
+- **When your tasks change** (one starts, finishes, or a new one comes up):
+  send the changed ones as `tasks` with your next sync. There is no need for a
+  sync of its own each time.
 - **Where you stopped**: sync with `stopped` at these moments and only these:
   - a piece of work has just finished;
   - the person is winding down: thanks, bye, "later", "that's all for today",
@@ -29,7 +36,8 @@ If the connection has no `sync` tool yet, do the same with `agent_home`
   - before switching apps, or when the person says they are moving to another
     app;
   - when this app reminds you (in Claude Code, the Mainmind plugin reminds you
-    when a session has gone on without it).
+    when a session has gone on without it, and names this session's task list
+    when it has changed: send those as `tasks` in that sync).
 - **When the person says "sync"** (or "sync now", or an old habit like "save
   my agent"): sync right away, like pulling down to refresh, with anything new
   and, if anything happened since the last one, `stopped`. Then answer
@@ -70,6 +78,23 @@ keeps them in this order:
     `expected_sha`, and write the whole new body, merged with what was there.
   - More than 20: several calls, each with its own key.
 - `forget`: up to 20 `{name, expected_sha}` for memories that should go.
+- `tasks`: the agent's working list, at most 20 per call, each
+  `{title, status, asked_by?, part_of?, id?, note?}`. Mainmind updates each
+  one by its `id`.
+  - Send what you are on (`doing`), what is next (`todo`) and what is done
+    (`done`). A task that is finished goes as `done`; never just drop it.
+  - `title`: one line, at most 200 characters, in the person's words.
+  - `asked_by`: when someone else asked for it: `"you"` for the person,
+    or another agent's name from the team. Leave it out for work the agent
+    took on itself.
+  - `id`: short kebab-case, at most 60 characters. Leave it out and Mainmind
+    makes one from the title; keep the same `id` (or the same title) every
+    time you send that task, so it stays one task.
+  - Bigger work: one task for the whole, and one task per piece with
+    `part_of` set to the whole's `id` (or to the number of a request on your
+    to-do list that it is part of).
+  - `note` (optional): one line, at most 300 characters.
+  - More than 20: several calls, each with its own key.
 - `stopped`: where you stopped.
   - `summary`: one line, at most 300 characters, what happened this session.
   - `next`: the next steps, most important first (at most 10, each at most
@@ -84,6 +109,10 @@ keeps them in this order:
 
 Nothing to send: `sync` with just `agent` and `harness` still brings the
 latest home back.
+
+If the sync is refused because of `tasks` (an older Mainmind that does not
+take them yet), send the same sync again without `tasks`, with a new key, and
+leave `tasks` out for the rest of the session. Nothing else changes.
 
 If this session holds an assignment, checkpoint it with `work_session` as
 usual too; `stopped` does not replace it.

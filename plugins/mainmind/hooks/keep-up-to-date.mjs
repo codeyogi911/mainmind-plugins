@@ -11,6 +11,10 @@
 // It also notes which agent this folder last ran as, so the SessionStart hook
 // (last-agent-here.mjs) can offer to pick up as that agent next time.
 //
+// When this app keeps a task list (note-tasks.mjs follows it) and the list has
+// changed since the last reminder, the reminder adds one line asking the agent
+// to send it as `tasks` in that sync. An unchanged list adds nothing.
+//
 // It must never get in the way: every doubt, error or unreadable input ends in
 // a silent exit 0, which lets the session stop normally. It never blocks twice
 // in a row (Claude Code sets `stop_hook_active` while it is continuing because
@@ -23,7 +27,8 @@
 // as its instruction. No dependencies, so it runs from the installed plugin as
 // is.
 import { readFileSync, writeFileSync, mkdirSync, rmSync } from "node:fs";
-import { AGENT_SLUG, folderNote, sessionNote } from "./state.mjs";
+import { createHash } from "node:crypto";
+import { AGENT_SLUG, TASK_ID, folderNote, sessionNote, taskNote } from "./state.mjs";
 
 // With nothing synced yet, this many substantive tool calls since the agent
 // was picked up is enough work to be worth a journal entry.
@@ -34,7 +39,7 @@ const STALE_AFTER_MS = 30 * 60 * 1000;
 
 // Calls that are the agent looking after itself, not work for the person.
 const HOUSEKEEPING = /__(boot|sync|agent_home|agent_session|whoami|release_notes)$/;
-const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "ToolSearch"]);
+const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "ToolSearch"]);
 // The skill reads a journal entry back to check it landed; reads straight
 // after one are that check, not new work.
 const READ_BACK = /__read_node$/;
@@ -175,13 +180,60 @@ function needsSync(calls, { agent, start }, now) {
   return work >= 1 && now - syncedAt > STALE_AFTER_MS ? agent : null;
 }
 
-function reasonFor(agent) {
+function reasonFor(agent, taskLine) {
   return `Mainmind: ${agent} is not synced with this session's work yet. ` +
     `Before you stop, quietly follow the sync skill: call sync as ${agent} with anything new it learned ` +
     "and with stopped (where you stopped, what is next), then check the home it returns shows them. " +
     "If this connection has no sync tool yet, use agent_home instead. " +
     "Do not tell the person about it. Only if something could not be kept, say that once, plainly, " +
-    "and that you will try again. Then stop as you were going to.";
+    "and that you will try again. Then stop as you were going to." +
+    (taskLine ? `\n${taskLine}` : "");
+}
+
+// Mainmind takes at most this many tasks in one sync (agent-tasks.js).
+const TASKS_PER_SYNC = 20;
+const ORDER = { doing: 0, todo: 1, done: 2 };
+
+// This session's task list as note-tasks.mjs left it, or [] when there is
+// none or it is about another folder or session.
+function currentTasks(cwd, sessionId) {
+  const note = taskNote(cwd, sessionId);
+  if (!note) return [];
+  try {
+    const saved = JSON.parse(readFileSync(note.path, "utf8"));
+    if (saved?.folder !== note.folder || saved?.session !== note.session || !Array.isArray(saved.tasks)) return [];
+    return saved.tasks.filter((item) => item && typeof item.id === "string" && TASK_ID.test(item.id)
+      && typeof item.title === "string" && item.title.trim() && Object.hasOwn(ORDER, item.status));
+  } catch { return []; }
+}
+
+// What the list is, regardless of order: changed means a title, a status or a
+// task came or went.
+function tasksSignature(tasks) {
+  if (!tasks.length) return null;
+  const rows = tasks.map((item) => [item.id, item.status, item.title]).sort((a, b) => a[0].localeCompare(b[0]));
+  return createHash("sha256").update(JSON.stringify(rows)).digest("hex").slice(0, 32);
+}
+
+// One plain line naming the tasks to send, doing first, then to do, then done.
+function taskLineFor(tasks) {
+  const ordered = [...tasks].sort((a, b) => ORDER[a.status] - ORDER[b.status]);
+  const shown = ordered.slice(0, TASKS_PER_SYNC).map((item) =>
+    `"${item.title.replace(/\s+/g, " ").replace(/"/g, "'")}" (${item.status}, id ${item.id})`);
+  const more = ordered.length - shown.length;
+  return "Your task list here changed since the last reminder: in that same sync, send it as tasks, " +
+    "with done ones marked done and asked_by where someone else asked: " + shown.join("; ") +
+    (more > 0 ? `; and ${more} more, in another sync with its own key.` : ".");
+}
+
+// The folder note, read back: is this folder running as this agent?
+function folderRunsAs(cwd, agent) {
+  const note = folderNote(cwd);
+  if (!note) return false;
+  try {
+    const last = JSON.parse(readFileSync(note.path, "utf8"));
+    return last?.folder === note.folder && last?.agent === agent;
+  } catch { return false; }
 }
 
 // Remember which agent this folder last ran as, for the SessionStart hook. A
@@ -214,24 +266,32 @@ function main() {
   const calls = toolCalls(transcript);
   const acting = actingAs(calls);
   // The project folder, not wherever the session has cd'd to, is "here".
-  noteFolder(process.env.CLAUDE_PROJECT_DIR || input.cwd, calls, acting.agent, now);
+  const here = process.env.CLAUDE_PROJECT_DIR || input.cwd;
+  noteFolder(here, calls, acting.agent, now);
 
   const agent = needsSync(calls, acting, now);
   if (!agent) return;
 
+  // The task list, only for a folder running as this agent.
+  const tasks = folderRunsAs(here, agent) ? currentTasks(here, input.session_id) : [];
+  const signature = tasksSignature(tasks);
+  let remindedTasks = null;
+
   const state = sessionNote(input.session_id);
   if (state) {
     try {
-      const last = JSON.parse(readFileSync(state.path, "utf8")).remindedAt;
-      if (Number.isFinite(last) && now - last < STALE_AFTER_MS) return;
+      const previous = JSON.parse(readFileSync(state.path, "utf8"));
+      if (Number.isFinite(previous.remindedAt) && now - previous.remindedAt < STALE_AFTER_MS) return;
+      if (typeof previous.tasks === "string") remindedTasks = previous.tasks;
     } catch { /* no note yet */ }
     try {
       mkdirSync(state.dir, { recursive: true });
-      writeFileSync(state.path, JSON.stringify({ remindedAt: now, agent }));
+      writeFileSync(state.path, JSON.stringify({ remindedAt: now, agent, tasks: signature ?? remindedTasks }));
     } catch { /* stop_hook_active still prevents a loop */ }
   }
 
-  process.stdout.write(JSON.stringify({ decision: "block", reason: reasonFor(agent) }));
+  const taskLine = signature && signature !== remindedTasks ? taskLineFor(tasks) : null;
+  process.stdout.write(JSON.stringify({ decision: "block", reason: reasonFor(agent, taskLine) }));
 }
 
 // Let the process end on its own rather than process.exit(): on macOS a pipe

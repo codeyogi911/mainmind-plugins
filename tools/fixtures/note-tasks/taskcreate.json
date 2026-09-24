@@ -1,0 +1,1 @@
+{"hook_event_name":"PostToolUse","tool_name":"TaskCreate","tool_input":{"subject":"Write the launch post","description":"A short post for Thursday","activeForm":"Writing the launch post"},"tool_response":{"task":{"id":"1","subject":"Write the launch post"}},"tool_use_id":"toolu_task_1"}

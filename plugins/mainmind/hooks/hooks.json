@@ -1,5 +1,5 @@
 {
-  "description": "Keeps a Mainmind agent synced: before a session acting as an agent stops, asks the model once to sync where it stopped if it has not lately; at the start of a session in a folder that last ran as an agent, says which one.",
+  "description": "Keeps a Mainmind agent synced: before a session acting as an agent stops, asks the model once to sync where it stopped if it has not lately, with this app's task list when it changed; follows that task list as the model keeps it; at the start of a session in a folder that last ran as an agent, says which one.",
   "hooks": {
     "SessionStart": [
       {
@@ -8,6 +8,18 @@
           {
             "type": "command",
             "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/last-agent-here.mjs\" 2>/dev/null || true",
+            "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "TodoWrite|TaskCreate|TaskUpdate",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/note-tasks.mjs\" >/dev/null 2>&1 || true",
             "timeout": 5
           }
         ]

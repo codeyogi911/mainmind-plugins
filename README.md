@@ -60,7 +60,7 @@ translation of it, never the source.
 
 **An agent syncs itself; nobody has to ask.** On every host the skills tell it
 when, and `mainmind-boot` has a session sync at the start so a person's agent is
-simply there. In Claude Code the plugin adds two hooks (`plugins/mainmind/hooks/`):
+simply there. In Claude Code the plugin adds three hooks (`plugins/mainmind/hooks/`):
 
 - **Stop**, a safety net for when the model forgets: only in a session acting as
   an agent, it asks the model once to sync where it stopped before it stops —
@@ -68,6 +68,13 @@ simply there. In Claude Code the plugin adds two hooks (`plugins/mainmind/hooks/
   or the last one is over thirty minutes old and work has happened since. It
   never asks twice in a row and lets the session stop on any doubt. It also
   notes which agent the folder last ran as.
+- **PostToolUse**, on Claude Code's own task list (`TodoWrite`, `TaskCreate`,
+  `TaskUpdate`): notes the list for this folder and session in one small local
+  file, each task as a title, todo, doing or done, and a stable id made from
+  its title (never the app's own id, which restarts every session). When the
+  Stop hook reminds an agent and that list has changed since its last
+  reminder, the reminder adds one line asking the agent to sync it as `tasks`,
+  with done ones marked done. It prints nothing and exits 0 on any doubt.
 - **SessionStart**: in a folder that last ran as an agent, one line of context
   for the model: "Last time here you were job-hunter. Sync as job-hunter and
   pick up where you left off." Silent otherwise, and on a resumed session. It
