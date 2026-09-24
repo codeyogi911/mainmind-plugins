@@ -97,7 +97,7 @@ Proceed only on a yes. If they drop an item, drop it.
    rather than choosing another name. Only a Founder can take one over: if
    the answer says to ask a Founder, or that someone else's agent has the
    name, stop and tell the person in one plain line, for example "Inbound
-   already belongs to someone else here; a Founder can sort that out."
+   already belongs to someone else here; the space's owner can sort that out."
 5. `boot` again with `agent: <slug>`; pass `agent` on every call that accepts
    it from here on.
 

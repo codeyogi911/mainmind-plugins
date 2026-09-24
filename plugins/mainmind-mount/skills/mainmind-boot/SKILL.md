@@ -115,7 +115,7 @@ be asked, and never ask the person to do it.
 
 - Tool access is capability, not permission — what you may *do* with what you
   read is governed by AUTHORITY.md and the Process you are running.
-- Before writing anything the Founder will read, `read_node` on `voice.md`
+- Before writing anything the owner will read, `read_node` on `voice.md`
   and follow it.
 - Before writing durable knowledge, `read_node` on `AUTHORING.md` when boot
   names it, and follow it. Boot skips the file when the space has
