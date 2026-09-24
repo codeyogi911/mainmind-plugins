@@ -1,6 +1,6 @@
 # Mainmind plugins
 
-Mount a [Mainmind](https://mainmind.app) organization into your coding agent,
+Mount a [Mainmind](https://mainmind.app) space into your coding agent,
 and give it the handful of habits that a mount alone cannot teach it.
 
 One skill set, published for every harness that can read one. MIT licensed, no
@@ -12,15 +12,15 @@ decides which tools the session ever sees.
 | Harness | How |
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
-| **Codex** | `codex mcp add "mainmind-<organization>" --url "https://mainmind.app/mcp/<organization>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself. If you copied them before 0.7.0, delete the renamed folders `save-my-agent`, `bring-back-my-agent` and `move-my-agent-in` from yours |
+| **Codex** | `codex mcp add "mainmind-<space>" --url "https://mainmind.app/mcp/<space>"`, then copy this repo's `.agents/skills/` over yours — each skill must sit at `.agents/skills/<name>/SKILL.md`, so copy the *contents*, not the directory onto itself. If you copied them before 0.7.0, delete the renamed folders `save-my-agent`, `bring-back-my-agent` and `move-my-agent-in` from yours |
 | **Cursor** and other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` declares the Agent Plugins 1.0.0 schema, so a client implementing that standard can load it as a plugin; [agent-plugins.org](https://agent-plugins.org) has the install route |
 | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one mount. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state |
 | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
 
-The canonical mount names no organization, so authorization asks which one to
+The canonical mount names no space, so authorization asks which one to
 mount — that is what lets one published file serve everybody. Configuring by
-hand instead? Prefer the complete per-organization URL,
-`https://mainmind.app/mcp/<organization>`, which fixes the organization before
+hand instead? Prefer the complete per-space URL,
+`https://mainmind.app/mcp/<space>`, which fixes the space before
 authorization begins.
 
 For a host that accepts only a static bearer — the xAI API's remote MCP tool,
@@ -53,7 +53,7 @@ Six skills, in `skills/`:
   behind.
 
 The four agent skills follow Mainmind's agent-portability design: the agent's
-home lives in the organization's knowledge, and each app's own format is a
+home lives in the space's knowledge, and each app's own format is a
 translation of it, never the source.
 
 **An agent keeps itself up to date; nobody has to ask.** On every host the
@@ -71,12 +71,12 @@ An earlier version of the mount plugin shipped none, deliberately, and said so:
 
 > Everything an agent needs in order to behave correctly on a mount arrives
 > from the server itself: the `instructions` returned on `initialize`, the tool
-> descriptions, and `boot`, which serves the organization's own entry
+> descriptions, and `boot`, which serves the space's own entry
 > documents. A habit that works only because a plugin file taught it is a habit
 > the next client will not have.
 
 That rule is right about everything the **server** can know, and it still
-governs: none of the organization's rules, processes or authority live here.
+governs: none of the space's rules, processes or authority live here.
 They arrive from `boot`, and when this repository disagrees with the mount, the
 mount wins.
 
@@ -87,7 +87,7 @@ the guidance has to sit on the client side — which is exactly what a plugin is
 
 The consequence is the one habit worth publishing: **try a checkout first, fall
 back to the mount if you cannot.** The mount serves Markdown under `knowledge/`
-and nothing else, so an organization's own command-line tools, under `tools/`,
+and nothing else, so a space's own command-line tools, under `tools/`,
 are invisible from the mount entirely. An agent that never tries a checkout
 cannot see them, will not know they exist, and will reach for a raw API call
 where a vetted client was sitting in the repository — one that knows the
@@ -95,7 +95,7 @@ payload shapes that actually work, which writes are safe to replay, and where
 the vendor's own documentation is wrong.
 
 That is not hypothetical. It is how an order update got reported as applied
-when the vendor had quietly dropped it, in an organization whose repository
+when the vendor had quietly dropped it, in a space whose repository
 held a client that would have got it right.
 
 ## Layout

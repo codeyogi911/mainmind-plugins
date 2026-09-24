@@ -28,9 +28,9 @@ https://mainmind.app/mcp
 The mount is an OAuth 2.1 server, so connecting means completing a browser
 authorization. Meta documents nothing about what its connector screen
 supports, so treat that step as unverified until you have done it once. It
-should ask which organization to mount, because that URL names none. If the
+should ask which space to mount, because that URL names none. If the
 connection is only ever meant to reach one, use the complete form,
-`https://mainmind.app/mcp/<organization>`, which fixes it before authorization
+`https://mainmind.app/mcp/<space>`, which fixes it before authorization
 begins.
 
 Meta does not review connectors added this way — you are trusting the service
@@ -46,7 +46,7 @@ Muse has no shell, no filesystem and no Git client, so it is a mount-only
 surface: `read_node`, `search` and `call_provider`, and no checkout. The
 skills in [`skills/`](./skills) say so, and an agent on this surface should say
 plainly that it is on the mount, so nobody reads a partial answer as a complete
-one. In particular the organization's own command-line tools, under `tools/`,
+one. In particular the space's own command-line tools, under `tools/`,
 are invisible from here — not absent.
 
 An agent keeps itself up to date here with no one asking: the

@@ -32,7 +32,7 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    agent with this name (or one that plainly does this job), ask once: "You
    already have <Name>. Change that one, or make a new one?" Reuse means
    carrying on with its slug; skip to step 4. For a Founder, boot also lists
-   `agents_you_can_take_over`: agents already in the organization that no one
+   `agents_you_can_take_over`: agents already in the space that no one
    has taken over, with their jobs. If one of them plainly does this job, even
    under a slightly different name (Books Steward for Books), ask once: "<Old
    name> already does this job. Use it?" On yes, `adopt_agent` with its
