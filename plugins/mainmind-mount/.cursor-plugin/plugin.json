@@ -1,7 +1,7 @@
 {
   "name": "mainmind",
   "displayName": "Mainmind",
-  "version": "0.7.2",
+  "version": "0.8.0",
   "description": "Connect a Mainmind space, whether it holds a company, a job hunt or anything else: its own processes, records, decisions and lessons at a named commit, plus its live run ledger. You sign in as yourself; the plugin ships no secrets.",
   "author": {
     "name": "Shashwat Jain",

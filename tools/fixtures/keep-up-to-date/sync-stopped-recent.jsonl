@@ -1,0 +1,28 @@
+{"type":"assistant","timestamp":"2026-09-23T10:30:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_001","name":"mcp__plugin_mainmind_mainmind__sync","input":{"harness":"claude-code","agent":"job-hunter"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:30:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_001","content":"Synced.\n\nPicking up where we left off: ..."}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_002","name":"Bash","input":{"command":"step 0"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_002","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_003","name":"Read","input":{"command":"step 1"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_003","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_004","name":"Bash","input":{"command":"step 2"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_004","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_005","name":"Read","input":{"command":"step 3"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_005","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_006","name":"Bash","input":{"command":"step 4"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_006","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_007","name":"Read","input":{"command":"step 5"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_007","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_008","name":"Bash","input":{"command":"step 6"}}]}}
+{"type":"user","timestamp":"2026-09-23T10:40:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_008","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T11:50:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_009","name":"mcp__plugin_mainmind_mainmind__sync","input":{"harness":"claude-code","agent":"job-hunter","idempotency_key":"jh-2026-09-23-b","stopped":{"summary":"Shortlisted three roles","next":["Draft the Razorpay cover letter"],"open_questions":[],"unresolved_effects":[]}}}]}}
+{"type":"user","timestamp":"2026-09-23T11:50:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_009","content":"Synced.\n\n..."}]}}
+{"type":"assistant","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_010","name":"Bash","input":{"command":"step 0"}}]}}
+{"type":"user","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_010","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_011","name":"Read","input":{"command":"step 1"}}]}}
+{"type":"user","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_011","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_012","name":"Bash","input":{"command":"step 2"}}]}}
+{"type":"user","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_012","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_013","name":"Read","input":{"command":"step 3"}}]}}
+{"type":"user","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_013","content":"ok"}]}}
+{"type":"assistant","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_014","name":"Bash","input":{"command":"step 4"}}]}}
+{"type":"user","timestamp":"2026-09-23T11:55:00.000Z","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_014","content":"ok"}]}}

@@ -11,7 +11,7 @@
 // Copying is the honest answer; drift is the risk. `--check` is the gate: it
 // fails when a destination disagrees with the source, so a skill edited in the
 // wrong copy cannot merge.
-import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, existsSync, statSync } from "node:fs";
+import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, rmdirSync, existsSync, statSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -24,6 +24,16 @@ const DESTINATIONS = [
   "plugins/mainmind-muse/skills",
   ".agents/skills",
 ];
+
+// A renamed skill leaves its old directory behind once its files are gone;
+// an empty skill directory still looks like a skill to a person browsing, and
+// the retired-name check in check-manifests.mjs would fail on it.
+function pruneEmpty(dir, keep) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) pruneEmpty(join(dir, entry.name), false);
+  }
+  if (!keep && readdirSync(dir).length === 0) rmdirSync(dir);
+}
 
 function walk(dir, base = dir, out = []) {
   for (const entry of readdirSync(dir, { withFileTypes: true })) {
@@ -99,6 +109,7 @@ for (const destination of DESTINATIONS) {
     }
     rmSync(join(target, file));
   }
+  if (!check && existsSync(target)) pruneEmpty(target, true);
 }
 
 if (check) {
