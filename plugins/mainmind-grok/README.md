@@ -57,12 +57,12 @@ connection. Grok Build loads plugins from `~/.grok/plugins/`
 so put this directory there under the name `mainmind`:
 
 ```sh
-git clone --depth 1 https://github.com/codeyogi911/mainmind-plugins /tmp/mainmind-plugins && mkdir -p ~/.grok/plugins && cp -R /tmp/mainmind-plugins/plugins/mainmind-grok ~/.grok/plugins/mainmind
+d=$(mktemp -d) && git clone --depth 1 https://github.com/codeyogi911/mainmind-plugins "$d" && mkdir -p ~/.grok/plugins/mainmind && cp -R "$d/plugins/mainmind-grok/." ~/.grok/plugins/mainmind
 ```
 
 Restart Grok Build, check that `/plugins` lists **mainmind** as enabled, then
-open `/mcps`, choose **mainmind** and sign in. If `~/.grok/plugins/mainmind`
-already exists, leave it: updating means deleting it and copying again. Grok
+open `/mcps`, choose **mainmind** and sign in. Running the same line again
+updates the copy in place. Grok
 Build also reads Claude Code plugins, so if you installed Mainmind's Claude
 Code plugin on this computer, `/plugins` may already show it and you need
 nothing more.
