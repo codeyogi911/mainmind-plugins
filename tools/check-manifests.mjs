@@ -197,8 +197,9 @@ if (claude.skills !== "./skills/") fail(`plugins/mainmind: skills is ${JSON.stri
 if (!existsSync(join(root, "plugins/mainmind/skills"))) fail("plugins/mainmind/skills does not exist; run npm run sync");
 
 // The hooks that keep an agent synced when the model forgets to: a Stop hook
-// that asks the model to sync before it stops, and a SessionStart hook that
-// names the agent a folder last ran as. Claude Code discovers
+// that asks the model to sync before it stops, a SessionStart hook that names
+// the agent a folder last ran as, and a PostToolUse hook that follows this
+// app's task list so the Stop hook can ask for it as `tasks`. Claude Code discovers
 // `hooks/hooks.json` at the plugin root by convention; naming that same file
 // again in plugin.json's `hooks` field would register it twice.
 // https://code.claude.com/docs/en/plugins-reference#hooks
@@ -206,7 +207,11 @@ const HOOKS = "plugins/mainmind/hooks/hooks.json";
 const HOOK_SCRIPTS = {
   Stop: "keep-up-to-date.mjs",
   SessionStart: "last-agent-here.mjs",
+  PostToolUse: "note-tasks.mjs",
 };
+// Every tool Claude Code keeps its task list with; a missing one means those
+// tasks never reach the agent.
+const TASK_TOOLS = ["TodoWrite", "TaskCreate", "TaskUpdate"];
 if ("hooks" in claude) fail(`plugins/mainmind: plugin.json declares "hooks"; ${HOOKS} is discovered by convention and would load twice`);
 for (const script of [...Object.values(HOOK_SCRIPTS), "state.mjs"]) {
   if (!existsSync(join(root, "plugins/mainmind/hooks", script))) fail(`plugins/mainmind/hooks/${script} is missing`);
@@ -226,6 +231,17 @@ if (!existsSync(join(root, HOOKS))) {
   }
   const start = (hooks.SessionStart || []).flatMap((group) => group.hooks || []);
   if (start.some((hook) => !(hook.timeout <= 10))) fail(`${HOOKS}: a SessionStart hook must time out within 10 seconds; it runs before the person can type`);
+  // The task hook runs after every task-list change, so it is quick and silent.
+  const taskGroup = (hooks.PostToolUse || []).find((group) =>
+    (group.hooks || []).some((hook) => hook.command?.includes(`\${CLAUDE_PLUGIN_ROOT}/hooks/${HOOK_SCRIPTS.PostToolUse}`)));
+  if (taskGroup) {
+    const matched = String(taskGroup.matcher || "").split("|");
+    for (const tool of TASK_TOOLS) if (!matched.includes(tool)) fail(`${HOOKS}: the PostToolUse matcher does not name ${tool}`);
+    for (const hook of taskGroup.hooks || []) {
+      if (!(hook.timeout <= 10)) fail(`${HOOKS}: the PostToolUse task hook must time out within 10 seconds`);
+      if (!/>\/dev\/null 2>&1 \|\| true$/.test(hook.command || "")) fail(`${HOOKS}: the PostToolUse task hook must print nothing and never fail`);
+    }
+  }
 }
 
 // The agent skills were renamed to the words people say. A stale copy under an

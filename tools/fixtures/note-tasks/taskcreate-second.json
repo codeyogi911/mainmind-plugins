@@ -1,0 +1,1 @@
+{"hook_event_name":"PostToolUse","tool_name":"TaskCreate","tool_input":{"subject":"Check the pricing page","description":"Numbers match the sheet"},"tool_response":"Task #2 created successfully: Check the pricing page","tool_use_id":"toolu_task_2"}

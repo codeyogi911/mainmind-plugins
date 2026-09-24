@@ -41,6 +41,9 @@ From the home `sync` returned (`agent_home`):
 - **Memory**: the index gives each memory's name and one-line description.
   `read_node` the ones that matter for the first task. Use these instead of
   this app's own memory for this agent.
+- **Tasks**: `tasks`, when the home has them, is the agent's working list:
+  what it is on, what is next, who asked, and what was done lately. Carry on
+  from it, and keep it current as you work (the sync skill).
 - **Where it stopped**: read the newest `recent_journal` entry: `summary`,
   `next`, `open_questions`, `unresolved_effects`. **Before doing anything that
   could repeat something outside Mainmind** (send, submit, pay, post), check
@@ -101,9 +104,13 @@ quietly. Finish the run with `run_finish` when done.
 - Assigned work: `page_work` (inbox `mine`) and `work_session` exactly as the
   space's boot instructions say, with `agent` on each call.
 - Keep the agent synced as you go, on your own and silently (the sync skill).
-  Whenever you learn something a later session would need, `sync` it as
-  `memories` then and there, not at the end. When a piece of work is
-  finished, `sync` with `stopped`. Never wait to be asked, never ask the
+  If this session already had work before you picked up the agent, bring it
+  in with the first sync: `tasks` for what you are on, what is next and what
+  is done (with `asked_by` when someone else asked), and `memories` for the
+  key facts. Whenever you learn something a later session would need, `sync`
+  it as `memories` then and there, not at the end. Send task changes as
+  `tasks` with your next sync, and split bigger work with `part_of`. When a
+  piece of work is finished, `sync` with `stopped`, with that task `done`. Never wait to be asked, never ask the
   person to, and never announce a routine sync; only a failure is mentioned,
   once and plainly.
 - Changes to its own instructions or schedule are never written directly:
@@ -188,7 +195,8 @@ agent's own instructions in Mainmind, and the next start rewrites the block.
 ## When something is not available
 
 - If a call refuses an argument this skill names (for example `harness` on
-  `boot`, or `slot_key` on `run_start`), retry once without it. Without
+  `boot`, `tasks` on `sync`, or `slot_key` on `run_start`), retry once
+  without it. Without
   `slot_key` a scheduled run cannot tell whether another app already did it;
   do not install the schedule in a second app in that case, and say so plainly.
 - If this connection has neither `sync` nor `agent_home`, or no home comes

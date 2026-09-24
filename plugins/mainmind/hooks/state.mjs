@@ -1,10 +1,14 @@
 // Where the Mainmind hooks keep their small local notes, shared by the Stop
-// hook (which writes them) and the SessionStart hook (which reads them).
+// hook, the SessionStart hook and the PostToolUse hook that follows this
+// app's task list.
 //
-// Two kinds of note:
-// - per session: when the Stop hook last reminded this session to sync;
+// Three kinds of note:
+// - per session: when the Stop hook last reminded this session to sync, and
+//   which task list that reminder carried;
 // - per folder: which agent this folder last ran as, so the next session here
-//   can pick up as that agent.
+//   can pick up as that agent;
+// - per folder and session: this app's current task list (note-tasks.mjs
+//   writes it, the Stop hook reads it).
 //
 // Nothing here throws. A folder that cannot be made or trusted is null, and a
 // caller treats null as "nothing to remember".
@@ -49,4 +53,24 @@ export function folderNote(cwd) {
   const folder = resolve(cwd);
   const name = createHash("sha256").update(folder).digest("hex").slice(0, 32);
   return { dir: join(dir, "folders"), path: join(dir, "folders", `${name}.json`), folder };
+}
+
+// One task list per folder and session, named by a hash of both. The note
+// repeats them, so a reader can check it is about this folder and session.
+export function taskNote(cwd, sessionId) {
+  if (typeof cwd !== "string" || !cwd || typeof sessionId !== "string" || !sessionId) return null;
+  const dir = stateDir();
+  if (!dir) return null;
+  const folder = resolve(cwd);
+  const name = createHash("sha256").update(`${folder}\0${sessionId}`).digest("hex").slice(0, 32);
+  return { dir: join(dir, "tasks"), path: join(dir, "tasks", `${name}.json`), folder, session: sessionId };
+}
+
+// The same stable id Mainmind gives a task that comes without one
+// (taskIdFrom in the server's agent-tasks.js): the same title is the same
+// task on the next sync.
+export const TASK_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+export function taskIdFrom(title) {
+  return String(title || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "").slice(0, 60).replace(/-+$/, "") || null;
 }
