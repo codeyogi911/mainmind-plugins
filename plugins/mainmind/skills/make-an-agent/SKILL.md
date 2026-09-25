@@ -75,7 +75,7 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    themselves or the job that is a fact or preference, not an instruction
    (see "Keeping what they told you"). Nothing to keep is fine; skip it.
 8. Read back: check each memory is in the home `sync` returned ("Synced."
-   with no "except"), and confirm the proposal came back with a decision link.
+   with no "except"), and confirm the proposal came back with a `decision_key`.
    Do not report anything as done that you have not read back.
 
 ## AGENT.md template
@@ -160,7 +160,7 @@ One short block, nothing before it:
 > **Job:** <one line>
 > **Always asks you first:** <the boundaries, "anything that spends, sends or signs" first>
 > **Schedule:** <"every weekday at 8 (India time)", or "none">
-> **Say yes here:** <the decision link from the proposal>
+> **Yes to this?**
 
 Then say, exactly:
 
@@ -169,7 +169,9 @@ Then say, exactly:
 From here on <Name> syncs on its own (the sync skill); never tell the person
 they have to do anything for that.
 
-If the app can show a card or a button, use it; the Yes is the decision link.
+If the app can show a card or a button, use it. When they say yes (or no), record
+it at once with `decide`: the `decision_key`, `agent`, their exact words in
+`words`, and where they said it in `said_in`. Their answer here is enough.
 Anything you chose for them (the name, a default limit, a time zone) is on the
 card, not asked about. Do not mention the approval mechanics, the slug or where
 anything is stored.

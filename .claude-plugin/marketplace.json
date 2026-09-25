@@ -13,7 +13,7 @@
       "displayName": "Mainmind",
       "category": "business",
       "source": "./plugins/mainmind",
-      "version": "0.10.1",
+      "version": "0.11.0",
       "description": "Move freely between AIs: your agents, knowledge and work come with you to every app. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
       "author": {
         "name": "Shashwat Jain"
