@@ -154,7 +154,7 @@ code), `becomes`, `blast_radius` (`reversible`, `no_money`, `many_files`,
 ## 6. Read back and sync where it stopped
 
 - Check every memory is in the home `sync` returned, `read_node` every copied
-  file, and confirm the proposal returned its decision link. Anything that did
+  file, and confirm the proposal returned its `decision_key`. Anything that did
   not read back is not moved; say so.
 - `sync` with `stopped`: `summary` of what moved; `next` starting with "Wait
   for the owner's yes on instructions and schedule"; `open_questions` for
@@ -165,8 +165,11 @@ code), `becomes`, `blast_radius` (`reversible`, `no_money`, `many_files`,
 ## 7. Say it
 
 > <Name> now continues everywhere. It remembers <n> things about you and has
-> your files. Say yes here to its instructions and schedule: <decision link>.
-> Then just say "Continue with <Name>" in any app.
+> your files. Yes to its instructions and schedule?
+
+When they answer, record it at once with `decide` (the `decision_key`,
+`agent`, their exact words in `words`, where they said it in `said_in`).
+Then tell them: just say "Continue with <Name>" in any app.
 
 List anything that did not come along, one line each, in the same voice ("I
 couldn't carry your apply log over yet; I'll try again."), and retry it

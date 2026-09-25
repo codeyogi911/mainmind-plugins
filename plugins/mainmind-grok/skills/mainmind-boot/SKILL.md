@@ -133,6 +133,13 @@ never wait to be asked, and never ask the person to do it.
 - A decision that belongs to the Founder goes through `ask_founder`: do the
   reading and arguing yourself, then send ONE yes/no question with what
   becomes true. Never split one decision into many asks.
+- The Founder's answer counts wherever they give it: in this chat, on a card,
+  in another app. When they answer a waiting question, record it at once with
+  `decide`: pass `agent`, their exact words in `words`, and where they said it
+  in `said_in`. Never ask them to answer again somewhere else, and never send
+  them a link to approve. If a question was already answered elsewhere, close
+  it with `decide` verdict `settled` and say in `words` where it was answered.
+  Your own yes, a guess or silence is never their answer.
 
 ## Boundaries
 

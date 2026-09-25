@@ -25,7 +25,8 @@ landed. Built entirely from mount reads — never from memory.
 Three short sections, in this order, plain words:
 
 - **Needs you** — each item one line: the decision or blocker, who is waiting,
-  the money figure if there is one. Decision links (`/d/…`) go here verbatim.
+  the money figure if there is one. Ask each as a question they can answer
+  here in a word; when they answer, record it with `decide`. Never a link.
   If nothing needs the reader, say exactly that in one sentence.
 - **In motion** — open runs: who, what, current step. Flag stalled ones.
 - **Landed** — recently finished runs and deposits worth knowing, with
