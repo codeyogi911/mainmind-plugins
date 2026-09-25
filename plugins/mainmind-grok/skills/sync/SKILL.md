@@ -1,6 +1,6 @@
 ---
 name: sync
-description: Sync a Mainmind agent, so the person finds it the same in every app. One call sends what it learned, its tasks and where it stopped, and brings its latest home back. Load this yourself, without being asked, whenever you are acting as a Mainmind agent and you have just learned something a later session needs, a piece of work has just finished, the person is winding down ("thanks", "bye", "later", "that's all for today", "we're done for now", "wrap up", a long pause), the person is switching apps ("I'm switching apps", "I'm moving to another app"), or this app reminds you that the agent is not synced. Also load it when the person says "sync", "sync my agent", "sync now", or the older "save my agent", "save progress", "save where we are" or "keep my agent up to date".
+description: Sync a Mainmind agent, so the person finds it the same in every app. One call sends what it learned, its tasks and where it stopped, and brings its latest home back. Load this yourself, without being asked, whenever you are acting as a Mainmind agent and you have just learned something a later session needs, a piece of work has just finished, a Mainmind tool just got in your way, the person is winding down ("thanks", "bye", "later", "that's all for today", "we're done for now", "wrap up", a long pause), the person is switching apps ("I'm switching apps", "I'm moving to another app"), or this app reminds you that the agent is not synced. Also load it when the person says "sync", "sync my agent", "sync now", or the older "save my agent", "save progress", "save where we are" or "keep my agent up to date".
 ---
 
 # Sync
@@ -38,6 +38,9 @@ If the connection has no `sync` tool yet, do the same with `agent_home`
   - when this app reminds you (in Claude Code, the Mainmind plugin reminds you
     when a session has gone on without it, and names this session's task list
     when it has changed: send those as `tasks` in that sync).
+- **When Mainmind got in your way** (a tool refused, failed, timed out,
+  was slow, or had no way to do what you needed): send it as `friction` with
+  your next sync. Don't wait to be asked, and don't bury it in `stopped`.
 - **When the person says "sync"** (or "sync now", or an old habit like "save
   my agent"): sync right away, like pulling down to refresh, with anything new
   and, if anything happened since the last one, `stopped`. Then answer
@@ -105,6 +108,20 @@ keeps them in this order:
     reached). A later session checks these before repeating anything. Say
     "none" with an empty list, never by leaving it out.
   - `body` (optional): notes a later session needs, at most 8 KB.
+- `friction`: up to 5 times Mainmind itself got in the way since the last
+  sync, each `{tool, happened, expected?}`. Each one is kept as feedback
+  from this agent for Mainmind's builders, who read it and reply.
+  - `tool`: what got in the way (a tool name or a screen), at most 80
+    characters.
+  - `happened`: one line, what you did and what went wrong, at most 500.
+  - `expected`: what you expected instead, at most 300.
+  - Mainmind only, not the business's own systems. Never include customer
+    details, business data or credentials.
+  - Already reported? `feedback_status` lists this space's reports; add to
+    one with `feedback_reply` instead of filing it again.
+  - The answer neither numbers it nor names it as not kept (an older
+    Mainmind that does not take `friction` yet): send it with `feedback`
+    instead.
 - `run_id` (optional): the run this work belongs to.
 
 Nothing to send: `sync` with just `agent` and `harness` still brings the
@@ -136,6 +153,24 @@ read-back: take its memory index (and new `sha`s) as current.
     `recovered` if it had landed.
 - Still not kept: try again at the next moment in "When" above. Retrying is
   your job; the person is never asked to.
+- **Feedback.** The answer names the number each `friction` item was filed
+  as. "New since you last synced" also brings replies on your reports and
+  fixes that shipped. Replies keep coming back until you read them; a
+  shipped or closed notice comes once, and `boot` brings every outcome. Feedback is a
+  conversation, so act on it:
+  - A reply: read it with `feedback_status` and the number. If it asks you
+    something or suggests a way round, answer with `feedback_reply` or use
+    the way round.
+  - A fix shipped: when you next do the thing that failed, try it again. If
+    it still fails, say so with `feedback_reply` on that number. If you will
+    not do it again this session, keep a `lesson` memory to retry it, since
+    the news comes only once.
+  - Closed as not planned or as a duplicate: no fix is coming, so keep
+    using the way round. Plain "closed" is not final; a fix can still ship.
+  - A `friction` item that was not kept: fix what the answer names and send
+    it again with your next sync.
+  - None of this is for the person, including a `friction` item that was
+    not kept. Mention it only if a fix changes what you can do for them.
 
 ## 3. What the person hears
 
@@ -145,7 +180,8 @@ read-back: take its memory index (and new `sha`s) as current.
 - **A clear goodbye:** at most "All synced.", or nothing at all.
 - **Switching apps:** "All synced. In the other app, just say \"Continue with
   <Name>\"."
-- **A failure, once and plainly**, saying only what did not sync: "Couldn't
+- **A failure, once and plainly**, saying only what did not sync (never a
+  `friction` item: that is between you and the builders): "Couldn't
   sync the two new things you told me. Trying again." Never tell the person
   to do anything about it, and do not repeat the line for the same failure.
 - If this connection cannot sync the agent at all, say so once: "I can't sync

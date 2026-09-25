@@ -13,7 +13,7 @@
       "displayName": "Mainmind",
       "category": "business",
       "source": "./plugins/mainmind",
-      "version": "0.9.0",
+      "version": "0.10.0",
       "description": "Your agents and your space's knowledge, synced in every app. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
       "author": {
         "name": "Shashwat Jain"
