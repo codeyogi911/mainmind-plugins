@@ -119,8 +119,9 @@ keeps them in this order:
     details, business data or credentials.
   - Already reported? `feedback_status` lists this space's reports; add to
     one with `feedback_reply` instead of filing it again.
-  - The answer names no feedback number for it (an older Mainmind that does
-    not take `friction` yet): send it with `feedback` instead.
+  - The answer neither numbers it nor names it as not kept (an older
+    Mainmind that does not take `friction` yet): send it with `feedback`
+    instead.
 - `run_id` (optional): the run this work belongs to.
 
 Nothing to send: `sync` with just `agent` and `harness` still brings the
@@ -154,17 +155,18 @@ read-back: take its memory index (and new `sha`s) as current.
   your job; the person is never asked to.
 - **Feedback.** The answer names the number each `friction` item was filed
   as. "New since you last synced" also brings replies on your reports and
-  fixes that shipped, each once; `boot` brings every outcome. Feedback is a
+  fixes that shipped. Replies keep coming back until you read them; a
+  shipped or closed notice comes once, and `boot` brings every outcome. Feedback is a
   conversation, so act on it:
   - A reply: read it with `feedback_status` and the number. If it asks you
     something or suggests a way round, answer with `feedback_reply` or use
     the way round.
   - A fix shipped: when you next do the thing that failed, try it again. If
     it still fails, say so with `feedback_reply` on that number. If you will
-    not do it again this session, keep a task to retry it, since the news
-    comes only once.
-  - Closed with no fix coming: stop waiting for one and keep using the way
-    round.
+    not do it again this session, keep a `lesson` memory to retry it, since
+    the news comes only once.
+  - Closed as not planned or as a duplicate: no fix is coming, so keep
+    using the way round. Plain "closed" is not final; a fix can still ship.
   - A `friction` item that was not kept: fix what the answer names and send
     it again with your next sync.
   - None of this is for the person, including a `friction` item that was
