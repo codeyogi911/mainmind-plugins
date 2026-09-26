@@ -202,6 +202,26 @@ if (!existsSync(join(root, "plugins/mainmind/skills"))) fail("plugins/mainmind/s
 // app's task list so the Stop hook can ask for it as `tasks`. Claude Code discovers
 // `hooks/hooks.json` at the plugin root by convention; naming that same file
 // again in plugin.json's `hooks` field would register it twice.
+// Anthropic's directory lists plugins/mainmind on its own: it shows the
+// README in that folder as the listing, blocks one under 40 words (code blocks
+// not counted), and reads displayName for the label people see.
+// https://claude.com/docs/plugins/pre-submission-checklist
+const LISTING_README = "plugins/mainmind/README.md";
+if (!existsSync(join(root, LISTING_README))) {
+  fail(`${LISTING_README} is missing: Anthropic's directory blocks a plugin folder without a README`);
+} else {
+  const prose = text(LISTING_README).replace(/```[\s\S]*?```/g, " ");
+  const words = prose.split(/\s+/).filter((word) => /[A-Za-z0-9]/.test(word)).length;
+  if (words < 40) fail(`${LISTING_README} has ${words} words outside code blocks; the directory needs at least 40`);
+  for (const topic of [/mainmind\.app\/mcp/, /privacy/i]) {
+    if (!topic.test(prose)) fail(`${LISTING_README} must say where data goes and link the privacy policy (missing ${topic})`);
+  }
+}
+if (claude.displayName !== "Mainmind") fail(`plugins/mainmind: displayName is ${JSON.stringify(claude.displayName)}, expected "Mainmind"`);
+for (const junk of [".DS_Store", "Thumbs.db", "desktop.ini", "__MACOSX"]) {
+  if (existsSync(join(root, "plugins/mainmind", junk))) fail(`plugins/mainmind/${junk}: the directory blocks system files`);
+}
+
 // https://code.claude.com/docs/en/plugins-reference#hooks
 const HOOKS = "plugins/mainmind/hooks/hooks.json";
 const HOOK_SCRIPTS = {
@@ -212,8 +232,11 @@ const HOOK_SCRIPTS = {
 // Every tool Claude Code keeps its task list with; a missing one means those
 // tasks never reach the agent.
 const TASK_TOOLS = ["TodoWrite", "TaskCreate", "TaskUpdate"];
+// How run.sh treats each hook's output: the Stop decision passes through, the
+// SessionStart hint keeps its stdout, and the task hook prints nothing.
+const HOOK_MODES = { Stop: "plain", SessionStart: "stdout", PostToolUse: "silent" };
 if ("hooks" in claude) fail(`plugins/mainmind: plugin.json declares "hooks"; ${HOOKS} is discovered by convention and would load twice`);
-for (const script of [...Object.values(HOOK_SCRIPTS), "state.mjs"]) {
+for (const script of [...Object.values(HOOK_SCRIPTS), "state.mjs", "run.sh"]) {
   if (!existsSync(join(root, "plugins/mainmind/hooks", script))) fail(`plugins/mainmind/hooks/${script} is missing`);
 }
 if (!existsSync(join(root, HOOKS))) {
@@ -224,9 +247,13 @@ if (!existsSync(join(root, HOOKS))) {
     const commands = (hooks[event] || []).flatMap((group) => group.hooks || []);
     const command = commands.find((hook) => hook.type === "command" && hook.command?.includes(`\${CLAUDE_PLUGIN_ROOT}/hooks/${script}`));
     if (!command) { fail(`${HOOKS}: no ${event} command running \${CLAUDE_PLUGIN_ROOT}/hooks/${script}`); continue; }
-    // A host without node must start and stop sessions as if no hook existed.
-    if (!command.command.startsWith("command -v node >/dev/null 2>&1 || exit 0;")) {
-      fail(`${HOOKS}: the ${event} command does not exit 0 when node is missing`);
+    // Anthropic's directory blocks a hook command in a plugin subfolder that
+    // names any path but one under ${CLAUDE_PLUGIN_ROOT}, so the command is
+    // only run.sh, a mode and the script; run.sh exits 0 when node is missing.
+    // https://claude.com/docs/plugins/pre-submission-checklist
+    const mode = HOOK_MODES[event];
+    if (command.command !== `sh "\${CLAUDE_PLUGIN_ROOT}/hooks/run.sh" ${mode} "\${CLAUDE_PLUGIN_ROOT}/hooks/${script}"`) {
+      fail(`${HOOKS}: the ${event} command must be exactly: sh "\${CLAUDE_PLUGIN_ROOT}/hooks/run.sh" ${mode} "\${CLAUDE_PLUGIN_ROOT}/hooks/${script}"`);
     }
   }
   const start = (hooks.SessionStart || []).flatMap((group) => group.hooks || []);
@@ -239,7 +266,7 @@ if (!existsSync(join(root, HOOKS))) {
     for (const tool of TASK_TOOLS) if (!matched.includes(tool)) fail(`${HOOKS}: the PostToolUse matcher does not name ${tool}`);
     for (const hook of taskGroup.hooks || []) {
       if (!(hook.timeout <= 10)) fail(`${HOOKS}: the PostToolUse task hook must time out within 10 seconds`);
-      if (!/>\/dev\/null 2>&1 \|\| true$/.test(hook.command || "")) fail(`${HOOKS}: the PostToolUse task hook must print nothing and never fail`);
+      if (!/run\.sh" silent /.test(hook.command || "")) fail(`${HOOKS}: the PostToolUse task hook must print nothing and never fail (run.sh silent)`);
     }
   }
 }
