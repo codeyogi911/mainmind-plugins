@@ -9,8 +9,9 @@ bottom before sending it.
 
 ## 1. Describe your product
 
-**What it is.** Mainmind lets a person move freely between AIs: their agents, their
-space's knowledge and their work come with them to every AI app. A space can hold a company, a job hunt, research or
+**What it is.** Mainmind lets a person move freely between AIs: their agents
+sync and travel with them, their space's knowledge gets better with every task,
+and their passwords stay safe: the assistant uses accounts through Mainmind. A space can hold a company, a job hunt, research or
 anything else: its processes, records, decisions, lessons and the jobs on its
 team, plus the work in progress right now. The assistant reads the space's own
 rules instead of guessing them, and every answer can point to where it came

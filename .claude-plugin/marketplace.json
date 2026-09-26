@@ -5,7 +5,7 @@
     "url": "https://mainmind.app"
   },
   "metadata": {
-    "description": "Mainmind: move freely between AIs. Your agents, knowledge and work come with you to every AI app. A space can hold a company, a job hunt or anything else."
+    "description": "Mainmind: move freely between AIs. Your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else."
   },
   "plugins": [
     {
@@ -13,8 +13,8 @@
       "displayName": "Mainmind",
       "category": "business",
       "source": "./plugins/mainmind",
-      "version": "0.11.0",
-      "description": "Move freely between AIs: your agents, knowledge and work come with you to every app. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
+      "version": "0.11.1",
+      "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
       "author": {
         "name": "Shashwat Jain"
       },
