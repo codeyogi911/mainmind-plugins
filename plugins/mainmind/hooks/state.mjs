@@ -67,7 +67,7 @@ export function taskNote(cwd, sessionId) {
 }
 
 // The same stable id Mainmind gives a task that comes without one
-// (taskIdFrom in the server's agent-tasks.js): the same title is the same
+// on sync: the same title is the same
 // task on the next sync.
 export const TASK_ID = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 export function taskIdFrom(title) {

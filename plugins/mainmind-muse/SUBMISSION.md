@@ -90,9 +90,8 @@ it.
 - **Listing assets:** a 512×512 icon, and privacy, terms and support URLs.
 
 **This answers the question this file used to end on.** Mainmind's mount is an
-OAuth 2.1 provider with PKCE and dynamic client registration — the OAuth
-machinery is described at `src/auth.js:10` and its policy at
-`src/oauth-policy.js` — so if the form offers OAuth with PKCE, the connector
+OAuth 2.1 provider with PKCE and dynamic client registration (its metadata is
+at `https://mainmind.app/.well-known/oauth-authorization-server`), so if the form offers OAuth with PKCE, the connector
 authenticates each person as themselves and the per-person role claim in
 section 2 stands as written. Tick OAuth with PKCE, not API keys: an API key
 would make the listing one machine identity, and section 2 would have to be
@@ -110,12 +109,8 @@ cannot keep.
    the icon is settled (below); these two are the remaining assets, and they
    need to exist at stable addresses before the listing can name them.
 
-The **512×512 icon** is already deployed: `public/icon-512.png` in the
-mainmind repository is a genuine 512×512 PNG, and `wrangler.jsonc` serves
-`./public` as the asset directory with ordinary static files answered before
-the Worker, so it is reachable at `https://mainmind.app/icon-512.png`. That
-last step is read from the configuration, not fetched — the sandbox this was
-written in cannot reach mainmind.app — so confirm the URL in a browser before
+The **512×512 icon** is already deployed at
+`https://mainmind.app/icon-512.png`, a genuine 512×512 PNG. Confirm the URL in a browser before
 pasting it into the form.
 
 Meta's own security writeup describes launch connectors as a joint engagement —

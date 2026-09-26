@@ -39,7 +39,7 @@ process.on("uncaughtException", quietExit);
 process.on("unhandledRejection", quietExit);
 
 const TOOLS = new Set(["TodoWrite", "TaskCreate", "TaskUpdate"]);
-// Mainmind's own limits (agent-tasks.js): a title is one line of at most 200
+// Mainmind's own limits for sync: a title is one line of at most 200
 // characters, an id at most 60. The note keeps at most this many tasks.
 const TITLE_MAX = 200;
 const ID_MAX = 60;
