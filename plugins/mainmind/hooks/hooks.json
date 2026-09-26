@@ -7,7 +7,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/last-agent-here.mjs\" 2>/dev/null || true",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" stdout \"${CLAUDE_PLUGIN_ROOT}/hooks/last-agent-here.mjs\"",
             "timeout": 5
           }
         ]
@@ -19,7 +19,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/note-tasks.mjs\" >/dev/null 2>&1 || true",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" silent \"${CLAUDE_PLUGIN_ROOT}/hooks/note-tasks.mjs\"",
             "timeout": 5
           }
         ]
@@ -30,7 +30,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "command -v node >/dev/null 2>&1 || exit 0; node \"${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs\"",
+            "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/run.sh\" plain \"${CLAUDE_PLUGIN_ROOT}/hooks/keep-up-to-date.mjs\"",
             "timeout": 15
           }
         ]
