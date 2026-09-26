@@ -84,13 +84,12 @@ plugin, the same way a merge releases it to Claude Code today.
 The connector checklist asks more of the server than the plugin checklist asks
 of the plugin. Measured on mainmind `main` at `15e7f5a`:
 
-- **Tool annotations.** Every tool needs a `title` and the right hint. 67 of
-  75 tools have a title and annotations. Missing: `title` on `review_checkout_tools`,
-  `checkout_member_repo`, `checkout_canonical_repo`, `land_canonical_change`,
-  `land_scoped_change`, `submit_checkout_change` and `checkout_change_status`;
-  `deposit_record` has no annotations at all. A small change in mainmind.
-  Write tools that only add (a record, a note) say `destructiveHint: false`,
-  which matches the MCP spec; a reviewer may still ask for `true`.
+- **Tool annotations.** Every tool needs a `title` and the right hint. On
+  mainmind `main` at `15e7f5a`, seven tools had no title and `deposit_record`
+  had no annotations; mainmind#1139 gives all 75 tools a plain title and both
+  hints, and a test now refuses a tool without them. Write tools that only add
+  (a record, a note) say `destructiveHint: false`, which matches the MCP spec;
+  a reviewer may still ask for `true`.
 - **Tool descriptions.** Review rejects a description that tells Claude how to
   behave rather than what the tool does. The server's instructions (served at
   connection, not in tool descriptions) carry the behaviour; descriptions
