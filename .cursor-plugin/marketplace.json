@@ -5,13 +5,13 @@
     "url": "https://mainmind.app"
   },
   "metadata": {
-    "description": "Mainmind: move freely between AIs. Your agents, knowledge and work come with you to every AI app. A space can hold a company, a job hunt or anything else."
+    "description": "Mainmind: move freely between AIs. Your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else."
   },
   "plugins": [
     {
       "name": "mainmind",
       "source": "./plugins/mainmind-mount",
-      "description": "Move freely between AIs: your agents, knowledge and work come with you into Cursor and its Grok Bot. Continue with any agent where you left off. You sign in as yourself."
+      "description": "Move freely between AIs: your agents travel with you into Cursor and its Grok Bot, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off. You sign in as yourself."
     }
   ]
 }
