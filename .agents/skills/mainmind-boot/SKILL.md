@@ -130,9 +130,22 @@ never wait to be asked, and never ask the person to do it.
   expire automatically and need no closing summary.
 - Report completed real work with `emit_event`: one buyer-readable sentence,
   no secrets, no repo paths in the title.
-- A decision that belongs to the Founder goes through `ask_founder`: do the
-  reading and arguing yourself, then send ONE yes/no question with what
-  becomes true. Never split one decision into many asks.
+- Before a choice that is not already yours, call `weigh` with the
+  `question`, your `recommend`, any `options` and the `targets` it would
+  change (pass `agent`). `go` means only that changing the files it names is
+  already approved: change those files and nothing more, and tell the person
+  which ruling you followed. It never approves anything else the question
+  says; weigh any other act on its own. On `ask`, put `put_to_person` to the
+  person in this chat as it stands, tell them where the answer will be kept
+  (`kept_in`; pass `access_scope` to `decide` if they want it elsewhere), then
+  record their exact answer at once with `decide` (`weigh_id`, their words in
+  `words`, where they said it in `said_in`). On `stop`, do not act: file it
+  for the person it names with `ask_founder` (or `propose_change` for a
+  change to files); a co-owner files it with `ask_founder` too.
+- A decision that belongs to the Founder and has no chat to ask in goes
+  through `ask_founder`: do the reading and arguing yourself, then send ONE
+  yes/no question with what becomes true. Never split one decision into many
+  asks.
 - The Founder's answer counts wherever they give it: in this chat, on a card,
   in another app. When they answer a waiting question, record it at once with
   `decide`: pass `agent`, their exact words in `words`, and where they said it
