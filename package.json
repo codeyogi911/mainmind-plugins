@@ -1,6 +1,6 @@
 {
   "name": "mainmind-plugins",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "private": true,
   "description": "Mainmind plugins and skills for Claude Code, Codex, Grok and Agent Plugins clients.",
   "license": "MIT",
