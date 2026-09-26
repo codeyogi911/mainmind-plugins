@@ -76,7 +76,7 @@ function syncStructured(entry, part) {
   return candidates.find((value) => value && typeof value === "object" && Array.isArray(value.sent)) || null;
 }
 
-// Receipt states that mean the write is kept (src/agent-sync.js `kept`).
+// Receipt states in which sync reports the write as kept.
 const KEPT = new Set(["saved", "recovered"]);
 
 // Did this sync keep where the agent stopped? Only that receipt matters: a
@@ -190,7 +190,7 @@ function reasonFor(agent, taskLine) {
     (taskLine ? `\n${taskLine}` : "");
 }
 
-// Mainmind takes at most this many tasks in one sync (agent-tasks.js).
+// Mainmind takes at most this many tasks in one sync.
 const TASKS_PER_SYNC = 20;
 const ORDER = { doing: 0, todo: 1, done: 2 };
 
