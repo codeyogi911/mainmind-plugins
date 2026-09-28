@@ -46,13 +46,13 @@ role to allow them, and a provider write takes an `operation_key`, so a retry
 returns the prior receipt instead of sending twice.
 
 **Security.** No credential ships in the connector and none is ever asked for in
-conversation. A person authorizes as themselves and the mount serves only what
+conversation. A person authorizes as themselves and Mainmind serves only what
 their live role allows; the role is the boundary, not the tool list. Provider
 credentials stay on Mainmind's server and are never returned to the assistant.
 The space's own command-line tools are not served to this surface at
 all — the projection carries Markdown and nothing else.
 
-A connection that names no space asks which one to mount at
+A connection that names no space asks which one to connect at
 authorization time, and it serves one at a time. A connection made to
 `https://mainmind.app/mcp/<space>` is fixed to that space before
 authorization begins.
@@ -89,7 +89,7 @@ it.
 - **Authentication**, multi-select: "OAuth with PKCE" or "API keys".
 - **Listing assets:** a 512×512 icon, and privacy, terms and support URLs.
 
-**This answers the question this file used to end on.** Mainmind's mount is an
+**This answers the question this file used to end on.** Mainmind's connection is an
 OAuth 2.1 provider with PKCE and dynamic client registration (its metadata is
 at `https://mainmind.app/.well-known/oauth-authorization-server`), so if the form offers OAuth with PKCE, the connector
 authenticates each person as themselves and the per-person role claim in

@@ -1,9 +1,9 @@
 ---
 name: mainmind-boot
-description: Mount discipline for Mainmind work. Load BEFORE answering any question about what a Mainmind space holds (a business, a job hunt, research or anything else) or starting any task in one in this session — the first such question, "boot", "start work", "connect to mainmind", or any request that will read the space's knowledge or touch the run ledger.
+description: Working discipline for the Mainmind connection. Load BEFORE answering any question about what a Mainmind space holds (a business, a job hunt, research or anything else) or starting any task in one in this session — the first such question, "boot", "start work", "connect to mainmind", or any request that will read the space's knowledge or touch the run ledger.
 ---
 
-# Boot the Mainmind mount
+# Boot the Mainmind connection
 
 You are entering a space (a company, a job hunt, a project: whatever it holds), not a toolbox. The `mainmind` MCP server serves a
 projection of the space's durable knowledge at a named commit, plus the live run
@@ -47,21 +47,23 @@ client. You can. Decide once, before you start reading, and say which you took.
 
 If this session has no shell, no filesystem and no Git client — a chat
 surface such as Grok on the web, Muse, Claude chat or ChatGPT — step 1 cannot
-apply to you. You are on the mount. Go to step 2 and say so.
+apply to you. You are working only through the Mainmind connection. Go to
+step 2 and say so.
 
 1. **Try a checkout first.** Call `checkout_canonical_repo` (Founder) or
    `checkout_member_repo` (everyone else) and clone what it returns. A checkout
    gives you the whole space's knowledge at once, and it gives you the parts the
-   mount does not carry at all: **the projection serves Markdown under
+   Mainmind connection does not carry at all: **the projection serves Markdown under
    `knowledge/` and nothing else, so the space's own command-line tools,
    under `tools/`, exist only in a checkout.**
-2. **If you cannot, work on the mount.** No shell, no disk, or the clone fails:
+2. **If you cannot, work only through the Mainmind connection.** No shell, no disk, or the clone fails:
    use `read_node`, `search` and `call_provider`. That is a supported way to
-   work, not a lesser one — say plainly that you are on the mount, so nobody
+   work, not a lesser one — say plainly that you are working only through the Mainmind
+   connection, so nobody
    reads a partial answer as a complete one.
 
-Never tell anyone this space has no tool for something while you are on
-the mount. You cannot see `tools/` from there; not finding it is not evidence.
+Never tell anyone this space has no tool for something while you are working
+only through the Mainmind connection. You cannot see `tools/` from there; not finding it is not evidence.
 
 A checkout is a working copy, not permission. Durable writes go through the
 governed path on either surface: `land_canonical_change`,
@@ -165,4 +167,4 @@ never wait to be asked, and never ask the person to do it.
   none. That file is how this space writes knowledge; do not treat
   the Worker as a write gate.
 - This skill owns transport and routing only. If it disagrees with what
-  `boot` returns, the mount wins.
+  `boot` returns, what Mainmind serves wins.

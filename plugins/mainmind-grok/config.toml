@@ -12,7 +12,7 @@
 # file carries no token, and none should ever be written into it.
 #
 # The URL below names no organization, so authorization asks which one to
-# mount. If this connection should only ever reach one organization, use the
+# connect. If this connection should only ever reach one organization, use the
 # complete form instead and name the entry after it:
 #
 #   [mcp_servers.mainmind-acme]
