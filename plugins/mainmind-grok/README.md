@@ -1,6 +1,6 @@
 # Mainmind on Grok
 
-Three surfaces, three setups, one mount. Grok reaches Mainmind the way it
+Three surfaces, three setups, one Mainmind connection. Grok reaches Mainmind the way it
 reaches any connector: as a remote MCP server over the public internet, with
 authorization completed in a browser. Nothing here ships a secret.
 
@@ -18,7 +18,7 @@ So the layout here is the one xAI's own catalogue uses:
 | Path | What Grok does with it |
 |---|---|
 | `.grok-plugin/plugin.json` | metadata — name, version, author, licence |
-| `.mcp.json` | the mount, at the plugin root. The leading dot matters |
+| `.mcp.json` | the Mainmind connection, at the plugin root. The leading dot matters |
 | `skills/<name>/SKILL.md` | discovered by convention; nothing declares them |
 | `config.toml` | Grok Build's own TOML route, for people not installing a plugin |
 
@@ -33,7 +33,7 @@ directories and not one, and `npm run check` asserts both.
 No file. xAI documents this screen for the web; whether the iOS and Android apps
 expose the same one is not something its docs state, so this file does not claim
 it. Open **[grok.com/connectors](https://grok.com/connectors)**, choose
-**New Connector**, then **Custom**, enter the mount URL, and complete
+**New Connector**, then **Custom**, enter the connection URL, and complete
 Mainmind's authorization in the flow Grok opens.
 
 ```text
@@ -82,7 +82,7 @@ Cursor on this host, look for the entry you have before adding a second one.
 
 This is the surface where the skills in [`skills/`](./skills) earn their place:
 Grok Build has a shell and a filesystem, so it can hold a checkout, and the
-mount alone cannot tell it that. See the repository README for why.
+Mainmind connection alone cannot tell it that. See the repository README for why.
 
 An agent syncs itself here with no one asking: the `sync` skill has it sync
 what it learns and where it stopped after each finished piece of work, when
@@ -96,7 +96,7 @@ Claude Code's.
 The xAI API's remote MCP tool takes `server_url`, `server_label` and
 `authorization`. That last field takes the **raw** credential, not a header
 value: xAI writes the `Authorization` header itself, so a value beginning
-`Bearer ` arrives doubled and the mount refuses it. That surface runs no OAuth,
+`Bearer ` arrives doubled and Mainmind refuses it. That surface runs no OAuth,
 so a plugin is the wrong shape for it and no file here applies.
 
 Register a machine member instead — `invite_member` with `kind: machine` — and

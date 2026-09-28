@@ -11,7 +11,8 @@ three-stage program in prose and links no developer documentation, no schema
 and no submission form. So there is no manifest here and no file shaped like
 one. With no published format, no file in this directory could be the one Muse
 reads: it would be read by nothing and would only look supported. What this
-directory holds is the mount URL, the skills for a mount-only surface, and
+directory holds is the connection URL, the skills for a surface that works only
+through the Mainmind connection, and
 [`SUBMISSION.md`](./SUBMISSION.md), the dossier the review stage asks for. If
 Meta publishes a manifest schema, that is the file to add, and it belongs
 here.
@@ -19,16 +20,16 @@ here.
 ## Add it yourself today
 
 You do not have to wait for the directory. Muse takes custom connectors from
-users directly: give it the mount URL.
+users directly: give it the connection URL.
 
 ```text
 https://mainmind.app/mcp
 ```
 
-The mount is an OAuth 2.1 server, so connecting means completing a browser
+The Mainmind connection is an OAuth 2.1 server, so connecting means completing a browser
 authorization. Meta documents nothing about what its connector screen
 supports, so treat that step as unverified until you have done it once. It
-should ask which space to mount, because that URL names none. If the
+should ask which space to connect, because that URL names none. If the
 connection is only ever meant to reach one, use the complete form,
 `https://mainmind.app/mcp/<space>`, which fixes it before authorization
 begins.
@@ -42,10 +43,10 @@ changes that, and nothing in this repository holds a credential.
 Ask the connected session for `whoami`, then `boot`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
-Muse has no shell, no filesystem and no Git client, so it is a mount-only
-surface: `read_node`, `search` and `call_provider`, and no checkout. The
+Muse has no shell, no filesystem and no Git client, so it works only
+through the Mainmind connection: `read_node`, `search` and `call_provider`, and no checkout. The
 skills in [`skills/`](./skills) say so, and an agent on this surface should say
-plainly that it is on the mount, so nobody reads a partial answer as a complete
+plainly that it is working only through the Mainmind connection, so nobody reads a partial answer as a complete
 one. In particular the space's own command-line tools, under `tools/`,
 are invisible from here — not absent.
 

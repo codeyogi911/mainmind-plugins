@@ -1,7 +1,7 @@
 # Mainmind plugins
 
-Mount a [Mainmind](https://mainmind.app) space into your coding agent,
-and give it the handful of habits that a mount alone cannot teach it.
+Connect your coding agent to a [Mainmind](https://mainmind.app) space,
+and give it the handful of habits that the connection alone cannot teach it.
 
 One skill set, published for every harness that can read one. MIT licensed, no
 secrets, no vendored credentials — you sign in as yourself and your live role
@@ -15,12 +15,12 @@ decides which tools the session ever sees.
 | **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`, then `codex mcp login mainmind` to sign in. Codex reads this repository's Claude Code marketplace, so it installs `plugins/mainmind` with its skills. Copying `.agents/skills/` into a repository is still there for a Codex that has no plugin command |
 | **Cursor**, including its Grok Bot | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins**, in the editor or in Grok Bot. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
 | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
-| **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one mount. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Cursor's Grok Bot is a Cursor product and uses the Cursor row |
+| **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Cursor's Grok Bot is a Cursor product and uses the Cursor row |
 | **Claude directory** (claude.ai, Cowork, Claude Code) | `plugins/mainmind` is ready to submit to Anthropic's directory; [`submissions/claude-directory.md`](submissions/claude-directory.md) holds every answer the portal asks for and what is still open |
 | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
 
-The canonical mount names no space, so authorization asks which one to
-mount — that is what lets one published file serve everybody. Configuring by
+The canonical connection URL names no space, so authorization asks which
+one to connect — that is what lets one published file serve everybody. Configuring by
 hand instead? Prefer the complete per-space URL,
 `https://mainmind.app/mcp/<space>`, which fixes the space before
 authorization begins.
@@ -33,10 +33,10 @@ for one — a plugin is the wrong shape. Register a machine member instead
 
 Six skills, in `skills/`:
 
-- **`mainmind-boot`** — how to behave on a mount. Boot before answering,
+- **`mainmind-boot`** — how to work through the Mainmind connection. Boot before answering,
   route through `find_process`, cite the path and the projection commit, and
   put Founder decisions through `ask_founder` as one question.
-- **`morning-brief`** — a start-of-day digest built entirely from mount reads:
+- **`morning-brief`** — a start-of-day digest built entirely from reads through the Mainmind connection:
   what needs you, what is in motion, what landed.
 - **`write-knowledge`** — before an agent saves or proposes a lesson, skill,
   decision, fact, gap or work note: which page type, and how to write it so a
@@ -89,7 +89,7 @@ Codex, Cursor, Grok and Muse have the skills only.
 
 ## Why this ships skills at all
 
-An earlier version of the mount plugin shipped none, deliberately, and said so:
+An earlier version of the `mainmind-mount` plugin shipped none, deliberately, and said so:
 
 > Everything an agent needs in order to behave correctly on a mount arrives
 > from the server itself: the `instructions` returned on `initialize`, the tool
@@ -99,8 +99,8 @@ An earlier version of the mount plugin shipped none, deliberately, and said so:
 
 That rule is right about everything the **server** can know, and it still
 governs: none of the space's rules, processes or authority live here.
-They arrive from `boot`, and when this repository disagrees with the mount, the
-mount wins.
+They arrive from `boot`, and when this repository disagrees with what Mainmind
+serves, what Mainmind serves wins.
 
 It is wrong about one class of thing, and that class turned out to matter.
 **Mainmind cannot tell whether your session has a shell, a filesystem or a Git
@@ -108,9 +108,10 @@ client. Your agent can.** The server cannot instruct what it cannot observe, so
 the guidance has to sit on the client side — which is exactly what a plugin is.
 
 The consequence is the one habit worth publishing: **try a checkout first, fall
-back to the mount if you cannot.** The mount serves Markdown under `knowledge/`
-and nothing else, so a space's own command-line tools, under `tools/`,
-are invisible from the mount entirely. An agent that never tries a checkout
+back to working only through the Mainmind connection if you cannot.** Mainmind
+serves Markdown under `knowledge/` and nothing else, so a space's own
+command-line tools, under `tools/`, are invisible through the connection
+entirely. An agent that never tries a checkout
 cannot see them, will not know they exist, and will reach for a raw API call
 where a vetted client was sitting in the repository — one that knows the
 payload shapes that actually work, which writes are safe to replay, and where
@@ -147,7 +148,7 @@ metadata only — none of them declares a skill or a server, because every one o
 them discovers those by convention. Claude Code's is
 `.claude-plugin/plugin.json`. The [Agent Plugins](https://agent-plugins.org)
 1.0.0 schema's is `plugin.json`, validated and `additionalProperties: false`,
-with the mount in the sibling `mcp.json`. Cursor's is
+with the Mainmind connection in the sibling `mcp.json`. Cursor's is
 `.cursor-plugin/plugin.json` in that same directory: Cursor loads an Agent
 Plugin as it is, but Cursor's own plugin template
 ([cursor/plugin-template](https://github.com/cursor/plugin-template)) and its
@@ -156,7 +157,7 @@ carry that manifest, so the two sit side by side and share `mcp.json` and
 `skills/`. The two manifests name the plugin differently on purpose: `mainmind`
 is what Cursor lists and must match the marketplace entry, and `mainmind-mount`
 is the Agent Plugins name that directory has always had. Grok's is `.grok-plugin/plugin.json`,
-with the mount in `.mcp.json` at the plugin root — xAI's marketplace guide says
+with the Mainmind connection in `.mcp.json` at the plugin root — xAI's marketplace guide says
 *"local plugins include a `README.md` and a valid `.grok-plugin/plugin.json`
 manifest"*, and the plugins xAI already lists ship that layout. **Muse is the
 one with no plugin format**: it takes a connector URL through a submission form.
