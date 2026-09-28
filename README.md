@@ -38,6 +38,9 @@ Six skills, in `skills/`:
   put Founder decisions through `ask_founder` as one question.
 - **`morning-brief`** — a start-of-day digest built entirely from mount reads:
   what needs you, what is in motion, what landed.
+- **`write-knowledge`** — before an agent saves or proposes a lesson, skill,
+  decision, fact, gap or work note: which page type, and how to write it so a
+  person and an AI can both follow it.
 - **`make-an-agent`** — "make me an agent that…": three plain questions, then
   a registered agent with proposed instructions, limits and schedule, shown as
   one summary card.
@@ -127,6 +130,7 @@ skills/                          canonical — edit here, only here
   continue-with-my-agent/SKILL.md
   sync/SKILL.md
   continue-everywhere/SKILL.md
+  write-knowledge/SKILL.md
 plugins/
   mainmind/                      Claude Code       .claude-plugin/plugin.json + hooks/hooks.json
   mainmind-mount/                Cursor and        .cursor-plugin/plugin.json + plugin.json + mcp.json
