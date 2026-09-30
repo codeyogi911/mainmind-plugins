@@ -11,7 +11,7 @@ decides which tools the session ever sees.
 another, you do not set your agent up again. An agent that already syncs is waiting:
 connect Mainmind in the new app and say "Continue with <name>". One set up
 inside the old app goes first: tell it "I'm moving to dots. Take everything
-you know about me and our work with you." [How it works](https://mainmind.app/docs/persistent-agents#switch-to-a-new-ai-app).
+you know with you." [How it works](https://mainmind.app/docs/persistent-agents#switch-to-a-new-ai-app).
 
 ## Install
 
