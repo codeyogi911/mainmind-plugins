@@ -24,6 +24,8 @@ const fail = (message) => failures.push(message);
 
 const marketplace = read(".claude-plugin/marketplace.json");
 const claude = read("plugins/mainmind/.claude-plugin/plugin.json");
+const codexMarketplace = read(".agents/plugins/marketplace.json");
+const codex = read("plugins/mainmind-codex/plugin.json");
 const agentPlugins = read("plugins/mainmind-mount/plugin.json");
 // Read defensively: if this file is missing, the required-files check below is
 // what should say so, not a Node stack trace from this line.
@@ -48,7 +50,7 @@ if (marketplace.metadata && "version" in marketplace.metadata) {
   fail(".claude-plugin/marketplace.json: metadata.version pins nothing — it belongs on the plugin entry");
 }
 const versions = new Set([
-  marketplaceEntry?.version, claude.version, agentPlugins.version, pkg.version,
+  marketplaceEntry?.version, claude.version, codex.version, agentPlugins.version, pkg.version,
   ...(grok ? [grok.version] : []), ...(cursor ? [cursor.version] : []),
 ]);
 if (versions.size !== 1) fail(`versions disagree: ${[...versions].join(", ")}`);
@@ -58,6 +60,7 @@ if (versions.size !== 1) fail(`versions disagree: ${[...versions].join(", ")}`);
 // reason it could not be listed.
 for (const [label, manifest] of [
   ["plugins/mainmind", claude],
+  ["plugins/mainmind-codex", codex],
   ["plugins/mainmind-mount (agent-plugins)", agentPlugins],
   ...(grok ? [["plugins/mainmind-grok (grok)", grok]] : []),
   ...(cursor ? [["plugins/mainmind-mount (cursor)", cursor]] : []),
@@ -74,6 +77,64 @@ if (!agentPlugins.$schema?.startsWith("https://agent-plugins.org/schemas/")) {
   fail("plugins/mainmind-mount: $schema must name an agent-plugins.org schema; it is required by that spec");
 }
 
+// OpenAI's portable plugin format: root plugin.json + mcp.json + skills/,
+// with presentation under extensions.com.openai. The native Codex marketplace
+// points at this package, leaving the Claude package and its hooks unchanged.
+// https://developers.openai.com/plugins/build/plugins
+// https://developers.openai.com/plugins/deploy/submission-errors
+const CODEX_ROOT = "plugins/mainmind-codex";
+const codexEntry = codexMarketplace.plugins?.find((entry) => entry.name === "mainmind");
+if (codexMarketplace.name !== "mainmind") fail(".agents/plugins/marketplace.json: marketplace name must be mainmind");
+if (codexMarketplace.plugins?.length !== 1 || codexEntry?.source?.source !== "local" ||
+    codexEntry?.source?.path !== `./${CODEX_ROOT}`) {
+  fail(`.agents/plugins/marketplace.json: expected one mainmind entry pointing at ./${CODEX_ROOT}`);
+}
+if (codex.$schema !== "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json") {
+  fail(`${CODEX_ROOT}/plugin.json: wrong portable schema`);
+}
+if (codex.name !== "mainmind") fail(`${CODEX_ROOT}/plugin.json: name must remain mainmind`);
+if (existsSync(join(root, CODEX_ROOT, ".codex-plugin/plugin.json"))) {
+  fail(`${CODEX_ROOT}: remove the compatibility overlay; the inline OpenAI extension replaces it`);
+}
+if (existsSync(join(root, CODEX_ROOT, "hooks"))) {
+  fail(`${CODEX_ROOT}: Claude hooks must not be bundled in the Codex package`);
+}
+if (!existsSync(join(root, CODEX_ROOT, "skills"))) fail(`${CODEX_ROOT}/skills does not exist; run npm run sync`);
+const codexInterface = codex.extensions?.["com.openai"]?.interface;
+if (!codexInterface) {
+  fail(`${CODEX_ROOT}/plugin.json: extensions.com.openai.interface is required`);
+} else {
+  for (const key of ["displayName", "shortDescription", "longDescription", "developerName",
+    "websiteURL", "privacyPolicyURL", "termsOfServiceURL", "supportURL"]) {
+    if (typeof codexInterface[key] !== "string" || !codexInterface[key].trim()) {
+      fail(`${CODEX_ROOT}/plugin.json: interface.${key} is required`);
+    }
+  }
+  if (codexInterface.displayName !== "Mainmind") fail(`${CODEX_ROOT}: displayName must be Mainmind`);
+  if (codexInterface.shortDescription?.length > 30) fail(`${CODEX_ROOT}: shortDescription exceeds the directory's 30-character limit`);
+  if (codexInterface.category !== "Productivity") fail(`${CODEX_ROOT}: category must be Productivity`);
+  if (codexInterface.brandColor !== "#B23A3A") fail(`${CODEX_ROOT}: use Mainmind's approved crimson brand colour`);
+  for (const key of ["composerIcon", "logo"]) {
+    const path = codexInterface[key];
+    if (typeof path !== "string" || !/^\.\/assets\/[^/]+\.png$/.test(path)) {
+      fail(`${CODEX_ROOT}: interface.${key} must point to a PNG under ./assets/`);
+      continue;
+    }
+    const file = join(root, CODEX_ROOT, path);
+    if (!existsSync(file)) { fail(`${CODEX_ROOT}: interface.${key} file is missing: ${path}`); continue; }
+    const image = readFileSync(file);
+    if (image.length > 5 * 1024 * 1024 || image.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") {
+      fail(`${CODEX_ROOT}: interface.${key} must be a readable PNG under 5 MiB`);
+      continue;
+    }
+    const width = image.readUInt32BE(16);
+    const height = image.readUInt32BE(20);
+    if (width !== height || width < 48 || width > 4096) {
+      fail(`${CODEX_ROOT}: interface.${key} must be square and 48–4096 pixels, got ${width}×${height}`);
+    }
+  }
+}
+
 // Every JSON spelling of the same server, and they are NOT interchangeable.
 // The Agent Plugins mcp schema enumerates `stdio | streamable-http | sse` and
 // rejects "http" outright. Claude Code takes "http", and so does the `.mcp.json`
@@ -85,6 +146,7 @@ if (!agentPlugins.$schema?.startsWith("https://agent-plugins.org/schemas/")) {
 const transports = [
   ["plugins/mainmind/.mcp.json", "http"],
   ["plugins/mainmind-mount/mcp.json", "streamable-http"],
+  ["plugins/mainmind-codex/mcp.json", "streamable-http"],
   ["plugins/mainmind-grok/.mcp.json", "http"],
 ];
 for (const [path, expected] of transports) {
@@ -112,6 +174,7 @@ for (const surface of ["mainmind-grok", "mainmind-muse"]) {
   if (!existsSync(join(root, `plugins/${surface}/README.md`))) fail(`plugins/${surface}: no README.md`);
   if (!existsSync(join(root, `plugins/${surface}/skills`))) fail(`plugins/${surface}/skills does not exist; run npm run sync`);
 }
+if (!existsSync(join(root, `${CODEX_ROOT}/README.md`))) fail(`${CODEX_ROOT}: no README.md`);
 if (!existsSync(join(root, "plugins/mainmind-muse/SUBMISSION.md"))) {
   fail("plugins/mainmind-muse: no SUBMISSION.md; the directory listing is the point of that package");
 }
@@ -305,6 +368,8 @@ for (const [label, description] of [
   [".claude-plugin/marketplace.json metadata", marketplace.metadata?.description],
   [".claude-plugin/marketplace.json mainmind entry", marketplaceEntry?.description],
   ["plugins/mainmind", claude.description],
+  ["plugins/mainmind-codex", codex.description],
+  ["plugins/mainmind-codex listing", codexInterface?.longDescription],
   ["plugins/mainmind-mount (agent-plugins)", agentPlugins.description],
   ...(grok ? [["plugins/mainmind-grok (grok)", grok.description]] : []),
   ...(cursor ? [["plugins/mainmind-mount (cursor)", cursor.description]] : []),

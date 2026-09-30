@@ -1,0 +1,41 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "mainmind",
+  "version": "0.14.4",
+  "description": "Continue with your agents across AI apps, use your space's knowledge, and keep work in sync.",
+  "author": {
+    "name": "Shashwat Jain",
+    "url": "https://mainmind.app"
+  },
+  "homepage": "https://mainmind.app",
+  "repository": "https://github.com/codeyogi911/mainmind-plugins",
+  "license": "MIT",
+  "keywords": ["mainmind", "agents", "knowledge", "mcp"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Mainmind",
+        "shortDescription": "Your agents in every AI app",
+        "longDescription": "Continue with an agent where you left off, ask what your space knows, and carry the work forward in Codex. Mainmind keeps your agents and knowledge in sync across AI apps.",
+        "developerName": "Shashwat Jain",
+        "category": "Productivity",
+        "capabilities": [
+          "Continue with your agents",
+          "Use your space's knowledge",
+          "Keep work in sync"
+        ],
+        "websiteURL": "https://mainmind.app",
+        "privacyPolicyURL": "https://mainmind.app/privacy",
+        "termsOfServiceURL": "https://mainmind.app/terms",
+        "supportURL": "https://mainmind.app/docs",
+        "defaultPrompt": [
+          "What's in my Mainmind space?",
+          "Continue with my agent where we left off"
+        ],
+        "brandColor": "#B23A3A",
+        "composerIcon": "./assets/composer-icon.png",
+        "logo": "./assets/logo.png"
+      }
+    }
+  }
+}
