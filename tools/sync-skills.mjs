@@ -2,9 +2,9 @@
 // One canonical skill set, and every place that has to carry it.
 //
 // `skills/` is the source. Claude Code reads a plugin's own `skills/`
-// directory, the Agent Plugins plugin reads its own, the Grok and Muse
-// packages carry their own for the hosts that can use them, and Codex reads
-// `.agents/skills` at the root of whatever repository it is working in — so
+// directory, the Agent Plugins plugin reads its own, the Codex, Grok and Muse
+// packages carry their own for the hosts that can use them, and Codex also
+// reads `.agents/skills` at the root of a repository it is working in — so
 // the same SKILL.md has to exist in every one of those places, and nothing
 // about the formats lets them share a directory.
 //
@@ -19,6 +19,7 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = "skills";
 const DESTINATIONS = [
   "plugins/mainmind/skills",
+  "plugins/mainmind-codex/skills",
   "plugins/mainmind-mount/skills",
   "plugins/mainmind-grok/skills",
   "plugins/mainmind-muse/skills",

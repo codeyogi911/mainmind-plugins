@@ -1,0 +1,17 @@
+{
+  "name": "mainmind",
+  "plugins": [
+    {
+      "name": "mainmind",
+      "source": {
+        "source": "local",
+        "path": "./plugins/mainmind-codex"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
