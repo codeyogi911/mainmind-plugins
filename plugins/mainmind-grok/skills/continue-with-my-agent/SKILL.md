@@ -15,7 +15,7 @@ If the connection has no `sync` tool yet, pick up with `boot` (`session_kind:
 "persistent"`, then `agent`) and keep it synced with `agent_home` instead.
 
 Harness values for this app: `claude-code`, `claude-ai`, `codex`, `cursor`,
-`grok-bot`; any other app, including ChatGPT and Muse, is `byo`. Use the same
+`grok-bot`; any other app, including ChatGPT, its dots and Muse, is `byo`. Use the same
 value on every call below.
 
 ## 1. Find the agent

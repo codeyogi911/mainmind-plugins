@@ -7,6 +7,11 @@ One skill set, published for every harness that can read one. MIT licensed, no
 secrets, no vendored credentials — you sign in as yourself and your live role
 decides which tools the session ever sees.
 
+**Switching AI apps?** Leaving Grok Bot for ChatGPT's dots, or any app for
+another, you do not set your agent up again. Say "Continue with <name>
+everywhere" in the old app, connect Mainmind in the new one, and say
+"Continue with <name>" there. [How it works](https://mainmind.app/docs/persistent-agents#switch-to-a-new-ai-app).
+
 ## Install
 
 | Harness | How |
@@ -16,6 +21,7 @@ decides which tools the session ever sees.
 | **Cursor**, including its Grok Bot | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins**, in the editor or in Grok Bot. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
 | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
 | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Cursor's Grok Bot is a Cursor product and uses the Cursor row |
+| **ChatGPT**, including its dots | No plugin to install: add the connection. Turn on **Settings → Security and login → Developer mode**, then in **Plugins** choose **+ → Create app → Create MCP App**, paste `https://mainmind.app/mcp` and sign in. For a dot, turn Mainmind on under its profile's **Customize → Plugins**. ChatGPT gets the connection but not these skills, so if it does not understand "Continue with Job Hunter", say "In Mainmind, continue with Job Hunter". Not yet tested in dots |
 | **Claude directory** (claude.ai, Cowork, Claude Code) | `plugins/mainmind` is ready to submit to Anthropic's directory; [`submissions/claude-directory.md`](submissions/claude-directory.md) holds every answer the portal asks for and what is still open |
 | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
 
