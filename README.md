@@ -8,9 +8,10 @@ secrets, no vendored credentials — you sign in as yourself and your live role
 decides which tools the session ever sees.
 
 **Switching AI apps?** Leaving Grok Bot for ChatGPT's dots, or any app for
-another, you do not set your agent up again. Say "Continue with <name>
-everywhere" in the old app, connect Mainmind in the new one, and say
-"Continue with <name>" there. [How it works](https://mainmind.app/docs/persistent-agents#switch-to-a-new-ai-app).
+another, you do not set your agent up again. An agent that already syncs is waiting:
+connect Mainmind in the new app and say "Continue with <name>". One set up
+inside the old app goes first: tell it "I'm moving to dots. Take everything
+you know with you." [How it works](https://mainmind.app/docs/persistent-agents#switch-to-a-new-ai-app).
 
 ## Install
 
