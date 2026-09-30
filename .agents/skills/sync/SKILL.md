@@ -63,9 +63,11 @@ other app, including ChatGPT and Muse, is `byo`. Use the same value every time.
 
 ## 1. Sync
 
-`sync` with `agent: <slug>`, `harness`, and, whenever you send anything,
-`idempotency_key` (8 to 96 characters, letters, digits and hyphens; reuse the
-same key if you retry this exact call). Send any of these together; Mainmind
+`sync` with `agent: <slug>`, `harness`, and a fresh `idempotency_key` every
+time (8 to 96 characters, letters, digits and hyphens). If a sync times out or
+fails, retry it once with the same key, within 15 minutes: the retry hears
+again what was new. Each update reaches only one app working as this agent, so
+without the retry a lost answer is gone. Send any of these together; Mainmind
 keeps them in this order:
 
 - `memories`: what is new since the last sync, at most 20 per call, each
