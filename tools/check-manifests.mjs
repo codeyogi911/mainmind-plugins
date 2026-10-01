@@ -40,17 +40,20 @@ const CURSOR_MANIFEST = "plugins/mainmind-mount/.cursor-plugin/plugin.json";
 const cursorMarketplace = existsSync(join(root, CURSOR_MARKETPLACE)) ? read(CURSOR_MARKETPLACE) : null;
 const cursor = existsSync(join(root, CURSOR_MANIFEST)) ? read(CURSOR_MANIFEST) : null;
 
-// One version across everything, so "which version am I running" has one
-// answer. Claude Code carries it on the PLUGIN ENTRY: `metadata` documents only
-// `pluginRoot`, so a version parked there pins nothing and is ignored.
-// https://code.claude.com/docs/en/plugin-marketplaces
+// One version across the plugin manifests, so "which version am I running"
+// has one answer. Claude's plugin.json version controls cached updates and
+// takes precedence over the marketplace entry. Do not duplicate it there.
+// https://code.claude.com/docs/en/plugins/marketplace-reference
 const marketplaceEntry = (marketplace.plugins || []).find((entry) => entry.name === "mainmind");
 if (!marketplaceEntry) fail(".claude-plugin/marketplace.json: no plugins[] entry named mainmind");
 if (marketplace.metadata && "version" in marketplace.metadata) {
-  fail(".claude-plugin/marketplace.json: metadata.version pins nothing — it belongs on the plugin entry");
+  fail(".claude-plugin/marketplace.json: metadata.version is not the plugin version — use plugin.json");
+}
+if (marketplaceEntry && "version" in marketplaceEntry) {
+  fail(".claude-plugin/marketplace.json: remove the duplicate entry version; plugin.json is authoritative");
 }
 const versions = new Set([
-  marketplaceEntry?.version, claude.version, codex.version, agentPlugins.version, pkg.version,
+  claude.version, codex.version, agentPlugins.version, pkg.version,
   ...(grok ? [grok.version] : []), ...(cursor ? [cursor.version] : []),
 ]);
 if (versions.size !== 1) fail(`versions disagree: ${[...versions].join(", ")}`);
