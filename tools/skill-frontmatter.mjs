@@ -38,6 +38,19 @@ export function validateSkillFrontmatter(text, directory) {
   }
 
   const problems = [];
+  function checkAngles(value, path) {
+    if (typeof value === "string") {
+      if (/[<>]/.test(value)) problems.push(`${path} contains a forbidden angle bracket`);
+    } else if (Array.isArray(value)) {
+      value.forEach((item, index) => checkAngles(item, `${path}[${index}]`));
+    } else if (value && typeof value === "object") {
+      for (const [key, item] of Object.entries(value)) {
+        checkAngles(key, `${path} key`);
+        checkAngles(item, `${path} ${key}`);
+      }
+    }
+  }
+  checkAngles(metadata, "frontmatter");
   for (const [key, limit] of [["name", 64], ["description", 1024]]) {
     const value = metadata[key];
     if (typeof value !== "string" || !value.trim()) {
@@ -45,7 +58,6 @@ export function validateSkillFrontmatter(text, directory) {
       continue;
     }
     if ([...value].length > limit) problems.push(`frontmatter ${key} exceeds ${limit} characters`);
-    if (/[<>]/.test(value)) problems.push(`frontmatter ${key} contains a forbidden angle bracket`);
   }
   if (typeof metadata.name === "string") {
     if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(metadata.name)) {
