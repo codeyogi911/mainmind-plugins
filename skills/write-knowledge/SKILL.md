@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
 
 A space is a folder of pages. The same page is read by the person and by
 their AI, so write it once, for a newcomer. Mainmind checks new and changed
-skills when they are saved and sends back any line that needs fixing.
+skills and decisions when they are saved and sends back any line that needs fixing.
 
 ## Pick the page type
 
@@ -42,6 +42,27 @@ don't erase the history.
 - **Draw it when words aren't enough.** A skill with branches or handoffs can
   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
   reads the same text.
+
+## Write a decision
+
+A decision answers "what did we decide, and why?", so it says that first,
+the way you would explain it to a new teammate:
+
+- **Title:** the question, in everyday words. "How much import duty should
+  we plan for on milk pitchers?"
+- **`## What we decided`:** the answer in one or two sentences, 35 words or
+  fewer, with no codes or abbreviations. Say what a number means: "Plan for
+  about 22% import duty on milk pitchers, not the 10% we use for grinder
+  parts."
+- **`## Why`:** one or two sentences.
+- **`## Until when`** or **`## What changes`:** how long it holds, or what
+  anyone now does differently.
+- **`## The details`:** every code, rate, source and link, exactly. The app
+  folds this away, so the person reads the first parts and you still have
+  everything.
+
+Mainmind sends back a new decision without a plain answer, with codes in
+the answer, or without a Why.
 
 ## Save it
 
