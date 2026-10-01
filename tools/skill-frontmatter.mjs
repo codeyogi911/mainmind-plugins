@@ -43,6 +43,13 @@ export function validateSkillFrontmatter(text, directory) {
       if (/[<>]/.test(value)) problems.push(`${path} contains a forbidden angle bracket`);
     } else if (Array.isArray(value)) {
       value.forEach((item, index) => checkAngles(item, `${path}[${index}]`));
+    } else if (value instanceof Set) {
+      for (const item of value) checkAngles(item, `${path} item`);
+    } else if (value instanceof Map) {
+      for (const [key, item] of value) {
+        checkAngles(key, `${path} key`);
+        checkAngles(item, `${path} value`);
+      }
     } else if (value && typeof value === "object") {
       for (const [key, item] of Object.entries(value)) {
         checkAngles(key, `${path} key`);

@@ -27,6 +27,8 @@ for (const [label, frontmatter, expected] of [
   ["nested metadata closing bracket", metadata("Valid") + '\nmetadata:\n  nested:\n    note: "Move name>"', "angle bracket"],
   ["metadata array bracket", metadata("Valid") + '\nmetadata:\n  notes: ["Move <name>"]', "angle bracket"],
   ["metadata key bracket", metadata("Valid") + '\nmetadata:\n  "<name>": Valid', "angle bracket"],
+  ["YAML set metadata bracket", metadata("Valid") + '\nmetadata: !!set\n  "<name>": null', "angle bracket"],
+  ["YAML ordered map metadata bracket", metadata("Valid") + '\nmetadata: !!omap\n  - "<name>": Valid', "angle bracket"],
   ["optional field bracket", metadata("Valid") + '\ncompatibility: "Use <app>"', "angle bracket"],
   ["empty description", metadata('""'), "non-empty string"],
   ["blank description", metadata('"   "'), "non-empty string"],
