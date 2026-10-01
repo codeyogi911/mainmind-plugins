@@ -10,6 +10,11 @@ research or anything else.
 - **Continue with an agent where you left off.** Say "Continue with Job Hunter"
   and the agent picks up with its instructions, what it remembers and what it
   was working on.
+- **Ask the Librarian or the Toolsmith.** Every space has both. The Librarian
+  works through what waits on your knowledge (lessons, gaps, flagged pages) and
+  proposes each change for your yes. The Toolsmith checks that your accounts
+  still work. Say "Continue with Librarian", or ask Claude to have the Librarian
+  do it.
 - **Make an agent.** Say "make me an agent that…", answer three plain
   questions, and see one summary of what it will do before it is saved.
 - **Ask what your space knows.** Answers come from your own processes, records

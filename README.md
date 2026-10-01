@@ -92,6 +92,13 @@ simply there. In Claude Code the plugin adds three hooks (`plugins/mainmind/hook
   reads one small local file, never the network, and exits 0 on any doubt or
   when `node` is missing.
 
+Two agents, in `plugins/mainmind/agents/`, for Claude Code: the **Librarian**
+and the **Toolsmith** that every Mainmind space has. Each file only starts the
+person's own agent from Mainmind. Its instructions, limits and memory come from
+Mainmind, the same in every app, so nothing here can drift from them. Every
+other app reaches them by saying "Continue with Librarian" or "Continue with
+Toolsmith".
+
 Codex has the skills and the Mainmind connection; Cursor and Grok have those too. Muse has the skills and its connector setup.
 
 ## Why this ships skills at all
