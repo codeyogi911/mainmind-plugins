@@ -1,0 +1,14 @@
+interface:
+  display_name: "Work in your Mainmind space"
+  short_description: "Use your space’s knowledge and work"
+  default_prompt: "What is in my Mainmind space?"
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp

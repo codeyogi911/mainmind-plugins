@@ -1,0 +1,14 @@
+interface:
+  display_name: "Connect to Mainmind"
+  short_description: "Check your Mainmind connection"
+  default_prompt: "Check which Mainmind space I am connected to."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: false
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp

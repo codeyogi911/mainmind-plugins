@@ -1,0 +1,14 @@
+interface:
+  display_name: "Make an agent"
+  short_description: "Create an agent with a clear job"
+  default_prompt: "Help me make an agent for my work."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp

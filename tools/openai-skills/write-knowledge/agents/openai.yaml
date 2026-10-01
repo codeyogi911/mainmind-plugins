@@ -1,0 +1,14 @@
+interface:
+  display_name: "Update your knowledge"
+  short_description: "Keep what your space needs to know"
+  default_prompt: "Help me update my space’s knowledge."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp
