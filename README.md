@@ -189,8 +189,9 @@ them — but each harness reads its own path, and nothing in the plugin formats
 lets them share a directory. So the copies are generated:
 
 ```
-npm run sync     # copy skills/ into every destination
-npm run check    # fail if any copy has drifted, the manifests disagree, or the hook tests fail
+npm ci --ignore-scripts  # install the locked development parser
+npm run sync            # validate and copy skills/ into every destination
+npm run check           # check all skill metadata, copy drift, manifests and hooks
 ```
 
 A copy is all any of them needs, xAI's catalogue included. An entry in

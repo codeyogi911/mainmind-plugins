@@ -7,7 +7,10 @@
   "type": "module",
   "scripts": {
     "sync": "node tools/sync-skills.mjs",
-    "check": "node tools/sync-skills.mjs --check && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs && node tools/test-note-tasks-hook.mjs",
+    "check": "node tools/test-skill-frontmatter.mjs && node tools/sync-skills.mjs --check && node tools/check-skills.mjs && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs && node tools/test-note-tasks-hook.mjs",
     "test": "npm run check"
+  },
+  "devDependencies": {
+    "yaml": "2.9.1"
   }
 }

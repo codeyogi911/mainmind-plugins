@@ -14,17 +14,11 @@
 import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, rmdirSync, existsSync, statSync } from "node:fs";
 import { join, dirname, relative } from "node:path";
 import { fileURLToPath } from "node:url";
+import { SKILL_ROOTS, validateSkillFrontmatter } from "./skill-frontmatter.mjs";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = "skills";
-const DESTINATIONS = [
-  "plugins/mainmind/skills",
-  "plugins/mainmind-codex/skills",
-  "plugins/mainmind-mount/skills",
-  "plugins/mainmind-grok/skills",
-  "plugins/mainmind-muse/skills",
-  ".agents/skills",
-];
+const DESTINATIONS = SKILL_ROOTS.filter((path) => path !== SOURCE);
 
 // A renamed skill leaves its old directory behind once its files are gone;
 // an empty skill directory still looks like a skill to a person browsing, and
@@ -62,17 +56,9 @@ const problems = [];
 for (const file of files) {
   if (!file.endsWith("SKILL.md")) continue;
   const text = readFileSync(join(sourceDir, file), "utf8");
-  const frontmatter = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
-  if (!frontmatter) { problems.push(`${SOURCE}/${file}: no frontmatter block`); continue; }
-  for (const key of ["name", "description"]) {
-    if (!new RegExp(`^${key}:\\s*\\S`, "m").test(frontmatter[1])) {
-      problems.push(`${SOURCE}/${file}: frontmatter has no ${key}`);
-    }
-  }
-  const named = frontmatter[1].match(/^name:\s*(.+)$/m)?.[1].trim();
-  const directory = file.split("/")[0];
-  if (named && named !== directory) {
-    problems.push(`${SOURCE}/${file}: frontmatter name "${named}" does not match its directory "${directory}"`);
+  const directory = dirname(file).split(/[\\/]/).at(-1);
+  for (const problem of validateSkillFrontmatter(text, directory)) {
+    problems.push(`${SOURCE}/${file}: ${problem}`);
   }
 }
 if (problems.length) {

@@ -1,6 +1,6 @@
 ---
 name: continue-with-my-agent
-description: Continue with a Mainmind agent in this app, with its instructions, what it remembers and where it left off. Load when the person says "continue with <name>" and <name> is one of their agents (not "continue with the refactor"; for "continue with <name> everywhere" use continue-everywhere instead), and also for "carry on as <name>", "sync as <name>", "continue as my agent", "bring back <name>", "resume <name>", "be my <name>", "restore my agent", "run routine <id>" from a schedule, and, while acting as an agent, "what do you remember about me?" or "forget that".
+description: Continue with a Mainmind agent in this app, with its instructions, what it remembers and where it left off. Load when the person says "continue with" followed by one of their agents' names (not "continue with the refactor"; to continue with a named agent everywhere use continue-everywhere instead), and also for "carry on as", "sync as", "bring back", "resume" or "be my" followed by an agent's name, "continue as my agent", "restore my agent", "run routine" with a routine ID from a schedule, and, while acting as an agent, "what do you remember about me?" or "forget that".
 ---
 
 # Continue with my agent
