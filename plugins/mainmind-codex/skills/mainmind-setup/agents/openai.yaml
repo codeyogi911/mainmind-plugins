@@ -4,7 +4,7 @@ interface:
   default_prompt: "Check which Mainmind space I am connected to."
 policy:
   products: [CHAT, CODEX]
-  allow_implicit_invocation: false
+  allow_implicit_invocation: true
 dependencies:
   tools:
     - type: mcp

@@ -19,8 +19,13 @@ This is a bounded connection check. It ends with the result and one next step.
    by name.” If the person already requested a task, continue that task using
    the appropriate existing Mainmind skill instead of repeating this offer.
 
-If the connection or `whoami` is missing, say “Mainmind isn’t connected here
-yet. Open the plugin’s settings to connect it.” If sign-in has expired, say
+If the host explicitly reports that the connection is missing, say “Mainmind
+isn’t connected here yet. Open the plugin’s settings to connect it.” If
+`whoami` is unavailable but the connection state is unknown or other Mainmind
+tools are present, say “I can’t check your Mainmind space from this app yet.
+Check the connection in the plugin’s settings.” A missing tool does not prove
+that the connection is absent. Do not silently substitute `boot`, `sync` or
+another tool with session or write effects. If sign-in has expired, say
 “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
 For other failures, report that the connection could not be checked and stop;
 do not claim an empty space, successful setup or knowledge from memory.
