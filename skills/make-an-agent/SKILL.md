@@ -42,7 +42,10 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    `agent` and `agent_epoch`, keep that slug and skip to step 4.
 3. **`register_agent`** with `name`, a one-sentence `charter` (the job, in the
    person's words), and a `registration_key` that is a fresh UUID v4 you choose
-   *before* the call. Keep that key and the exact name and charter for the rest
+   *before* the call. If boot's team has an empty job this agent is plainly
+   for, also pass that job's short name as `job`: the agent is then in that job
+   on the team at once. If the answer refuses the job, register without it.
+   Keep that key and the exact name, charter and job for the rest
    of this session. If the call fails or the answer is lost, retry with the
    same key and the same details, never a new key. Never register again on a
    restart or in a later session: a later session finds the agent through
