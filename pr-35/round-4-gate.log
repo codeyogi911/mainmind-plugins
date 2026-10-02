@@ -1,0 +1,97 @@
+
+> mainmind-plugins@0.17.1 check
+> node tools/test-skill-frontmatter.mjs && node tools/sync-skills.mjs --check && node tools/check-skills.mjs && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs && node tools/test-note-tasks-hook.mjs && node tools/check-openai-package.mjs && node tools/test-openai-package.mjs
+
+PASS 52 skill frontmatter cases (invalid before, valid after, safe YAML and metadata limits)
+PASS 7 shared files across 6 destinations; 9 OpenAI files across 2 destinations
+PASS metadata for 51 shipped skills across 7 roots
+PASS manifests agree (version 0.17.1, MIT, https://mainmind.app/mcp)
+PASS stop_hook_active: never blocks twice in a row
+PASS stdin is not JSON
+PASS stdin is empty
+PASS stdin is JSON but not an object
+PASS no transcript_path
+PASS transcript unreadable
+PASS clock unreadable
+PASS never booted
+PASS booted without an agent
+PASS under the threshold of work since boot
+PASS only the agent looking after itself
+PASS enough work since boot and no handoff
+PASS a handoff that failed does not count
+PASS a handoff the server refused does not count
+PASS the agent booted last is the one reminded
+PASS malformed transcript lines are skipped
+PASS recent handoff, work since
+PASS old handoff, no work since
+PASS old handoff, only its read-back since
+PASS old handoff, work since
+PASS asks once per session window, then lets it stop
+PASS picked up with sync, enough work and nothing stopped
+PASS a sync with only memories is not where it stopped
+PASS recent sync with stopped, work since
+PASS old sync with stopped, work since
+PASS a sync that did not keep where it stopped does not count
+PASS "Not synced" is not kept
+PASS a refused memory beside a kept stopped is kept
+PASS receipts: stopped saved, memory refused, is kept
+PASS receipts: stopped uncertain is not kept, whatever the text says
+PASS receipts: no home read back is not kept
+PASS a sync without an agent is no agent
+PASS held request, work since its claim: asks for its checkpoint
+PASS held request checkpointed in the last sync
+PASS held request reported
+PASS a refused claim holds nothing
+PASS a sync whose request move was refused holds nothing (receipts)
+PASS a sync whose request move was refused holds nothing (text)
+PASS 38 keep-up-to-date hook cases
+PASS a folder that never ran as an agent: nothing
+PASS stdin is not JSON: nothing
+PASS stdin is empty: nothing
+PASS no cwd: nothing
+PASS last ran as an agent (boot): names it
+PASS last ran as an agent (sync): names it
+PASS after /clear and after compaction too
+PASS a resumed session already has its history: nothing
+PASS the agent picked up last is the one named
+PASS another folder's agent is not this folder's
+PASS the project folder is here, wherever the session cd'd to
+PASS a session without an agent never writes a note
+PASS real work here as no agent: the folder no longer last ran as one
+PASS a quick question as no agent keeps the note
+PASS a note that is not a plain agent name is never printed
+PASS a corrupt note: nothing
+PASS no state folder can be made: nothing
+PASS fast: well under its 5 second timeout
+PASS 18 last-agent-here hook cases
+PASS a TodoWrite call leaves the list, in Mainmind's words
+PASS a later TodoWrite replaces the list
+PASS the synced id is always the title's slug, never the app's own id
+PASS TaskCreate and TaskUpdate follow one task by the app's id
+PASS two sessions' task-1 sync under different ids, and each session still finds its own
+PASS a title that is only digits gets a word in front
+PASS a title with no Latin letters or digits is kept, under a short hash of itself
+PASS a task made without an id the hook can see is found again by its title
+PASS a later duplicate keeps its -2 when the earlier one goes (by the app's id)
+PASS a later duplicate keeps its -2 when the earlier one goes (TodoWrite, no ids)
+PASS a subagent's list is ignored
+PASS a session started with --agent still notes its list
+PASS a lock left behind by a killed hook is taken over, and nothing of it is left
+PASS an update to a task never seen, with no title, changes nothing
+PASS another folder or another session starts its own list
+PASS stdin is not JSON: silent, no note
+PASS stdin is empty: silent, no note
+PASS stdin is JSON but not an object: silent, no note
+PASS tool_input is missing: silent, no note
+PASS no session: silent, no note
+PASS other-tool.json: silent, no note
+PASS todos-not-a-list.json: silent, no note
+PASS an unreadable note is started over, not trusted
+PASS a list, in a session acting as an agent, adds the task line to the reminder
+PASS an unchanged list adds nothing to the next reminder; a changed one adds the line again
+PASS no list: the reminder is as before
+PASS a list in a session that is no agent: no reminder at all
+PASS another session's list is not this one's
+PASS 28 note-tasks hook cases
+PASS OpenAI public package contract and 8 skills on both OpenAI surfaces (host acceptance remains separate)
+PASS 27 OpenAI package cases (public contract, skill dependencies and scoped generation)

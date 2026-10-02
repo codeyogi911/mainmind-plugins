@@ -1,0 +1,99 @@
+diff --git a/.agents/skills/mainmind-setup/SKILL.md b/.agents/skills/mainmind-setup/SKILL.md
+index 137dc27..a64669f 100644
+--- a/.agents/skills/mainmind-setup/SKILL.md
++++ b/.agents/skills/mainmind-setup/SKILL.md
+@@ -19,8 +19,13 @@ This is a bounded connection check. It ends with the result and one next step.
+    by name.” If the person already requested a task, continue that task using
+    the appropriate existing Mainmind skill instead of repeating this offer.
+ 
+-If the connection or `whoami` is missing, say “Mainmind isn’t connected here
+-yet. Open the plugin’s settings to connect it.” If sign-in has expired, say
++If the host explicitly reports that the connection is missing, say “Mainmind
++isn’t connected here yet. Open the plugin’s settings to connect it.” If
++`whoami` is unavailable but the connection state is unknown or other Mainmind
++tools are present, say “I can’t check your Mainmind space from this app yet.
++Check the connection in the plugin’s settings.” A missing tool does not prove
++that the connection is absent. Do not silently substitute `boot`, `sync` or
++another tool with session or write effects. If sign-in has expired, say
+ “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
+ For other failures, report that the connection could not be checked and stop;
+ do not claim an empty space, successful setup or knowledge from memory.
+diff --git a/.agents/skills/mainmind-setup/agents/openai.yaml b/.agents/skills/mainmind-setup/agents/openai.yaml
+index bd2a47a..d587efe 100644
+--- a/.agents/skills/mainmind-setup/agents/openai.yaml
++++ b/.agents/skills/mainmind-setup/agents/openai.yaml
+@@ -4,7 +4,7 @@ interface:
+   default_prompt: "Check which Mainmind space I am connected to."
+ policy:
+   products: [CHAT, CODEX]
+-  allow_implicit_invocation: false
++  allow_implicit_invocation: true
+ dependencies:
+   tools:
+     - type: mcp
+diff --git a/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md b/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
+index 137dc27..a64669f 100644
+--- a/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
++++ b/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
+@@ -19,8 +19,13 @@ This is a bounded connection check. It ends with the result and one next step.
+    by name.” If the person already requested a task, continue that task using
+    the appropriate existing Mainmind skill instead of repeating this offer.
+ 
+-If the connection or `whoami` is missing, say “Mainmind isn’t connected here
+-yet. Open the plugin’s settings to connect it.” If sign-in has expired, say
++If the host explicitly reports that the connection is missing, say “Mainmind
++isn’t connected here yet. Open the plugin’s settings to connect it.” If
++`whoami` is unavailable but the connection state is unknown or other Mainmind
++tools are present, say “I can’t check your Mainmind space from this app yet.
++Check the connection in the plugin’s settings.” A missing tool does not prove
++that the connection is absent. Do not silently substitute `boot`, `sync` or
++another tool with session or write effects. If sign-in has expired, say
+ “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
+ For other failures, report that the connection could not be checked and stop;
+ do not claim an empty space, successful setup or knowledge from memory.
+diff --git a/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml b/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml
+index bd2a47a..d587efe 100644
+--- a/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml
++++ b/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml
+@@ -4,7 +4,7 @@ interface:
+   default_prompt: "Check which Mainmind space I am connected to."
+ policy:
+   products: [CHAT, CODEX]
+-  allow_implicit_invocation: false
++  allow_implicit_invocation: true
+ dependencies:
+   tools:
+     - type: mcp
+diff --git a/tools/openai-skills/mainmind-setup/SKILL.md b/tools/openai-skills/mainmind-setup/SKILL.md
+index 137dc27..a64669f 100644
+--- a/tools/openai-skills/mainmind-setup/SKILL.md
++++ b/tools/openai-skills/mainmind-setup/SKILL.md
+@@ -19,8 +19,13 @@ This is a bounded connection check. It ends with the result and one next step.
+    by name.” If the person already requested a task, continue that task using
+    the appropriate existing Mainmind skill instead of repeating this offer.
+ 
+-If the connection or `whoami` is missing, say “Mainmind isn’t connected here
+-yet. Open the plugin’s settings to connect it.” If sign-in has expired, say
++If the host explicitly reports that the connection is missing, say “Mainmind
++isn’t connected here yet. Open the plugin’s settings to connect it.” If
++`whoami` is unavailable but the connection state is unknown or other Mainmind
++tools are present, say “I can’t check your Mainmind space from this app yet.
++Check the connection in the plugin’s settings.” A missing tool does not prove
++that the connection is absent. Do not silently substitute `boot`, `sync` or
++another tool with session or write effects. If sign-in has expired, say
+ “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
+ For other failures, report that the connection could not be checked and stop;
+ do not claim an empty space, successful setup or knowledge from memory.
+diff --git a/tools/openai-skills/mainmind-setup/agents/openai.yaml b/tools/openai-skills/mainmind-setup/agents/openai.yaml
+index bd2a47a..d587efe 100644
+--- a/tools/openai-skills/mainmind-setup/agents/openai.yaml
++++ b/tools/openai-skills/mainmind-setup/agents/openai.yaml
+@@ -4,7 +4,7 @@ interface:
+   default_prompt: "Check which Mainmind space I am connected to."
+ policy:
+   products: [CHAT, CODEX]
+-  allow_implicit_invocation: false
++  allow_implicit_invocation: true
+ dependencies:
+   tools:
+     - type: mcp

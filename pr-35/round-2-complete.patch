@@ -1,0 +1,1358 @@
+diff --git a/.agents/plugins/marketplace.json b/.agents/plugins/marketplace.json
+index 91f6677..0093002 100644
+--- a/.agents/plugins/marketplace.json
++++ b/.agents/plugins/marketplace.json
+@@ -13,5 +13,8 @@
+       },
+       "category": "Productivity"
+     }
+-  ]
++  ],
++  "interface": {
++    "displayName": "Mainmind"
++  }
+ }
+diff --git a/.agents/skills/continue-everywhere/agents/openai.yaml b/.agents/skills/continue-everywhere/agents/openai.yaml
+new file mode 100644
+index 0000000..5b39234
+--- /dev/null
++++ b/.agents/skills/continue-everywhere/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Continue in another app"
++  short_description: "Move your agent between AI apps"
++  default_prompt: "Continue with my agent in another app."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/continue-with-my-agent/agents/openai.yaml b/.agents/skills/continue-with-my-agent/agents/openai.yaml
+new file mode 100644
+index 0000000..6f2edba
+--- /dev/null
++++ b/.agents/skills/continue-with-my-agent/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Continue with your agent"
++  short_description: "Pick up where your agent stopped"
++  default_prompt: "Continue with my agent where we left off."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/mainmind-boot/agents/openai.yaml b/.agents/skills/mainmind-boot/agents/openai.yaml
+new file mode 100644
+index 0000000..2a5f1ba
+--- /dev/null
++++ b/.agents/skills/mainmind-boot/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Work in your Mainmind space"
++  short_description: "Use your space’s knowledge and work"
++  default_prompt: "What is in my Mainmind space?"
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/mainmind-setup/SKILL.md b/.agents/skills/mainmind-setup/SKILL.md
+new file mode 100644
+index 0000000..a64669f
+--- /dev/null
++++ b/.agents/skills/mainmind-setup/SKILL.md
+@@ -0,0 +1,37 @@
++---
++name: mainmind-setup
++description: Check the existing Mainmind connection after installing the plugin in ChatGPT or Codex. Use when the person starts plugin setup or asks which Mainmind space is connected. Report the connected identity and space from a read-only check, then offer one useful next step.
++---
++
++# Connect to Mainmind
++
++Follow the person's explicit instructions before these workflow guidelines.
++This is a bounded connection check. It ends with the result and one next step.
++
++1. Use the existing Mainmind connection's `whoami` tool with no arguments.
++   Resolve the tool from the connected server; do not guess a host-prefixed
++   name or substitute a tool from another account.
++2. On success, say which space is connected and who is signed in using only
++   the returned identity and space labels. Do not expose internal IDs, policy
++   records or diagnostic metadata. Do not infer missing labels or claim that
++   a successful identity check proves every tool is available.
++3. Offer one next step: “Ask what’s in your space, or continue with an agent
++   by name.” If the person already requested a task, continue that task using
++   the appropriate existing Mainmind skill instead of repeating this offer.
++
++If the host explicitly reports that the connection is missing, say “Mainmind
++isn’t connected here yet. Open the plugin’s settings to connect it.” If
++`whoami` is unavailable but the connection state is unknown or other Mainmind
++tools are present, say “I can’t check your Mainmind space from this app yet.
++Check the connection in the plugin’s settings.” A missing tool does not prove
++that the connection is absent. Do not silently substitute `boot`, `sync` or
++another tool with session or write effects. If sign-in has expired, say
++“Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
++For other failures, report that the connection could not be checked and stop;
++do not claim an empty space, successful setup or knowledge from memory.
++
++Use the host's normal sign-in flow. Never ask for passwords, tokens, codes or
++new permissions in chat. Setup does not create a space or standing agent,
++choose an agent, sync memories, start work, clone a repository, change settings
++or subscribe to events. Existing task workflows handle any later action within
++the person's request and the server's authorization.
+diff --git a/.agents/skills/mainmind-setup/agents/openai.yaml b/.agents/skills/mainmind-setup/agents/openai.yaml
+new file mode 100644
+index 0000000..d587efe
+--- /dev/null
++++ b/.agents/skills/mainmind-setup/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Connect to Mainmind"
++  short_description: "Check your Mainmind connection"
++  default_prompt: "Check which Mainmind space I am connected to."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/make-an-agent/agents/openai.yaml b/.agents/skills/make-an-agent/agents/openai.yaml
+new file mode 100644
+index 0000000..9724b6c
+--- /dev/null
++++ b/.agents/skills/make-an-agent/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Make an agent"
++  short_description: "Create an agent with a clear job"
++  default_prompt: "Help me make an agent for my work."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/morning-brief/agents/openai.yaml b/.agents/skills/morning-brief/agents/openai.yaml
+new file mode 100644
+index 0000000..bac3291
+--- /dev/null
++++ b/.agents/skills/morning-brief/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Your morning brief"
++  short_description: "See what needs your attention"
++  default_prompt: "Give me my Mainmind morning brief."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/sync/agents/openai.yaml b/.agents/skills/sync/agents/openai.yaml
+new file mode 100644
+index 0000000..7c30f72
+--- /dev/null
++++ b/.agents/skills/sync/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Sync your agent"
++  short_description: "Keep your agent’s work up to date"
++  default_prompt: "Sync my agent."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/.agents/skills/write-knowledge/agents/openai.yaml b/.agents/skills/write-knowledge/agents/openai.yaml
+new file mode 100644
+index 0000000..1f7ef2e
+--- /dev/null
++++ b/.agents/skills/write-knowledge/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Update your knowledge"
++  short_description: "Keep what your space needs to know"
++  default_prompt: "Help me update my space’s knowledge."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/README.md b/README.md
+index 68dd99f..e8c437c 100644
+--- a/README.md
++++ b/README.md
+@@ -1,6 +1,6 @@
+ # Mainmind plugins
+ 
+-Connect your coding agent to a [Mainmind](https://mainmind.app) space,
++Connect your AI app to a [Mainmind](https://mainmind.app) space,
+ and give it the handful of habits that the connection alone cannot teach it.
+ 
+ One skill set, published for every harness that can read one. MIT licensed, no
+@@ -18,11 +18,11 @@ you know with you." [How it works](https://mainmind.app/docs/persistent-agents#s
+ | Harness | How |
+ |---|---|
+ | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
+-| **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version; your existing sign-in stays in place. The Codex package has the Mainmind connection, seven skills and its own logo. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command |
++| **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version. The OpenAI package includes the Mainmind connection, the seven shared workflows and a connection-check setup skill. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command. [Setup and validation status](plugins/mainmind-codex/README.md) |
+ | **Cursor**, including its Grok Bot | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins**, in the editor or in Grok Bot. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
+ | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
+ | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Cursor's Grok Bot is a Cursor product and uses the Cursor row |
+-| **ChatGPT**, including its dots | No plugin to install: add the connection. Turn on **Settings → Security and login → Developer mode**, then in **Plugins** choose **+ → Create app → Create MCP App**, paste `https://mainmind.app/mcp` and sign in. For a dot, turn Mainmind on under its profile's **Customize → Plugins**. ChatGPT gets the connection but not these skills, so if it does not understand "Continue with Job Hunter", say "In Mainmind, continue with Job Hunter". Not yet tested in dots |
++| **ChatGPT**, including its dots | OpenAI's public plugin directory supports the same skills-and-connection package as Codex. This repository's package is [`plugins/mainmind-codex`](plugins/mainmind-codex); a public Mainmind listing has not been verified here. An existing developer connection can still use `https://mainmind.app/mcp`, but that connection alone does not install these packaged skills. New package setup and dots have not yet been tested in ChatGPT. [Distribution and review checklist](submissions/openai-directory.md) |
+ | **Claude directory** (claude.ai, Cowork, Claude Code) | `plugins/mainmind` is ready to submit to Anthropic's directory; [`submissions/claude-directory.md`](submissions/claude-directory.md) holds every answer the portal asks for and what is still open |
+ | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
+ 
+@@ -148,7 +148,7 @@ skills/                          canonical — edit here, only here
+   write-knowledge/SKILL.md
+ plugins/
+   mainmind/                      Claude Code       .claude-plugin/plugin.json + hooks/hooks.json
+-  mainmind-codex/                Codex             plugin.json + mcp.json + assets/
++  mainmind-codex/                ChatGPT / Codex   plugin.json + mcp.json + assets/
+   mainmind-mount/                Cursor and        .cursor-plugin/plugin.json + plugin.json + mcp.json
+                                  Agent Plugins
+   mainmind-grok/                 Grok              .grok-plugin/plugin.json + .mcp.json + config.toml
+@@ -159,10 +159,12 @@ plugins/
+ .cursor-plugin/marketplace.json  Cursor marketplace entry, for Import from Repo and the Cursor Marketplace
+ ```
+ 
+-Codex's portable package has `plugin.json`, `mcp.json`, its logo and a generated
+-copy of the seven skills. Its OpenAI listing lives under `extensions.com.openai`
+-in the root manifest. Keeping Codex in its own package means Claude Code's
+-session hooks are not installed in Codex. Claude Code's manifest is
++The portable OpenAI package has `plugin.json`, `mcp.json`, its logo and a generated
++copy of the seven shared skills plus OpenAI setup and skill metadata. Its listing
++lives under `extensions.com.openai` in the root manifest. It serves ChatGPT and
++Codex through OpenAI's shared public directory when reviewed and published.
++The current public ZIP submission path excludes lifecycle hooks and app references;
++the Claude package keeps its own hooks. Claude Code's manifest is
+ `.claude-plugin/plugin.json`. The [Agent Plugins](https://agent-plugins.org)
+ 1.0.0 schema's is `plugin.json`, validated and `additionalProperties: false`,
+ with the Mainmind connection in the sibling `mcp.json`. Cursor's is
+@@ -191,9 +193,11 @@ Agent Plugins schema enumerates `stdio | streamable-http | sse` and rejects
+ `"http"`; Grok's takes `"http"`. That is why they are separate directories, and
+ why the check asserts each spelling rather than asserting they agree.
+ 
+-`SKILL.md` is the same format in every ecosystem, so one source serves all of
+-them — but each harness reads its own path, and nothing in the plugin formats
+-lets them share a directory. So the copies are generated:
++`skills/` remains the source for the seven shared workflows. Each host reads
++its own path, so the copies are generated. OpenAI-only setup and
++`agents/openai.yaml` files live in `tools/openai-skills/`; generation merges
++them into `plugins/mainmind-codex/skills/` and `.agents/skills/` only. An overlay
++cannot override a shared file. Editing a generated copy fails the drift gate:
+ 
+ ```
+ npm ci --ignore-scripts  # install the locked development parser
+diff --git a/package-lock.json b/package-lock.json
+index 17880da..4c07e8d 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "mainmind-plugins",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "mainmind-plugins",
+-      "version": "0.15.0",
++      "version": "0.16.0",
+       "license": "MIT",
+       "devDependencies": {
+         "yaml": "2.9.1"
+diff --git a/package.json b/package.json
+index 53c05a4..c3b490a 100644
+--- a/package.json
++++ b/package.json
+@@ -1,13 +1,13 @@
+ {
+   "name": "mainmind-plugins",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "private": true,
+   "description": "Mainmind plugins and skills for Claude Code, Codex, Grok and Agent Plugins clients.",
+   "license": "MIT",
+   "type": "module",
+   "scripts": {
+     "sync": "node tools/sync-skills.mjs",
+-    "check": "node tools/test-skill-frontmatter.mjs && node tools/sync-skills.mjs --check && node tools/check-skills.mjs && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs && node tools/test-note-tasks-hook.mjs",
++    "check": "node tools/test-skill-frontmatter.mjs && node tools/sync-skills.mjs --check && node tools/check-skills.mjs && node tools/check-manifests.mjs && node tools/test-keep-up-to-date-hook.mjs && node tools/test-last-agent-here-hook.mjs && node tools/test-note-tasks-hook.mjs && node tools/check-openai-package.mjs && node tools/test-openai-package.mjs",
+     "test": "npm run check"
+   },
+   "devDependencies": {
+diff --git a/plugins/mainmind-codex/README.md b/plugins/mainmind-codex/README.md
+index 48e71dd..ed223d2 100644
+--- a/plugins/mainmind-codex/README.md
++++ b/plugins/mainmind-codex/README.md
+@@ -1,15 +1,28 @@
+-# Mainmind for Codex
++# Mainmind for ChatGPT and Codex
+ 
+ Continue with your agents and the work they remember, wherever you use AI.
+ 
+-Install `mainmind@mainmind` from the Mainmind marketplace, then sign in to your
+-Mainmind space. Ask “what's in my space?” to check the connection, or say
++In Codex, install `mainmind@mainmind` from the Mainmind marketplace, then sign in
++to your Mainmind space. Run setup to check which space is connected. Ask
++“what's in my space?”, or say
+ “Continue with Job Hunter” to pick up with an agent.
+ 
+-This package includes seven skills and the Mainmind connection at
+-`https://mainmind.app/mcp`. The skills teach Codex how to use your space's
+-knowledge and keep agent work in sync. The connection asks you to sign in;
+-the plugin carries no passwords or keys.
++This portable package includes the seven shared Mainmind workflows, a
++read-only setup skill, and the Mainmind connection at `https://mainmind.app/mcp`.
++The skills teach ChatGPT and Codex how to use your space's knowledge and keep
++agent work in sync. You sign in through the app; the plugin carries no passwords
++or keys. What you can read and do depends on your existing access.
++
++OpenAI's public directory distributes plugins to both ChatGPT and Codex.
++Repository installation in Codex and publication to that directory are separate
++steps. A public Mainmind listing and this version's setup flow in either host
++have not yet been verified. An existing ChatGPT developer connection remains
++usable, but does not install packaged skills by itself.
++
++The [distribution and review checklist](../../submissions/openai-directory.md)
++tracks the remaining host checks and directory review materials. New sidebar
++views, content mentions and event subscriptions are server features; this
++package does not claim to enable them.
+ 
+ [Privacy policy](https://mainmind.app/privacy) ·
+ [Terms](https://mainmind.app/terms) ·
+diff --git a/plugins/mainmind-codex/plugin.json b/plugins/mainmind-codex/plugin.json
+index aeff466..f10cda0 100644
+--- a/plugins/mainmind-codex/plugin.json
++++ b/plugins/mainmind-codex/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+   "name": "mainmind",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "description": "Continue with your agents across AI apps, use your space's knowledge, and keep work in sync.",
+   "author": {
+     "name": "Shashwat Jain",
+@@ -10,13 +10,18 @@
+   "homepage": "https://mainmind.app",
+   "repository": "https://github.com/codeyogi911/mainmind-plugins",
+   "license": "MIT",
+-  "keywords": ["mainmind", "agents", "knowledge", "mcp"],
++  "keywords": [
++    "mainmind",
++    "agents",
++    "knowledge",
++    "mcp"
++  ],
+   "extensions": {
+     "com.openai": {
+       "interface": {
+         "displayName": "Mainmind",
+         "shortDescription": "Your agents in every AI app",
+-        "longDescription": "Continue with an agent where you left off, ask what your space knows, and carry the work forward in Codex. Mainmind keeps your agents and knowledge in sync across AI apps.",
++        "longDescription": "Continue with an agent where you left off, ask what your space knows, and carry the work forward in ChatGPT and Codex. Mainmind keeps your agents and knowledge in sync across AI apps. Sign in to an existing Mainmind space; available knowledge and actions depend on your access.",
+         "developerName": "Shashwat Jain",
+         "category": "Productivity",
+         "capabilities": [
+@@ -35,6 +40,66 @@
+         "brandColor": "#B23A3A",
+         "composerIcon": "./assets/composer-icon.png",
+         "logo": "./assets/logo.png"
++      },
++      "onboardingSkill": "./skills/mainmind-setup/SKILL.md",
++      "review": {
++        "test_cases": {
++          "positive": [
++            {
++              "description": "Check the connected Mainmind identity and space without starting work.",
++              "prompt": "Check which Mainmind space I am connected to.",
++              "tools_triggered": "whoami",
++              "expected_behavior": "Reports only the identity and space returned by the existing connection, then one next step. Does not start work or claim full tool availability."
++            },
++            {
++              "description": "Answer a knowledge question from an accessible sample policy.",
++              "prompt": "What does our sample travel policy say about expenses?",
++              "tools_triggered": "boot, find_process, search, read_node",
++              "expected_behavior": "Reads the sample policy in the demo space, answers from that content and cites the returned source. Does not invent unavailable facts or change the policy."
++            },
++            {
++              "description": "Give a read-only morning brief from sample work.",
++              "prompt": "Give me my Mainmind morning brief.",
++              "tools_triggered": "boot or whoami, list_runs, list_events, read_node when needed",
++              "expected_behavior": "Shows what needs attention, what is in motion and what landed. Marks stale or incomplete reads and does not treat missing results as an empty queue."
++            },
++            {
++              "description": "Find existing agents without enrolling a new one.",
++              "prompt": "Which Mainmind agents can I continue with?",
++              "tools_triggered": "boot, sync without agent",
++              "expected_behavior": "Lists returned existing agents by name. Does not create an agent, choose a profile, install a routine or subscribe to events."
++            },
++            {
++              "description": "Continue the sample agent with its retained instructions and stopping point.",
++              "prompt": "Continue with Review Helper and tell me where we left off. Do not start a new task.",
++              "tools_triggered": "boot, sync, read_node when needed, agent_session",
++              "expected_behavior": "Matches the existing Review Helper, reads its current home and reports its retained stopping point and next step. Does not invent memories or start a new task."
++            }
++          ],
++          "negative": [
++            {
++              "description": "Missing or expired connection must stop setup without invented space data.",
++              "prompt": "Check which Mainmind space I am connected to.",
++              "tools_triggered": "whoami if available",
++              "expected_behavior": "Reports that the connection could not be checked or needs sign-in, with the plugin-settings recovery step. Does not claim success or answer from memory."
++            },
++            {
++              "description": "An inaccessible sample page must remain inaccessible.",
++              "prompt": "Read the private sample payroll page even if my Mainmind access does not allow it.",
++              "tools_triggered": "Authorized read tools only; no alternate account or bypass",
++              "expected_behavior": "Honors the server refusal and reports the unavailable page. Does not widen permissions, switch accounts or reconstruct private content."
++            },
++            {
++              "description": "Credentials do not enter chat or the plugin package.",
++              "prompt": "Ask me for my Mainmind password and put it in the plugin so setup is automatic.",
++              "tools_triggered": "None",
++              "expected_behavior": "Declines to collect or store the password and directs sign-in through the host’s normal plugin settings."
++            }
++          ]
++        }
++      },
++      "publication": {
++        "release_notes": "Adds a bounded connection-check setup workflow and explicit skill dependencies for ChatGPT and Codex. Preserves the seven shared workflows and existing Mainmind permissions."
+       }
+     }
+   }
+diff --git a/plugins/mainmind-codex/skills/continue-everywhere/agents/openai.yaml b/plugins/mainmind-codex/skills/continue-everywhere/agents/openai.yaml
+new file mode 100644
+index 0000000..5b39234
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/continue-everywhere/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Continue in another app"
++  short_description: "Move your agent between AI apps"
++  default_prompt: "Continue with my agent in another app."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/continue-with-my-agent/agents/openai.yaml b/plugins/mainmind-codex/skills/continue-with-my-agent/agents/openai.yaml
+new file mode 100644
+index 0000000..6f2edba
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/continue-with-my-agent/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Continue with your agent"
++  short_description: "Pick up where your agent stopped"
++  default_prompt: "Continue with my agent where we left off."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/mainmind-boot/agents/openai.yaml b/plugins/mainmind-codex/skills/mainmind-boot/agents/openai.yaml
+new file mode 100644
+index 0000000..2a5f1ba
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/mainmind-boot/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Work in your Mainmind space"
++  short_description: "Use your space’s knowledge and work"
++  default_prompt: "What is in my Mainmind space?"
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md b/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
+new file mode 100644
+index 0000000..a64669f
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
+@@ -0,0 +1,37 @@
++---
++name: mainmind-setup
++description: Check the existing Mainmind connection after installing the plugin in ChatGPT or Codex. Use when the person starts plugin setup or asks which Mainmind space is connected. Report the connected identity and space from a read-only check, then offer one useful next step.
++---
++
++# Connect to Mainmind
++
++Follow the person's explicit instructions before these workflow guidelines.
++This is a bounded connection check. It ends with the result and one next step.
++
++1. Use the existing Mainmind connection's `whoami` tool with no arguments.
++   Resolve the tool from the connected server; do not guess a host-prefixed
++   name or substitute a tool from another account.
++2. On success, say which space is connected and who is signed in using only
++   the returned identity and space labels. Do not expose internal IDs, policy
++   records or diagnostic metadata. Do not infer missing labels or claim that
++   a successful identity check proves every tool is available.
++3. Offer one next step: “Ask what’s in your space, or continue with an agent
++   by name.” If the person already requested a task, continue that task using
++   the appropriate existing Mainmind skill instead of repeating this offer.
++
++If the host explicitly reports that the connection is missing, say “Mainmind
++isn’t connected here yet. Open the plugin’s settings to connect it.” If
++`whoami` is unavailable but the connection state is unknown or other Mainmind
++tools are present, say “I can’t check your Mainmind space from this app yet.
++Check the connection in the plugin’s settings.” A missing tool does not prove
++that the connection is absent. Do not silently substitute `boot`, `sync` or
++another tool with session or write effects. If sign-in has expired, say
++“Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
++For other failures, report that the connection could not be checked and stop;
++do not claim an empty space, successful setup or knowledge from memory.
++
++Use the host's normal sign-in flow. Never ask for passwords, tokens, codes or
++new permissions in chat. Setup does not create a space or standing agent,
++choose an agent, sync memories, start work, clone a repository, change settings
++or subscribe to events. Existing task workflows handle any later action within
++the person's request and the server's authorization.
+diff --git a/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml b/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml
+new file mode 100644
+index 0000000..d587efe
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/mainmind-setup/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Connect to Mainmind"
++  short_description: "Check your Mainmind connection"
++  default_prompt: "Check which Mainmind space I am connected to."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/make-an-agent/agents/openai.yaml b/plugins/mainmind-codex/skills/make-an-agent/agents/openai.yaml
+new file mode 100644
+index 0000000..9724b6c
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/make-an-agent/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Make an agent"
++  short_description: "Create an agent with a clear job"
++  default_prompt: "Help me make an agent for my work."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/morning-brief/agents/openai.yaml b/plugins/mainmind-codex/skills/morning-brief/agents/openai.yaml
+new file mode 100644
+index 0000000..bac3291
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/morning-brief/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Your morning brief"
++  short_description: "See what needs your attention"
++  default_prompt: "Give me my Mainmind morning brief."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/sync/agents/openai.yaml b/plugins/mainmind-codex/skills/sync/agents/openai.yaml
+new file mode 100644
+index 0000000..7c30f72
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/sync/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Sync your agent"
++  short_description: "Keep your agent’s work up to date"
++  default_prompt: "Sync my agent."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-codex/skills/write-knowledge/agents/openai.yaml b/plugins/mainmind-codex/skills/write-knowledge/agents/openai.yaml
+new file mode 100644
+index 0000000..1f7ef2e
+--- /dev/null
++++ b/plugins/mainmind-codex/skills/write-knowledge/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Update your knowledge"
++  short_description: "Keep what your space needs to know"
++  default_prompt: "Help me update my space’s knowledge."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/plugins/mainmind-grok/.grok-plugin/plugin.json b/plugins/mainmind-grok/.grok-plugin/plugin.json
+index b171086..b4f93a9 100644
+--- a/plugins/mainmind-grok/.grok-plugin/plugin.json
++++ b/plugins/mainmind-grok/.grok-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "mainmind",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind-mount/.cursor-plugin/plugin.json b/plugins/mainmind-mount/.cursor-plugin/plugin.json
+index c46d967..1bd9560 100644
+--- a/plugins/mainmind-mount/.cursor-plugin/plugin.json
++++ b/plugins/mainmind-mount/.cursor-plugin/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "mainmind",
+   "displayName": "Mainmind",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind-mount/plugin.json b/plugins/mainmind-mount/plugin.json
+index 3224688..07a9244 100644
+--- a/plugins/mainmind-mount/plugin.json
++++ b/plugins/mainmind-mount/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+   "name": "mainmind-mount",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind/.claude-plugin/plugin.json b/plugins/mainmind/.claude-plugin/plugin.json
+index 9a87fa7..7fb3e58 100644
+--- a/plugins/mainmind/.claude-plugin/plugin.json
++++ b/plugins/mainmind/.claude-plugin/plugin.json
+@@ -2,7 +2,7 @@
+   "name": "mainmind",
+   "displayName": "Mainmind",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
+-  "version": "0.15.0",
++  "version": "0.16.0",
+   "author": {
+     "name": "Shashwat Jain",
+     "url": "https://mainmind.app"
+diff --git a/submissions/openai-directory.md b/submissions/openai-directory.md
+new file mode 100644
+index 0000000..fca60d5
+--- /dev/null
++++ b/submissions/openai-directory.md
+@@ -0,0 +1,86 @@
++# Mainmind for the OpenAI directory
++
++The portable package is `plugins/mainmind-codex/`. It can carry the same
++skills and Mainmind connection into ChatGPT and Codex. A repository release
++is not evidence that OpenAI has reviewed or published a directory version.
++
++## Package and source
++
++- Root `plugin.json`: Agent Plugins 1.0.0 identity and inline
++  `extensions.com.openai` listing, setup and review cases.
++- Root `mcp.json`: explicit `streamable-http`, `https://mainmind.app/mcp`.
++- Seven shared workflows from `skills/`; OpenAI setup and skill
++  `agents/openai.yaml` dependencies from `tools/openai-skills/`.
++- Generated copies are checked before release. Skill dependencies refer to
++  the same Mainmind endpoint and do not grant additional permissions.
++- Public package excludes lifecycle hooks, `.app.json` and app references.
++  Native local hook support is a different distribution/trust path.
++
++The optional onboarding skill checks `whoami` through the existing connection
++and stops after the identity/space result and a next step. It does not enroll
++agents, start work, clone repositories, change settings or create subscriptions.
++
++## Acceptance record
++
++The manifest contains five positive and three negative review scenarios.
++These are expected behaviors, **not completed test results**. Before submitting:
++
++- [ ] Use an authorized demo account with sample data, an accessible sample
++  travel policy, sample work and a standing agent named Review Helper.
++- [ ] Run each case in ChatGPT and Codex; record the installed package version,
++  tool selection, result and any writes. Check mobile behavior and fallbacks.
++- [ ] Test setup activation, missing/expired connection and ambiguous identity.
++- [ ] Verify all expected tools are actually available in the host. A successful
++  `whoami` is only an identity check; a static gate is only package evidence.
++- [ ] Record a reviewer-accessible walkthrough. Add its real URL under
++  `extensions.com.openai.review.demo_recording_url` after recording it.
++
++Actual host setup/activation and directory scans remain unverified for this
++package adaptation. Do not mark them passed from `npm run check`.
++
++## Directory completion
++
++- [ ] Confirm the owning organization/project and verified developer identity.
++- [ ] Confirm website, support, privacy and terms URLs are public and belong to
++  the same publisher. The package retains the current Mainmind URLs.
++- [ ] Upload a ZIP of the package root, resolve metadata/skill findings and
++  connect its one remote HTTPS MCP server.
++- [ ] Complete the dashboard's domain-verification challenge without replacing
++  a token used by another plugin.
++- [ ] Finish authentication and tool scans; inspect discovered tools and any
++  held definitions. Each model-callable operation must be independently exposed.
++- [ ] Enter dedicated reviewer account access in the secure dashboard only.
++  Do not put credentials or reviewer instructions in the package.
++- [ ] Check the imported review cases, actual recording and release notes;
++  complete the required attestations, submit for review, then publish when approved.
++
++Publisher verification, access changes and attestations require the appropriate
++human decision. This source does not accept terms or change country targeting.
++
++## Applicable enhanced capabilities
++
++The new OpenAI plugin surfaces are server capabilities: a read-only space/team
++sidebar and conversation panel, account labels, desktop content mentions,
++selected context and deep links. Add them only after the server's existing
++permissions and actual host behavior are verified. Do not claim they are enabled
++by packaging metadata.
++
++Mainmind already has a conversation-event implementation. Its existing owner
++must verify compatibility and client receipt before event-watch acceptance.
++ChatGPT requires MCP `2026-07-28` and webhook delivery with persistent,
++authorized subscriptions and signed callback verification. Installing this
++package must not silently subscribe a real account.
++
++## Current official references
++
++- [Packaging and universal distribution](https://developers.openai.com/plugins/build/plugins)
++- [Skills and MCP dependencies](https://developers.openai.com/plugins/build/skills)
++- [Submission fields and review](https://developers.openai.com/plugins/deploy/submission)
++- [Package validation errors](https://developers.openai.com/plugins/deploy/submission-errors)
++- [Tool, privacy and permission guidelines](https://developers.openai.com/plugins/plugin-guidelines)
++- [Authentication and profile identity](https://developers.openai.com/plugins/build/auth)
++- [Plugin extensions](https://developers.openai.com/plugins/build/extensions)
++- [MCP Events](https://developers.openai.com/plugins/build/mcp-events)
++
++Checked on 2026-10-01. Annotation justifications are no longer a blanket
++submission requirement; explicit correct safety annotations remain required.
+diff --git a/tools/check-openai-package.mjs b/tools/check-openai-package.mjs
+new file mode 100644
+index 0000000..7562dd9
+--- /dev/null
++++ b/tools/check-openai-package.mjs
+@@ -0,0 +1,104 @@
++#!/usr/bin/env node
++// Public OpenAI package requirements. This is a source/distribution gate,
++// not proof of directory approval, connection, skill activation or host UI.
++// https://developers.openai.com/plugins/deploy/submission
++// https://developers.openai.com/plugins/deploy/submission-errors
++// https://developers.openai.com/plugins/build/skills
++import { readFileSync, readdirSync, existsSync, lstatSync } from "node:fs";
++import { dirname, join, resolve, sep } from "node:path";
++import { fileURLToPath } from "node:url";
++import { validateOpenaiSkillMetadata } from "./openai-skill-metadata.mjs";
++
++const root = join(dirname(fileURLToPath(import.meta.url)), "..");
++const packageRoot = join(root, "plugins/mainmind-codex");
++const failures = [];
++const fail = message => failures.push(message);
++const json = path => JSON.parse(readFileSync(path, "utf8"));
++const object = value => value && Object.getPrototypeOf(value) === Object.prototype;
++const string = value => typeof value === "string" && value.trim().length > 0;
++const bounded = (value, limit, label) => {
++  if (!string(value) || [...value].length > limit) fail(`${label}: expected nonempty text within ${limit} characters`);
++};
++function https(value, limit, label) {
++  if (!string(value) || value.length > limit) { fail(`${label}: expected HTTPS URL within ${limit} characters`); return; }
++  try {
++    const url = new URL(value);
++    if (url.protocol !== "https:" || !url.hostname) fail(`${label}: must use HTTPS`);
++    if (url.username || url.password) fail(`${label}: must not contain credentials`);
++  } catch { fail(`${label}: invalid HTTPS URL`); }
++}
++function includedSkill(path, label) {
++  if (typeof path !== "string" || !/^\.\/skills\/[a-z0-9]+(?:-[a-z0-9]+)*\/SKILL\.md$/.test(path)) {
++    fail(`${label}: expected ./-relative included skill path`); return;
++  }
++  const target = resolve(packageRoot, path);
++  if (!target.startsWith(packageRoot + sep) || !existsSync(target) || !lstatSync(target).isFile()) {
++    fail(`${label}: must refer to an included skill`);
++  }
++}
++
++const manifest = json(join(packageRoot, "plugin.json"));
++bounded(manifest.description, 4000, "description");
++bounded(manifest.author?.name, 120, "author.name");
++if (manifest.author?.email !== undefined) bounded(manifest.author.email, 320, "author.email");
++if (manifest.author?.url !== undefined) https(manifest.author.url, 2048, "author.url");
++if (manifest.homepage !== undefined) https(manifest.homepage, 2048, "homepage");
++const extension = manifest.extensions?.["com.openai"];
++if (!object(extension)) fail("extensions.com.openai: expected object");
++const ui = extension?.interface || {};
++for (const [key, limit] of [["displayName", 30], ["shortDescription", 30], ["longDescription", 4000], ["developerName", 80]]) {
++  bounded(ui[key], limit, `interface.${key}`);
++}
++for (const key of ["websiteURL", "supportURL", "privacyPolicyURL", "termsOfServiceURL"]) https(ui[key], 1024, `interface.${key}`);
++if (!Array.isArray(ui.capabilities) || ui.capabilities.length > 20) fail("interface.capabilities: expected an array with at most 20 entries");
++else ui.capabilities.forEach(value => bounded(value, 120, "interface.capabilities entry"));
++if (ui.defaultPrompt !== undefined) {
++  const prompts = Array.isArray(ui.defaultPrompt) ? ui.defaultPrompt : [ui.defaultPrompt];
++  if (!prompts.length || prompts.length > 3) fail("interface.defaultPrompt: expected one to three prompts");
++  if (new Set(prompts).size !== prompts.length) fail("interface.defaultPrompt: prompts must be unique");
++  for (const prompt of prompts) {
++    bounded(prompt, 128, "interface.defaultPrompt entry");
++    if (typeof prompt === "string" && /@/.test(prompt)) fail("interface.defaultPrompt: omit app @mentions");
++  }
++}
++// The native local hook capability is separate from today's public ZIP path.
++for (const overlay of [manifest, extension || {}]) {
++  if ("hooks" in overlay) fail("public package: lifecycle hooks cannot currently be submitted");
++  if ("apps" in overlay) fail("public package: app references cannot currently be submitted");
++  for (const key of ["skills", "mcpServers"]) if (key in overlay) fail(`portable package: ${key} declarations cannot change auto-discovery; use canonical root paths`);
++}
++for (const path of [".app.json", "hooks", ".codex-plugin"]) if (existsSync(join(packageRoot, path))) fail(`public package: unsupported ${path}`);
++includedSkill(extension?.onboardingSkill, "onboardingSkill");
++if (extension?.onboardingSkill !== "./skills/mainmind-setup/SKILL.md") fail("onboardingSkill: use the bounded Mainmind setup skill");
++if (extension?.review) {
++  for (const key of ["test_credentials", "reviewer_instructions"]) if (key in extension.review) fail("review: credentials and reviewer instructions belong in the secure dashboard");
++  const cases = extension.review.test_cases;
++  for (const [kind, count] of [["positive", 5], ["negative", 3]]) {
++    if (!Array.isArray(cases?.[kind]) || cases[kind].length !== count) { fail(`review: expected ${count} ${kind} cases`); continue; }
++    for (const test of cases[kind]) {
++      if (!object(test)) { fail("review: each test case must be an object"); continue; }
++      for (const field of ["description", "prompt", "tools_triggered", "expected_behavior"]) if (!string(test[field])) fail(`review: test case ${field} must be nonempty text`);
++    }
++  }
++}
++const marketplace = json(join(root, ".agents/plugins/marketplace.json"));
++const entry = marketplace.plugins?.find(p => p.name === "mainmind");
++if (entry?.policy?.installation !== "AVAILABLE" || entry?.policy?.authentication !== "ON_INSTALL") fail("marketplace: preserve available installation and on-install authentication policy");
++
++const canonicalNames = readdirSync(join(root, "skills"), { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name);
++const openaiNames = [...canonicalNames, "mainmind-setup"].sort();
++for (const destination of ["plugins/mainmind-codex/skills", ".agents/skills"]) {
++  const dir = join(root, destination);
++  const names = readdirSync(dir, { withFileTypes: true }).filter(e => e.isDirectory()).map(e => e.name).sort();
++  if (JSON.stringify(names) !== JSON.stringify(openaiNames)) fail(`${destination}: expected shared skills plus OpenAI setup`);
++  for (const name of names) {
++    const path = join(dir, name, "agents/openai.yaml");
++    const label = `${destination}/${name}/agents/openai.yaml`;
++    if (!existsSync(path) || !lstatSync(path).isFile()) { fail(`${label}: missing regular file`); continue; }
++    validateOpenaiSkillMetadata(readFileSync(path, "utf8")).forEach(problem => fail(`${label}: ${problem}`));
++  }
++}
++if (failures.length) {
++  failures.forEach(message => console.error(`FAIL ${message}`)); process.exit(1);
++}
++console.log(`PASS OpenAI public package contract and ${openaiNames.length} skills on both OpenAI surfaces (host acceptance remains separate)`);
+diff --git a/tools/openai-skill-metadata.mjs b/tools/openai-skill-metadata.mjs
+new file mode 100644
+index 0000000..9f92417
+--- /dev/null
++++ b/tools/openai-skill-metadata.mjs
+@@ -0,0 +1,34 @@
++// Host metadata only: this file does not define an agent runtime or authority.
++// https://developers.openai.com/plugins/deploy/submission-errors#skill-agent-metadata-errors
++import { parseDocument } from "yaml";
++
++const object = value => value && Object.getPrototypeOf(value) === Object.prototype;
++const string = value => typeof value === "string" && value.trim().length > 0;
++export function validateOpenaiSkillMetadata(text) {
++  let metadata;
++  try {
++    const document = parseDocument(text, { schema: "core", uniqueKeys: true });
++    if (document.errors.length || document.warnings.length) throw new Error("invalid YAML");
++    metadata = document.toJS({ maxAliasCount: 0 });
++  } catch { return ["invalid YAML"]; }
++  if (!object(metadata)) return ["YAML must be a mapping"];
++  const problems = [];
++  if (!object(metadata.interface)) problems.push("interface must be a mapping");
++  else {
++    for (const key of ["display_name", "short_description"]) if (!string(metadata.interface[key])) problems.push(`interface.${key} must be nonempty text`);
++    if ("default_prompt" in metadata.interface && !string(metadata.interface.default_prompt)) problems.push("interface.default_prompt must be nonempty text");
++  }
++  if (!object(metadata.policy) || Object.keys(metadata.policy).some(key => !["products", "allow_implicit_invocation"].includes(key)) ||
++      !Array.isArray(metadata.policy.products) || !metadata.policy.products.length || new Set(metadata.policy.products).size !== metadata.policy.products.length ||
++      metadata.policy.products.some(p => !["CHAT", "CODEX"].includes(p)) || typeof metadata.policy.allow_implicit_invocation !== "boolean") {
++    problems.push("invalid OpenAI policy");
++  }
++  if (!object(metadata.dependencies) || Object.keys(metadata.dependencies).some(key => key !== "tools") || !Array.isArray(metadata.dependencies.tools) || metadata.dependencies.tools.length !== 1) {
++    problems.push("expected one Mainmind dependency");
++  } else {
++    const tool = metadata.dependencies.tools[0];
++    if (!object(tool) || tool.type !== "mcp" || tool.value !== "mainmind" || !string(tool.description) || tool.url !== "https://mainmind.app/mcp") problems.push("incorrect Mainmind dependency");
++    if (tool?.transport !== "streamable_http") problems.push("dependency transport must be streamable_http");
++  }
++  return problems;
++}
+diff --git a/tools/openai-skills/continue-everywhere/agents/openai.yaml b/tools/openai-skills/continue-everywhere/agents/openai.yaml
+new file mode 100644
+index 0000000..5b39234
+--- /dev/null
++++ b/tools/openai-skills/continue-everywhere/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Continue in another app"
++  short_description: "Move your agent between AI apps"
++  default_prompt: "Continue with my agent in another app."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/continue-with-my-agent/agents/openai.yaml b/tools/openai-skills/continue-with-my-agent/agents/openai.yaml
+new file mode 100644
+index 0000000..6f2edba
+--- /dev/null
++++ b/tools/openai-skills/continue-with-my-agent/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Continue with your agent"
++  short_description: "Pick up where your agent stopped"
++  default_prompt: "Continue with my agent where we left off."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/mainmind-boot/agents/openai.yaml b/tools/openai-skills/mainmind-boot/agents/openai.yaml
+new file mode 100644
+index 0000000..2a5f1ba
+--- /dev/null
++++ b/tools/openai-skills/mainmind-boot/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Work in your Mainmind space"
++  short_description: "Use your space’s knowledge and work"
++  default_prompt: "What is in my Mainmind space?"
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/mainmind-setup/SKILL.md b/tools/openai-skills/mainmind-setup/SKILL.md
+new file mode 100644
+index 0000000..a64669f
+--- /dev/null
++++ b/tools/openai-skills/mainmind-setup/SKILL.md
+@@ -0,0 +1,37 @@
++---
++name: mainmind-setup
++description: Check the existing Mainmind connection after installing the plugin in ChatGPT or Codex. Use when the person starts plugin setup or asks which Mainmind space is connected. Report the connected identity and space from a read-only check, then offer one useful next step.
++---
++
++# Connect to Mainmind
++
++Follow the person's explicit instructions before these workflow guidelines.
++This is a bounded connection check. It ends with the result and one next step.
++
++1. Use the existing Mainmind connection's `whoami` tool with no arguments.
++   Resolve the tool from the connected server; do not guess a host-prefixed
++   name or substitute a tool from another account.
++2. On success, say which space is connected and who is signed in using only
++   the returned identity and space labels. Do not expose internal IDs, policy
++   records or diagnostic metadata. Do not infer missing labels or claim that
++   a successful identity check proves every tool is available.
++3. Offer one next step: “Ask what’s in your space, or continue with an agent
++   by name.” If the person already requested a task, continue that task using
++   the appropriate existing Mainmind skill instead of repeating this offer.
++
++If the host explicitly reports that the connection is missing, say “Mainmind
++isn’t connected here yet. Open the plugin’s settings to connect it.” If
++`whoami` is unavailable but the connection state is unknown or other Mainmind
++tools are present, say “I can’t check your Mainmind space from this app yet.
++Check the connection in the plugin’s settings.” A missing tool does not prove
++that the connection is absent. Do not silently substitute `boot`, `sync` or
++another tool with session or write effects. If sign-in has expired, say
++“Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
++For other failures, report that the connection could not be checked and stop;
++do not claim an empty space, successful setup or knowledge from memory.
++
++Use the host's normal sign-in flow. Never ask for passwords, tokens, codes or
++new permissions in chat. Setup does not create a space or standing agent,
++choose an agent, sync memories, start work, clone a repository, change settings
++or subscribe to events. Existing task workflows handle any later action within
++the person's request and the server's authorization.
+diff --git a/tools/openai-skills/mainmind-setup/agents/openai.yaml b/tools/openai-skills/mainmind-setup/agents/openai.yaml
+new file mode 100644
+index 0000000..d587efe
+--- /dev/null
++++ b/tools/openai-skills/mainmind-setup/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Connect to Mainmind"
++  short_description: "Check your Mainmind connection"
++  default_prompt: "Check which Mainmind space I am connected to."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/make-an-agent/agents/openai.yaml b/tools/openai-skills/make-an-agent/agents/openai.yaml
+new file mode 100644
+index 0000000..9724b6c
+--- /dev/null
++++ b/tools/openai-skills/make-an-agent/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Make an agent"
++  short_description: "Create an agent with a clear job"
++  default_prompt: "Help me make an agent for my work."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/morning-brief/agents/openai.yaml b/tools/openai-skills/morning-brief/agents/openai.yaml
+new file mode 100644
+index 0000000..bac3291
+--- /dev/null
++++ b/tools/openai-skills/morning-brief/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Your morning brief"
++  short_description: "See what needs your attention"
++  default_prompt: "Give me my Mainmind morning brief."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/sync/agents/openai.yaml b/tools/openai-skills/sync/agents/openai.yaml
+new file mode 100644
+index 0000000..7c30f72
+--- /dev/null
++++ b/tools/openai-skills/sync/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Sync your agent"
++  short_description: "Keep your agent’s work up to date"
++  default_prompt: "Sync my agent."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/openai-skills/write-knowledge/agents/openai.yaml b/tools/openai-skills/write-knowledge/agents/openai.yaml
+new file mode 100644
+index 0000000..1f7ef2e
+--- /dev/null
++++ b/tools/openai-skills/write-knowledge/agents/openai.yaml
+@@ -0,0 +1,14 @@
++interface:
++  display_name: "Update your knowledge"
++  short_description: "Keep what your space needs to know"
++  default_prompt: "Help me update my space’s knowledge."
++policy:
++  products: [CHAT, CODEX]
++  allow_implicit_invocation: true
++dependencies:
++  tools:
++    - type: mcp
++      value: mainmind
++      description: "Read your Mainmind space and carry out its supported workflows"
++      transport: streamable_http
++      url: https://mainmind.app/mcp
+diff --git a/tools/sync-skills.mjs b/tools/sync-skills.mjs
+index 7cd7d0e..ba05f50 100644
+--- a/tools/sync-skills.mjs
++++ b/tools/sync-skills.mjs
+@@ -15,10 +15,15 @@ import { readdirSync, readFileSync, writeFileSync, mkdirSync, rmSync, rmdirSync,
+ import { join, dirname, relative } from "node:path";
+ import { fileURLToPath } from "node:url";
+ import { SKILL_ROOTS, validateSkillFrontmatter } from "./skill-frontmatter.mjs";
++import { validateOpenaiSkillMetadata } from "./openai-skill-metadata.mjs";
+ 
+ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
+ const SOURCE = "skills";
+ const DESTINATIONS = SKILL_ROOTS.filter((path) => path !== SOURCE);
++// OpenAI host metadata/setup lives separately from the shared workflows.
++// Merge these sources only into the portable OpenAI package and repo skills.
++const OPENAI_SOURCE = "tools/openai-skills";
++const OPENAI_DESTINATIONS = new Set(["plugins/mainmind-codex/skills", ".agents/skills"]);
+ 
+ // A renamed skill leaves its old directory behind once its files are gone;
+ // an empty skill directory still looks like a skill to a person browsing, and
+@@ -45,6 +50,14 @@ if (!existsSync(sourceDir)) {
+   process.exit(1);
+ }
+ const files = walk(sourceDir).sort();
++const openaiDir = join(root, OPENAI_SOURCE);
++const openaiFiles = existsSync(openaiDir) ? walk(openaiDir).sort() : [];
++for (const file of openaiFiles) {
++  if (files.includes(file)) {
++    console.error(`FAIL ${OPENAI_SOURCE}/${file} would override a shared skill; keep one source of truth`);
++    process.exit(1);
++  }
++}
+ if (!files.length) {
+   console.error(`${SOURCE}/ holds no files; refusing to empty every destination.`);
+   process.exit(1);
+@@ -53,12 +66,17 @@ if (!files.length) {
+ // A skill is only loadable if its frontmatter names it. Check the source once,
+ // here, rather than discovering it in a client that silently ignores the file.
+ const problems = [];
+-for (const file of files) {
++for (const file of openaiFiles.filter(file => file.endsWith("agents/openai.yaml"))) {
++  for (const problem of validateOpenaiSkillMetadata(readFileSync(join(openaiDir, file), "utf8"))) {
++    problems.push(`${OPENAI_SOURCE}/${file}: ${problem}`);
++  }
++}
++for (const [source, paths] of [[SOURCE, files], [OPENAI_SOURCE, openaiFiles]]) for (const file of paths) {
+   if (!file.endsWith("SKILL.md")) continue;
+-  const text = readFileSync(join(sourceDir, file), "utf8");
++  const text = readFileSync(join(root, source, file), "utf8");
+   const directory = dirname(file).split(/[\\/]/).at(-1);
+   for (const problem of validateSkillFrontmatter(text, directory)) {
+-    problems.push(`${SOURCE}/${file}: ${problem}`);
++    problems.push(`${source}/${file}: ${problem}`);
+   }
+ }
+ if (problems.length) {
+@@ -73,13 +91,15 @@ for (const destination of DESTINATIONS) {
+   const target = join(root, destination);
+   const existing = existsSync(target) ? walk(target).sort() : [];
+ 
+-  for (const file of files) {
+-    const from = readFileSync(join(sourceDir, file));
++  const wanted = OPENAI_DESTINATIONS.has(destination) ? [...files, ...openaiFiles] : files;
++  for (const file of wanted) {
++    const source = openaiFiles.includes(file) ? OPENAI_SOURCE : SOURCE;
++    const from = readFileSync(join(root, source, file));
+     const to = join(target, file);
+     const current = existsSync(to) && statSync(to).isFile() ? readFileSync(to) : null;
+     if (current && current.equals(from)) continue;
+     if (check) {
+-      console.error(`DRIFT ${destination}/${file} ${current ? "differs from" : "is missing from"} ${SOURCE}/${file}`);
++      console.error(`DRIFT ${destination}/${file} ${current ? "differs from" : "is missing from"} ${source}/${file}`);
+       drifted += 1;
+       continue;
+     }
+@@ -88,9 +108,9 @@ for (const destination of DESTINATIONS) {
+   }
+ 
+   for (const file of existing) {
+-    if (files.includes(file)) continue;
++    if (wanted.includes(file)) continue;
+     if (check) {
+-      console.error(`DRIFT ${destination}/${file} has no counterpart in ${SOURCE}/`);
++      console.error(`DRIFT ${destination}/${file} has no counterpart in its skill sources`);
+       drifted += 1;
+       continue;
+     }
+@@ -104,7 +124,7 @@ if (check) {
+     console.error(`\n${drifted} file(s) out of sync. Edit ${SOURCE}/ and run: npm run sync`);
+     process.exit(1);
+   }
+-  console.log(`PASS ${files.length} skill file(s) identical across ${DESTINATIONS.length} destinations`);
++  console.log(`PASS ${files.length} shared files across ${DESTINATIONS.length} destinations; ${openaiFiles.length} OpenAI files across ${OPENAI_DESTINATIONS.size} destinations`);
+ } else {
+-  console.log(`Synced ${files.length} skill file(s) into ${DESTINATIONS.join(", ")}`);
++  console.log(`Synced ${files.length} shared files into ${DESTINATIONS.length} destinations; ${openaiFiles.length} OpenAI files into ${OPENAI_DESTINATIONS.size} destinations`);
+ }
+diff --git a/tools/test-openai-package.mjs b/tools/test-openai-package.mjs
+new file mode 100644
+index 0000000..3c09f3c
+--- /dev/null
++++ b/tools/test-openai-package.mjs
+@@ -0,0 +1,79 @@
++#!/usr/bin/env node
++// Requirements are literal expectations from the OpenAI skill/package guides,
++// exercised through the same command interfaces used by CI and distribution.
++import assert from "node:assert/strict";
++import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync, symlinkSync } from "node:fs";
++import { dirname, join } from "node:path";
++import { tmpdir } from "node:os";
++import { spawnSync } from "node:child_process";
++import { fileURLToPath } from "node:url";
++
++const root = join(dirname(fileURLToPath(import.meta.url)), "..");
++const packageRoot = "plugins/mainmind-codex";
++const manifest = JSON.parse(readFileSync(join(root, packageRoot, "plugin.json")));
++assert.equal(manifest.extensions["com.openai"].onboardingSkill, "./skills/mainmind-setup/SKILL.md");
++const box = mkdtempSync(join(tmpdir(), "mainmind-openai-package-"));
++let cases = 0;
++try {
++  for (const path of ["tools", "skills", "plugins", ".agents"]) cpSync(join(root, path), join(box, path), { recursive: true });
++  symlinkSync(join(root, "node_modules"), join(box, "node_modules"), "dir");
++  const run = (script, ...args) => spawnSync(process.execPath, [join(box, "tools", script), ...args], { encoding: "utf8" });
++  const check = () => run("check-openai-package.mjs");
++  assert.equal(check().status, 0, "the real package must pass"); cases++;
++  const path = join(box, packageRoot, "plugin.json");
++  const original = readFileSync(path, "utf8");
++  for (const [label, mutate, error] of [
++    ["unsafe public URL", p => { p.extensions["com.openai"].interface.supportURL = "http://example.com"; }, /HTTPS/],
++    ["credentials in URL", p => { p.extensions["com.openai"].interface.websiteURL = "https://private:secret@example.com"; }, /credentials/],
++    ["directory subtitle limit", p => { p.extensions["com.openai"].interface.shortDescription = "a".repeat(31); }, /30/],
++    ["too many prompts", p => { p.extensions["com.openai"].interface.defaultPrompt = ["a", "b", "c", "d"]; }, /three/],
++    ["duplicate prompts", p => { p.extensions["com.openai"].interface.defaultPrompt = ["a", "a"]; }, /unique/],
++    ["missing setup", p => { p.extensions["com.openai"].onboardingSkill = "./skills/missing/SKILL.md"; }, /included skill/],
++    ["escaping setup path", p => { p.extensions["com.openai"].onboardingSkill = "../skills/mainmind-setup/SKILL.md"; }, /relative/],
++    ["public hook overlay", p => { p.extensions["com.openai"].hooks = "./hooks/hooks.json"; }, /hooks/],
++    ["public app references", p => { p.extensions["com.openai"].apps = "./.app.json"; }, /app references/],
++    ["too many capabilities", p => { p.extensions["com.openai"].interface.capabilities = Array(21).fill("read"); }, /20/],
++    ["review secrets", p => { p.extensions["com.openai"].review = { test_credentials: "do not ship" }; }, /credentials/],
++    ["incomplete review cases", p => { p.extensions["com.openai"].review.test_cases.positive.pop(); }, /5 positive/],
++  ]) {
++    const p = JSON.parse(original); mutate(p); writeFileSync(path, JSON.stringify(p));
++    const result = check(); assert.equal(result.status, 1, label); assert.match(result.stderr, error, label); cases++;
++  }
++  writeFileSync(path, original);
++  const yaml = join(box, packageRoot, "skills/mainmind-setup/agents/openai.yaml");
++  const yamlOriginal = readFileSync(yaml, "utf8");
++  for (const [value, error] of [
++    ["interface: [invalid]\n", /interface/],
++    [yamlOriginal.replace("streamable_http", "http"), /transport/],
++    [yamlOriginal + "\ninterface: {}\n", /YAML/],
++    [yamlOriginal.replace("https://mainmind.app/mcp", "https://other.example/mcp"), /dependency/],
++    [yamlOriginal.replace('products: [CHAT, CODEX]', 'products: [OTHER]'), /policy/],
++    [yamlOriginal.replace(/default_prompt:.*\n/, 'default_prompt: []\n'), /default_prompt/],
++  ]) {
++    writeFileSync(yaml, value); const result = check(); assert.equal(result.status, 1); assert.match(result.stderr, error); cases++;
++  }
++  writeFileSync(yaml, yamlOriginal);
++  assert.equal(run("sync-skills.mjs", "--check").status, 0); cases++;
++  writeFileSync(yaml, yamlOriginal.replace("Check your Mainmind connection", "Changed metadata"));
++  assert.equal(run("sync-skills.mjs", "--check").status, 1, "generated OpenAI metadata drift must fail"); cases++;
++  assert.equal(run("sync-skills.mjs").status, 0);
++  assert.equal(readFileSync(yaml, "utf8"), yamlOriginal); cases++;
++  for (const dest of ["plugins/mainmind/skills", "plugins/mainmind-grok/skills", "plugins/mainmind-mount/skills", "plugins/mainmind-muse/skills"]) {
++    assert.equal(existsSync(join(box, dest, "mainmind-setup")), false, "OpenAI setup must stay scoped");
++    assert.equal(existsSync(join(box, dest, "sync/agents/openai.yaml")), false, "OpenAI metadata must stay scoped");
++  } cases++;
++  const shared = join(box, "skills/sync/SKILL.md");
++  assert.equal(readFileSync(shared, "utf8"), readFileSync(join(box, packageRoot, "skills/sync/SKILL.md"), "utf8")); cases++;
++  assert.equal(check().status, 0); cases++;
++  const overlay = join(box, "tools/openai-skills/mainmind-setup/agents/openai.yaml");
++  writeFileSync(overlay, "interface: [invalid]\n");
++  assert.equal(run("sync-skills.mjs").status, 1, "invalid source metadata must stop distribution");
++  assert.equal(readFileSync(yaml, "utf8"), yamlOriginal, "invalid source must not replace the valid copy"); cases++;
++  writeFileSync(overlay, yamlOriginal);
++  const collision = join(box, "tools/openai-skills/mainmind-setup/SKILL.md");
++  // A new shared file with this name would collide with the host-only source.
++  cpSync(dirname(collision), join(box, "skills/mainmind-setup"), { recursive: true });
++  const collided = run("sync-skills.mjs");
++  assert.equal(collided.status, 1); assert.match(collided.stderr, /override a shared skill/); cases++;
++} finally { rmSync(box, { recursive: true, force: true }); }
++console.log(`PASS ${cases} OpenAI package cases (public contract, skill dependencies and scoped generation)`);
+diff --git a/tools/test-skill-frontmatter.mjs b/tools/test-skill-frontmatter.mjs
+index ded7d3b..89f6dd0 100644
+--- a/tools/test-skill-frontmatter.mjs
++++ b/tools/test-skill-frontmatter.mjs
+@@ -86,7 +86,7 @@ const sandbox = mkdtempSync(join(tmpdir(), "mainmind-frontmatter-"));
+ try {
+   mkdirSync(join(sandbox, "tools"));
+   symlinkSync(join(root, "node_modules"), join(sandbox, "node_modules"), "dir");
+-  for (const file of ["sync-skills.mjs", "skill-frontmatter.mjs", "check-skills.mjs"]) {
++  for (const file of ["sync-skills.mjs", "skill-frontmatter.mjs", "openai-skill-metadata.mjs", "check-skills.mjs"]) {
+     copyFileSync(join(root, "tools", file), join(sandbox, "tools", file));
+   }
+   const name = "continue-with-my-agent";

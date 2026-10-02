@@ -1,0 +1,1 @@
+plugins/mainmind-codex/README.md

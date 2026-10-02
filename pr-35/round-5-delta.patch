@@ -1,0 +1,30 @@
+diff --git a/plugins/mainmind-codex/README.md b/plugins/mainmind-codex/README.md
+index bf32b65..ce17d0d 100644
+--- a/plugins/mainmind-codex/README.md
++++ b/plugins/mainmind-codex/README.md
+@@ -2,9 +2,22 @@
+ 
+ Continue with your agents and the work they remember, wherever you use AI.
+ 
+-In Codex, install `mainmind@mainmind` from the Mainmind marketplace, then sign in
+-to your Mainmind space. Run `$mainmind-setup` to check which space is connected. Ask
+-“what's in my space?”, or say
++In Codex, install `mainmind@mainmind` from the Mainmind marketplace and sign in
++to your Mainmind space.
++
++Already installed? Paste this into a Codex conversation:
++
++```text
++$mainmind-setup
++```
++
++Setup reports which identity and space are connected, or explains why it cannot
++check. If the check is unavailable, retry the command once. If it still cannot
++check, [report the unavailable connection check](https://github.com/codeyogi911/mainmind-plugins/issues)
++with your AI app's name and the message you saw. Leave out private account
++details. Setup keeps your existing connection and does not start work.
++
++Once the connection is checked, ask “what's in my space?”, or say
+ “Continue with Job Hunter” to pick up with an agent.
+ 
+ This portable package includes the seven shared Mainmind workflows, a

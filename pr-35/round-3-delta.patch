@@ -1,0 +1,539 @@
+diff --git a/.agents/skills/mainmind-setup/SKILL.md b/.agents/skills/mainmind-setup/SKILL.md
+index a64669f..b578980 100644
+--- a/.agents/skills/mainmind-setup/SKILL.md
++++ b/.agents/skills/mainmind-setup/SKILL.md
+@@ -24,7 +24,9 @@ isn’t connected here yet. Open the plugin’s settings to connect it.” If
+ `whoami` is unavailable but the connection state is unknown or other Mainmind
+ tools are present, say “I can’t check your Mainmind space from this app yet.
+ Check the connection in the plugin’s settings.” A missing tool does not prove
+-that the connection is absent. Do not silently substitute `boot`, `sync` or
++that the connection is absent. Include both sentences in the final reply,
++even if an earlier progress message already explained the limitation.
++Do not silently substitute `boot`, `sync` or
+ another tool with session or write effects. If sign-in has expired, say
+ “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
+ For other failures, report that the connection could not be checked and stop;
+diff --git a/.agents/skills/write-knowledge/SKILL.md b/.agents/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/.agents/skills/write-knowledge/SKILL.md
++++ b/.agents/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/README.md b/README.md
+index e8c437c..13342bd 100644
+--- a/README.md
++++ b/README.md
+@@ -22,7 +22,7 @@ you know with you." [How it works](https://mainmind.app/docs/persistent-agents#s
+ | **Cursor**, including its Grok Bot | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins**, in the editor or in Grok Bot. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
+ | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
+ | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Cursor's Grok Bot is a Cursor product and uses the Cursor row |
+-| **ChatGPT**, including its dots | OpenAI's public plugin directory supports the same skills-and-connection package as Codex. This repository's package is [`plugins/mainmind-codex`](plugins/mainmind-codex); a public Mainmind listing has not been verified here. An existing developer connection can still use `https://mainmind.app/mcp`, but that connection alone does not install these packaged skills. New package setup and dots have not yet been tested in ChatGPT. [Distribution and review checklist](submissions/openai-directory.md) |
++| **ChatGPT**, including its dots | OpenAI's public plugin directory supports the same skills-and-connection package as Codex. This repository's package is [`plugins/mainmind-codex`](plugins/mainmind-codex); a public Mainmind listing has not been verified here. An existing developer connection can still use `https://mainmind.app/mcp`, but that connection alone does not install these packaged skills. Installed skill loading and setup activation were tested in Codex CLI; ChatGPT desktop and dots remain untested. [Distribution and review checklist](submissions/openai-directory.md) |
+ | **Claude directory** (claude.ai, Cowork, Claude Code) | `plugins/mainmind` is ready to submit to Anthropic's directory; [`submissions/claude-directory.md`](submissions/claude-directory.md) holds every answer the portal asks for and what is still open |
+ | **Muse** | [`plugins/mainmind-muse`](plugins/mainmind-muse): add it yourself today, plus the dossier for the directory listing |
+ 
+diff --git a/package-lock.json b/package-lock.json
+index 4c07e8d..ca2683e 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -1,12 +1,12 @@
+ {
+   "name": "mainmind-plugins",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "lockfileVersion": 3,
+   "requires": true,
+   "packages": {
+     "": {
+       "name": "mainmind-plugins",
+-      "version": "0.16.0",
++      "version": "0.16.1",
+       "license": "MIT",
+       "devDependencies": {
+         "yaml": "2.9.1"
+diff --git a/package.json b/package.json
+index c3b490a..c725bcd 100644
+--- a/package.json
++++ b/package.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "mainmind-plugins",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "private": true,
+   "description": "Mainmind plugins and skills for Claude Code, Codex, Grok and Agent Plugins clients.",
+   "license": "MIT",
+diff --git a/plugins/mainmind-codex/README.md b/plugins/mainmind-codex/README.md
+index ed223d2..bf32b65 100644
+--- a/plugins/mainmind-codex/README.md
++++ b/plugins/mainmind-codex/README.md
+@@ -3,7 +3,7 @@
+ Continue with your agents and the work they remember, wherever you use AI.
+ 
+ In Codex, install `mainmind@mainmind` from the Mainmind marketplace, then sign in
+-to your Mainmind space. Run setup to check which space is connected. Ask
++to your Mainmind space. Run `$mainmind-setup` to check which space is connected. Ask
+ “what's in my space?”, or say
+ “Continue with Job Hunter” to pick up with an agent.
+ 
+@@ -15,8 +15,11 @@ or keys. What you can read and do depends on your existing access.
+ 
+ OpenAI's public directory distributes plugins to both ChatGPT and Codex.
+ Repository installation in Codex and publication to that directory are separate
+-steps. A public Mainmind listing and this version's setup flow in either host
+-have not yet been verified. An existing ChatGPT developer connection remains
++steps. Installed skill loading and setup activation were tested in Codex CLI
++0.159.3. That host did not expose the connection-check tool, so setup stopped
++without claiming success or changing anything. The connected-space success
++path, ChatGPT desktop and a public Mainmind listing remain unverified.
++An existing ChatGPT developer connection remains
+ usable, but does not install packaged skills by itself.
+ 
+ The [distribution and review checklist](../../submissions/openai-directory.md)
+diff --git a/plugins/mainmind-codex/plugin.json b/plugins/mainmind-codex/plugin.json
+index f10cda0..21be8da 100644
+--- a/plugins/mainmind-codex/plugin.json
++++ b/plugins/mainmind-codex/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+   "name": "mainmind",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "description": "Continue with your agents across AI apps, use your space's knowledge, and keep work in sync.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md b/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
+index a64669f..b578980 100644
+--- a/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
++++ b/plugins/mainmind-codex/skills/mainmind-setup/SKILL.md
+@@ -24,7 +24,9 @@ isn’t connected here yet. Open the plugin’s settings to connect it.” If
+ `whoami` is unavailable but the connection state is unknown or other Mainmind
+ tools are present, say “I can’t check your Mainmind space from this app yet.
+ Check the connection in the plugin’s settings.” A missing tool does not prove
+-that the connection is absent. Do not silently substitute `boot`, `sync` or
++that the connection is absent. Include both sentences in the final reply,
++even if an earlier progress message already explained the limitation.
++Do not silently substitute `boot`, `sync` or
+ another tool with session or write effects. If sign-in has expired, say
+ “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
+ For other failures, report that the connection could not be checked and stop;
+diff --git a/plugins/mainmind-codex/skills/write-knowledge/SKILL.md b/plugins/mainmind-codex/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/plugins/mainmind-codex/skills/write-knowledge/SKILL.md
++++ b/plugins/mainmind-codex/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/plugins/mainmind-grok/.grok-plugin/plugin.json b/plugins/mainmind-grok/.grok-plugin/plugin.json
+index b4f93a9..02a9bf7 100644
+--- a/plugins/mainmind-grok/.grok-plugin/plugin.json
++++ b/plugins/mainmind-grok/.grok-plugin/plugin.json
+@@ -1,6 +1,6 @@
+ {
+   "name": "mainmind",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind-grok/skills/write-knowledge/SKILL.md b/plugins/mainmind-grok/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/plugins/mainmind-grok/skills/write-knowledge/SKILL.md
++++ b/plugins/mainmind-grok/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/plugins/mainmind-mount/.cursor-plugin/plugin.json b/plugins/mainmind-mount/.cursor-plugin/plugin.json
+index 1bd9560..dd02d7b 100644
+--- a/plugins/mainmind-mount/.cursor-plugin/plugin.json
++++ b/plugins/mainmind-mount/.cursor-plugin/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "name": "mainmind",
+   "displayName": "Mainmind",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind-mount/plugin.json b/plugins/mainmind-mount/plugin.json
+index 07a9244..2b56dbe 100644
+--- a/plugins/mainmind-mount/plugin.json
++++ b/plugins/mainmind-mount/plugin.json
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+   "name": "mainmind-mount",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. A space can hold a company, a job hunt or anything else. You sign in as yourself, and the plugin holds no passwords or keys.",
+   "author": {
+     "name": "Shashwat Jain",
+diff --git a/plugins/mainmind-mount/skills/write-knowledge/SKILL.md b/plugins/mainmind-mount/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/plugins/mainmind-mount/skills/write-knowledge/SKILL.md
++++ b/plugins/mainmind-mount/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/plugins/mainmind-muse/skills/write-knowledge/SKILL.md b/plugins/mainmind-muse/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/plugins/mainmind-muse/skills/write-knowledge/SKILL.md
++++ b/plugins/mainmind-muse/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/plugins/mainmind/.claude-plugin/plugin.json b/plugins/mainmind/.claude-plugin/plugin.json
+index 7fb3e58..bf910e8 100644
+--- a/plugins/mainmind/.claude-plugin/plugin.json
++++ b/plugins/mainmind/.claude-plugin/plugin.json
+@@ -2,7 +2,7 @@
+   "name": "mainmind",
+   "displayName": "Mainmind",
+   "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
+-  "version": "0.16.0",
++  "version": "0.16.1",
+   "author": {
+     "name": "Shashwat Jain",
+     "url": "https://mainmind.app"
+diff --git a/plugins/mainmind/skills/write-knowledge/SKILL.md b/plugins/mainmind/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/plugins/mainmind/skills/write-knowledge/SKILL.md
++++ b/plugins/mainmind/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/skills/write-knowledge/SKILL.md b/skills/write-knowledge/SKILL.md
+index dbdcfd3..2bbef48 100644
+--- a/skills/write-knowledge/SKILL.md
++++ b/skills/write-knowledge/SKILL.md
+@@ -9,7 +9,7 @@ description: Write or change a page in a Mainmind space so a person and an AI ca
+ 
+ A space is a folder of pages. The same page is read by the person and by
+ their AI, so write it once, for a newcomer. Mainmind checks new and changed
+-skills when they are saved and sends back any line that needs fixing.
++skills and decisions when they are saved and sends back any line that needs fixing.
+ 
+ ## Pick the page type
+ 
+@@ -43,6 +43,27 @@ don't erase the history.
+   add a diagram as a `mermaid` block. The skill's page draws it, and an AI
+   reads the same text.
+ 
++## Write a decision
++
++A decision answers "what did we decide, and why?", so it says that first,
++the way you would explain it to a new teammate:
++
++- **Title:** the question, in everyday words. "How much import duty should
++  we plan for on milk pitchers?"
++- **`## What we decided`:** the answer in one or two sentences, 35 words or
++  fewer, with no codes or abbreviations. Say what a number means: "Plan for
++  about 22% import duty on milk pitchers, not the 10% we use for grinder
++  parts."
++- **`## Why`:** one or two sentences.
++- **`## Until when`** or **`## What changes`:** how long it holds, or what
++  anyone now does differently.
++- **`## The details`:** every code, rate, source and link, exactly. The app
++  folds this away, so the person reads the first parts and you still have
++  everything.
++
++Mainmind sends back a new decision without a plain answer, with codes in
++the answer, or without a Why.
++
+ ## Save it
+ 
+ - A work note, lesson, fact or gap is saved straight away.
+diff --git a/submissions/openai-directory.md b/submissions/openai-directory.md
+index fca60d5..b9c9265 100644
+--- a/submissions/openai-directory.md
++++ b/submissions/openai-directory.md
+@@ -35,8 +35,13 @@ These are expected behaviors, **not completed test results**. Before submitting:
+ - [ ] Record a reviewer-accessible walkthrough. Add its real URL under
+   `extensions.com.openai.review.demo_recording_url` after recording it.
+ 
+-Actual host setup/activation and directory scans remain unverified for this
+-package adaptation. Do not mark them passed from `npm run check`.
++Installed skill loading and setup activation were exercised in Codex CLI
++0.159.3 on 2026-10-02 using the unchanged existing connection. The unavailable
++`whoami` branch stopped honestly with no Mainmind calls. See
++[the host acceptance receipt](openai-host-acceptance.md) for exact coverage.
++The connected-space success path, all eight directory review scenarios,
++ChatGPT desktop/mobile and directory scans remain pending. Do not mark them
++passed from `npm run check` or the bounded failure-path test.
+ 
+ ## Directory completion
+ 
+diff --git a/submissions/openai-host-acceptance.md b/submissions/openai-host-acceptance.md
+new file mode 100644
+index 0000000..0d9e11f
+--- /dev/null
++++ b/submissions/openai-host-acceptance.md
+@@ -0,0 +1,46 @@
++# Installed Codex acceptance
++
++On 2026-10-02, Codex CLI 0.159.3 installed Mainmind 0.16.1 from the local
++candidate marketplace through the supported plugin commands. The plugin was
++enabled. The existing connection and authentication were retained; no new
++credentials, permissions, OAuth scopes or subscriptions were requested.
++
++Each test used `codex exec --ephemeral --skip-git-repo-check --sandbox read-only`
++in an empty temporary directory, outside this repository. This prevents the
++repository's `.agents/skills` from standing in for installed skill loading.
++The prompts restricted the run to the existing read-only `whoami` operation.
++
++## Observed results
++
++- Explicit `$mainmind-setup`: the trace read the installed cache's
++  `skills/mainmind-setup/SKILL.md` successfully. The required `whoami` tool was
++  unavailable. The turn completed with zero MCP tool calls.
++- Plain-language connection question: one run selected the installed setup
++  skill, while another selected the installed `mainmind-boot` skill. Both
++  stopped with zero MCP tool calls. Implicit selection is therefore variable;
++  `$mainmind-setup` is the documented Codex entry point for this bounded check.
++- The first implicit setup reply omitted the settings recovery sentence.
++  The source now explicitly requires both sentences in the final reply. The
++  final explicit test loaded that updated installed file and returned:
++
++> The existing read-only `whoami` tool is unavailable, so I stopped without
++> making any Mainmind calls. I can’t check your Mainmind space from this app
++> yet. Check the connection in the plugin’s settings.
++
++The final setup source and installed file had identical SHA-256:
++`01471d2bae7a78a66234231bd750e009801944b610d8f15da8c299263ceb340d`.
++Private CLI event traces were inspected for skill paths, completed turns and
++MCP calls; they are retained outside the package and are not public artifacts.
++
++## Coverage limits
++
++This proves installed skill loading and an honest unavailable-tool response in
++Codex CLI. It does not prove connected identity, that all server tools are
++available, reliable implicit selection, ChatGPT desktop/mobile behavior, event
++delivery, the eight directory review scenarios, or directory approval.
++
++The smallest remaining identity acceptance step is to expose the existing
++read-only `whoami` tool in the authorized host connection and repeat
++`$mainmind-setup`, checking its returned identity/space without follow-on writes.
++The existing server/tool-discovery owner is handling that dependency. The
++[directory checklist](openai-directory.md) retains the separate publication work.
+diff --git a/tools/openai-skills/mainmind-setup/SKILL.md b/tools/openai-skills/mainmind-setup/SKILL.md
+index a64669f..b578980 100644
+--- a/tools/openai-skills/mainmind-setup/SKILL.md
++++ b/tools/openai-skills/mainmind-setup/SKILL.md
+@@ -24,7 +24,9 @@ isn’t connected here yet. Open the plugin’s settings to connect it.” If
+ `whoami` is unavailable but the connection state is unknown or other Mainmind
+ tools are present, say “I can’t check your Mainmind space from this app yet.
+ Check the connection in the plugin’s settings.” A missing tool does not prove
+-that the connection is absent. Do not silently substitute `boot`, `sync` or
++that the connection is absent. Include both sentences in the final reply,
++even if an earlier progress message already explained the limitation.
++Do not silently substitute `boot`, `sync` or
+ another tool with session or write effects. If sign-in has expired, say
+ “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
+ For other failures, report that the connection could not be checked and stop;
