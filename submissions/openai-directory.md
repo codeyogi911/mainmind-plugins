@@ -35,8 +35,13 @@ These are expected behaviors, **not completed test results**. Before submitting:
 - [ ] Record a reviewer-accessible walkthrough. Add its real URL under
   `extensions.com.openai.review.demo_recording_url` after recording it.
 
-Actual host setup/activation and directory scans remain unverified for this
-package adaptation. Do not mark them passed from `npm run check`.
+Installed skill loading and setup activation were exercised in Codex CLI
+0.159.3 on 2026-10-02 using the unchanged existing connection. The unavailable
+`whoami` branch stopped honestly with no Mainmind calls. See
+[the host acceptance receipt](openai-host-acceptance.md) for exact coverage.
+The connected-space success path, all eight directory review scenarios,
+ChatGPT desktop/mobile and directory scans remain pending. Do not mark them
+passed from `npm run check` or the bounded failure-path test.
 
 ## Directory completion
 

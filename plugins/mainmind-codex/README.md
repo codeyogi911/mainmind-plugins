@@ -3,7 +3,7 @@
 Continue with your agents and the work they remember, wherever you use AI.
 
 In Codex, install `mainmind@mainmind` from the Mainmind marketplace, then sign in
-to your Mainmind space. Run setup to check which space is connected. Ask
+to your Mainmind space. Run `$mainmind-setup` to check which space is connected. Ask
 “what's in my space?”, or say
 “Continue with Job Hunter” to pick up with an agent.
 
@@ -15,8 +15,11 @@ or keys. What you can read and do depends on your existing access.
 
 OpenAI's public directory distributes plugins to both ChatGPT and Codex.
 Repository installation in Codex and publication to that directory are separate
-steps. A public Mainmind listing and this version's setup flow in either host
-have not yet been verified. An existing ChatGPT developer connection remains
+steps. Installed skill loading and setup activation were tested in Codex CLI
+0.159.3. That host did not expose the connection-check tool, so setup stopped
+without claiming success or changing anything. The connected-space success
+path, ChatGPT desktop and a public Mainmind listing remain unverified.
+An existing ChatGPT developer connection remains
 usable, but does not install packaged skills by itself.
 
 The [distribution and review checklist](../../submissions/openai-directory.md)

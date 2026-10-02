@@ -24,7 +24,9 @@ isn’t connected here yet. Open the plugin’s settings to connect it.” If
 `whoami` is unavailable but the connection state is unknown or other Mainmind
 tools are present, say “I can’t check your Mainmind space from this app yet.
 Check the connection in the plugin’s settings.” A missing tool does not prove
-that the connection is absent. Do not silently substitute `boot`, `sync` or
+that the connection is absent. Include both sentences in the final reply,
+even if an earlier progress message already explained the limitation.
+Do not silently substitute `boot`, `sync` or
 another tool with session or write effects. If sign-in has expired, say
 “Mainmind needs you to sign in again. Open the plugin’s settings to reconnect.”
 For other failures, report that the connection could not be checked and stop;
