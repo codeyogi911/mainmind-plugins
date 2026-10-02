@@ -200,7 +200,7 @@ const taskIdFrom = (title) => String(title || "").toLowerCase().normalize("NFKD"
 function requestMoved(call, task) {
   const moves = call.result?.structured?.requests;
   if (Array.isArray(moves)) {
-    const id = typeof task.id === "string" && task.id ? task.id : taskIdFrom(task.title);
+    const id = task.id !== undefined && task.id !== null && task.id !== "" ? String(task.id) : taskIdFrom(task.title);
     const move = moves.find((item) => item?.task === id);
     return Boolean(move && (move.state === "moved" || move.state === "unchanged"));
   }
