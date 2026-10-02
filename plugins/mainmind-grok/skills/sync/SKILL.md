@@ -133,8 +133,12 @@ If the sync is refused because of `tasks` (an older Mainmind that does not
 take them yet), send the same sync again without `tasks`, with a new key, and
 leave `tasks` out for the rest of the session. Nothing else changes.
 
-If this session holds an assignment, checkpoint it with `work_session` as
-usual too; `stopped` does not replace it.
+If this session holds an assignment, checkpoint it in the same sync after each
+step: give its task `status: "doing"`, `request` (its number) and `checkpoint`
+(`summary`, `plan`, `pending`, `unresolved_effects`), with `run_id` and
+`control_key`. A session that ends without warning then loses at most that
+step. `stopped` does not replace it. Where sync does not take `checkpoint`
+yet, checkpoint with `work_session` as usual.
 
 ## 2. Check what came back
 
