@@ -123,6 +123,8 @@ test("held request, work since its claim: asks for its checkpoint", () => {
 test("held request checkpointed in the last sync", () => expect(run({ fixture: "holds-request-checkpointed.jsonl" }), ALLOWS));
 test("held request reported", () => expect(run({ fixture: "holds-request-reported.jsonl" }), ALLOWS));
 test("a refused claim holds nothing", () => expect(run({ fixture: "holds-request-claim-refused.jsonl" }), ALLOWS));
+test("a sync whose request move was refused holds nothing (receipts)", () => expect(run({ fixture: "holds-request-move-refused.jsonl" }), ALLOWS));
+test("a sync whose request move was refused holds nothing (text)", () => expect(run({ fixture: "holds-request-move-refused-text.jsonl" }), ALLOWS));
 
 let failures = 0;
 for (const [name, fn] of cases) {

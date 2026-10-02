@@ -44,7 +44,10 @@ const FIRST_HANDOFF_AFTER = 6;
 const STALE_AFTER_MS = 30 * 60 * 1000;
 
 // Calls that are the agent looking after itself, not work for the person.
-const HOUSEKEEPING = /__(boot|sync|agent_home|agent_session|whoami|release_notes|work_session|run_start|run_heartbeat)$/;
+const HOUSEKEEPING = /__(boot|sync|agent_home|agent_session|whoami|release_notes|run_start|run_heartbeat)$/;
+// work_session moving the agent's own request is looking after itself;
+// reviewing someone else's report (accept, request_changes, cancel) is work.
+const OWN_WORK_ACTIONS = new Set(["claim", "checkpoint", "recover", "release", "report"]);
 const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "ToolSearch"]);
 // The skill reads a journal entry back to check it landed; reads straight
 // after one are that check, not new work.
@@ -148,7 +151,8 @@ function syncsWhereItStopped(call) {
   return !call.result || (!call.result.isError && !REFUSED.test(call.result.text));
 }
 
-const housekeeping = (call) => HOUSEKEEPING.test(call.name) || HOUSEKEEPING_TOOLS.has(call.name);
+const housekeeping = (call) => HOUSEKEEPING.test(call.name) || HOUSEKEEPING_TOOLS.has(call.name)
+  || (/__work_session$/.test(call.name) && OWN_WORK_ACTIONS.has(call.input.action));
 
 // The agent this session is acting as now, and the call where it was picked
 // up. After "Continue with A" and then "Continue with B", that is B. Picking
@@ -186,6 +190,24 @@ function needsSync(calls, { agent, start }, now) {
   return work >= 1 && now - syncedAt > STALE_AFTER_MS ? agent : null;
 }
 
+// Mainmind's id for a task given without one: from its title.
+const taskIdFrom = (title) => String(title || "").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g, "-")
+  .replace(/^-+|-+$/g, "").slice(0, 60).replace(/-+$/, "");
+
+// Did this sync move the request linked to this task? Its answer says, per
+// task: `requests` in the structured answer, or "the request "<title>" did not
+// move" in the text. A move the server refused holds nothing.
+function requestMoved(call, task) {
+  const moves = call.result?.structured?.requests;
+  if (Array.isArray(moves)) {
+    const id = typeof task.id === "string" && task.id ? task.id : taskIdFrom(task.title);
+    const move = moves.find((item) => item?.task === id);
+    return Boolean(move && (move.state === "moved" || move.state === "unchanged"));
+  }
+  const title = typeof task.title === "string" ? task.title.trim() : "";
+  return !(title && call.result?.text?.includes(`the request "${title}" did not move`));
+}
+
 // The request this session holds as the agent, and the call after which
 // work counts against its checkpoint: the claim, or its latest checkpoint.
 // Claimed by work_session claim or recover, or by a sync task that is doing
@@ -206,7 +228,7 @@ function heldRequest(calls, start) {
       else if (held && String(id) === held.id && ["release", "report", "cancel"].includes(action)) held = null;
     } else if (/__sync$/.test(call.name) && Array.isArray(call.input.tasks)) {
       for (const task of call.input.tasks) {
-        if (!task || task.request === undefined || task.request === null) continue;
+        if (!task || task.request === undefined || task.request === null || !requestMoved(call, task)) continue;
         const id = String(task.request);
         if (task.status === "doing") {
           if (!held || held.id !== id) held = { id, since: i };
