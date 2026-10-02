@@ -109,6 +109,21 @@ test("receipts: stopped uncertain is not kept, whatever the text says", () => ex
 test("receipts: no home read back is not kept", () => expect(run({ fixture: "sync-structured-not-synced.jsonl" }), BLOCKS));
 test("a sync without an agent is no agent", () => expect(run({ fixture: "sync-without-agent.jsonl" }), ALLOWS));
 
+// A held request (Mainmind ADR 0125): with work since its last checkpoint the
+// reminder asks for that checkpoint in the same sync, even when where the agent
+// stopped is recent; a checkpointed, reported or never-held request lets it stop.
+test("held request, work since its claim: asks for its checkpoint", () => {
+  const result = run({ fixture: "holds-request-no-checkpoint.jsonl" });
+  expect(result, BLOCKS);
+  const { reason } = JSON.parse(result.stdout);
+  if (!/You hold request 42\b/.test(reason) || !/\bcheckpoint\b/.test(reason) || !/\bwork_session checkpoint\b/.test(reason)) {
+    throw new Error(`reason does not ask for request 42's checkpoint: ${reason}`);
+  }
+});
+test("held request checkpointed in the last sync", () => expect(run({ fixture: "holds-request-checkpointed.jsonl" }), ALLOWS));
+test("held request reported", () => expect(run({ fixture: "holds-request-reported.jsonl" }), ALLOWS));
+test("a refused claim holds nothing", () => expect(run({ fixture: "holds-request-claim-refused.jsonl" }), ALLOWS));
+
 let failures = 0;
 for (const [name, fn] of cases) {
   try { fn(); console.log(`PASS ${name}`); } catch (error) { failures += 1; console.error(`FAIL ${name}: ${error.message}`); }

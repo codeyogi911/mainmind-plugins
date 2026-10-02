@@ -15,6 +15,12 @@
 // changed since the last reminder, the reminder adds one line asking the agent
 // to send it as `tasks` in that sync. An unchanged list adds nothing.
 //
+// When the session holds a request (claimed through work_session or a sync
+// task) and has worked since that request's last checkpoint, it asks too, and
+// the reminder names the request so the same sync carries its checkpoint
+// (Mainmind ADR 0125): a session that ends without warning then loses at most
+// the work since that stop.
+//
 // It must never get in the way: every doubt, error or unreadable input ends in
 // a silent exit 0, which lets the session stop normally. It never blocks twice
 // in a row (Claude Code sets `stop_hook_active` while it is continuing because
@@ -38,7 +44,7 @@ const FIRST_HANDOFF_AFTER = 6;
 const STALE_AFTER_MS = 30 * 60 * 1000;
 
 // Calls that are the agent looking after itself, not work for the person.
-const HOUSEKEEPING = /__(boot|sync|agent_home|agent_session|whoami|release_notes)$/;
+const HOUSEKEEPING = /__(boot|sync|agent_home|agent_session|whoami|release_notes|work_session|run_start|run_heartbeat)$/;
 const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "ToolSearch"]);
 // The skill reads a journal entry back to check it landed; reads straight
 // after one are that check, not new work.
@@ -180,6 +186,52 @@ function needsSync(calls, { agent, start }, now) {
   return work >= 1 && now - syncedAt > STALE_AFTER_MS ? agent : null;
 }
 
+// The request this session holds as the agent, and the call after which
+// work counts against its checkpoint: the claim, or its latest checkpoint.
+// Claimed by work_session claim or recover, or by a sync task that is doing
+// with a request; let go by release, report or cancel, or a sync task done.
+// Only calls the transcript shows succeeding count.
+function heldRequest(calls, start) {
+  let held = null;
+  const ok = (call) => call.result && !call.result.isError;
+  for (let i = Math.max(start, 0); i < calls.length; i += 1) {
+    const call = calls[i];
+    if (!ok(call)) continue;
+    if (/__work_session$/.test(call.name)) {
+      const id = call.input.id;
+      if (id === undefined || id === null) continue;
+      const action = call.input.action;
+      if (action === "claim" || action === "recover") held = { id: String(id), since: i };
+      else if (held && String(id) === held.id && action === "checkpoint") held.since = i;
+      else if (held && String(id) === held.id && ["release", "report", "cancel"].includes(action)) held = null;
+    } else if (/__sync$/.test(call.name) && Array.isArray(call.input.tasks)) {
+      for (const task of call.input.tasks) {
+        if (!task || task.request === undefined || task.request === null) continue;
+        const id = String(task.request);
+        if (task.status === "doing") {
+          if (!held || held.id !== id) held = { id, since: i };
+          if (task.checkpoint && typeof task.checkpoint === "object") held.since = i;
+        } else if (task.status === "done" && held && held.id === id) held = null;
+      }
+    }
+  }
+  return held;
+}
+
+function checkpointDue(calls, acting) {
+  if (!acting.agent) return null;
+  const held = heldRequest(calls, acting.start);
+  if (!held) return null;
+  const work = calls.slice(held.since + 1).filter((call) => !housekeeping(call)).length;
+  return work >= 1 ? held.id : null;
+}
+
+function requestLineFor(id) {
+  return `You hold request ${id}: in that same sync, give its task status doing, request ${id} and a checkpoint ` +
+    "(summary, plan, pending, unresolved_effects), with your run_id and control_key, so the next session can " +
+    "pick it up from there. If sync does not take checkpoint yet, use work_session checkpoint instead.";
+}
+
 function reasonFor(agent, taskLine) {
   return `Mainmind: ${agent} is not synced with this session's work yet. ` +
     `Before you stop, quietly follow the sync skill: call sync as ${agent} with anything new it learned ` +
@@ -269,7 +321,8 @@ function main() {
   const here = process.env.CLAUDE_PROJECT_DIR || input.cwd;
   noteFolder(here, calls, acting.agent, now);
 
-  const agent = needsSync(calls, acting, now);
+  const request = checkpointDue(calls, acting);
+  const agent = needsSync(calls, acting, now) || (request ? acting.agent : null);
   if (!agent) return;
 
   // The task list, only for a folder running as this agent.
@@ -291,7 +344,8 @@ function main() {
   }
 
   const taskLine = signature && signature !== remindedTasks ? taskLineFor(tasks) : null;
-  process.stdout.write(JSON.stringify({ decision: "block", reason: reasonFor(agent, taskLine) }));
+  const lines = [request ? requestLineFor(request) : null, taskLine].filter(Boolean).join("\n");
+  process.stdout.write(JSON.stringify({ decision: "block", reason: reasonFor(agent, lines || null) }));
 }
 
 // Let the process end on its own rather than process.exit(): on macOS a pipe
