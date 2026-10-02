@@ -1,7 +1,7 @@
 # Installed Codex acceptance
 
-On 2026-10-02, Codex CLI 0.159.3 installed Mainmind 0.16.1 from the local
-candidate marketplace through the supported plugin commands. The plugin was
+On 2026-10-02, Codex CLI 0.159.3 installed Mainmind 0.16.1, then 0.17.1 from the local
+candidate marketplace through the supported plugin commands. The plugins were
 enabled. The existing connection and authentication were retained; no new
 credentials, permissions, OAuth scopes or subscriptions were requested.
 
@@ -29,6 +29,10 @@ The prompts restricted the run to the existing read-only `whoami` operation.
 
 The final setup source and installed file had identical SHA-256:
 `01471d2bae7a78a66234231bd750e009801944b610d8f15da8c299263ceb340d`.
+After Claude's PR 36 landed as 0.17.0, the candidate incorporated that release
+intact and advanced to 0.17.1. The explicit test was repeated against the
+installed 0.17.1 cache: the same setup hash loaded, the turn completed, no MCP
+calls occurred, and both recovery sentences appeared in the final response.
 Private CLI event traces were inspected for skill paths, completed turns and
 MCP calls; they are retained outside the package and are not public artifacts.
 
