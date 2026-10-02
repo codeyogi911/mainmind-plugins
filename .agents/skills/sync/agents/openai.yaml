@@ -1,0 +1,14 @@
+interface:
+  display_name: "Sync your agent"
+  short_description: "Keep your agent’s work up to date"
+  default_prompt: "Sync my agent."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp

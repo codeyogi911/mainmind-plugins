@@ -1,0 +1,14 @@
+interface:
+  display_name: "Continue in another app"
+  short_description: "Move your agent between AI apps"
+  default_prompt: "Continue with my agent in another app."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp

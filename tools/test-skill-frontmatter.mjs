@@ -86,7 +86,7 @@ const sandbox = mkdtempSync(join(tmpdir(), "mainmind-frontmatter-"));
 try {
   mkdirSync(join(sandbox, "tools"));
   symlinkSync(join(root, "node_modules"), join(sandbox, "node_modules"), "dir");
-  for (const file of ["sync-skills.mjs", "skill-frontmatter.mjs", "check-skills.mjs"]) {
+  for (const file of ["sync-skills.mjs", "skill-frontmatter.mjs", "openai-skill-metadata.mjs", "check-skills.mjs"]) {
     copyFileSync(join(root, "tools", file), join(sandbox, "tools", file));
   }
   const name = "continue-with-my-agent";
