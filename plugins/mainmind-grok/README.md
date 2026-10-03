@@ -4,6 +4,10 @@ Three surfaces, three setups, one Mainmind connection. Grok reaches Mainmind the
 reaches any connector: as a remote MCP server over the public internet, with
 authorization completed in a browser. Nothing here ships a secret.
 
+This folder is for Grok Build, Grok on the web and the API. **Grok Bot** takes
+its plugins from Cursor's marketplace instead, so it uses
+[`plugins/mainmind-mount`](../mainmind-mount).
+
 **The manifest is metadata only, and it is still required.** An earlier version
 of this repository removed `.grok-plugin/plugin.json` on the reading that no
 Grok surface read it. That was half right and wrong where it counted: the

@@ -233,7 +233,8 @@ for (const entry of marketplace.plugins || []) {
   if (!existsSync(join(root, manifest))) fail(`marketplace entry ${entry.name}: ${manifest} does not exist`);
 }
 
-// Cursor, and Cursor's Grok Bot, find Mainmind through this file: an admin's
+// Cursor, and xAI's Grok Bot (which takes plugins from Cursor's marketplace),
+// find Mainmind through this file: an admin's
 // Import from Repo reads it, and so does a Cursor Marketplace submission.
 if (!cursorMarketplace) fail(`${CURSOR_MARKETPLACE} is missing: Cursor cannot import this repository without it`);
 if (!cursor) fail(`${CURSOR_MANIFEST} is missing: Cursor lists only a plugin directory that carries it`);
@@ -254,12 +255,38 @@ if (cursorMarketplace) {
 if (cursor?.logo && !existsSync(join(root, "plugins/mainmind-mount", cursor.logo))) {
   fail(`${CURSOR_MANIFEST}: logo ${cursor.logo} does not exist`);
 }
+// Cursor's own plugin format infers the transport from `url` and documents no
+// `type` for a remote server, while the Agent Plugins mcp.json beside it must say
+// "streamable-http". Declaring the server in the Cursor manifest replaces mcp.json
+// discovery for Cursor and Grok Bot only, so each host reads its own shape.
+// https://cursor.com/docs/reference/plugins
+const cursorServer = cursor?.mcpServers?.mainmind;
+if (cursor && (cursorServer?.url !== "https://mainmind.app/mcp" || "type" in (cursorServer || {}))) {
+  fail(`${CURSOR_MANIFEST}: mcpServers.mainmind must be { "url": "https://mainmind.app/mcp" } and nothing else`);
+}
+if (cursor && cursor.name !== agentPlugins.name) {
+  fail(`plugins/mainmind-mount: plugin.json is named ${JSON.stringify(agentPlugins.name)} but ${CURSOR_MANIFEST} ${JSON.stringify(cursor.name)}; one folder, one name`);
+}
+// Cursor's Marketplace review asks for a README, and a team admin reads it first.
+if (!existsSync(join(root, "plugins/mainmind-mount/README.md"))) fail("plugins/mainmind-mount: no README.md");
 if (!existsSync(join(root, "plugins/mainmind-mount/skills"))) fail("plugins/mainmind-mount/skills does not exist; run npm run sync");
 
 // Claude Code loads a plugin's skills from this path; if it is wrong the plugin
 // installs and silently teaches nothing, which is the failure this repo exists
 // to stop.
 if (claude.skills !== "./skills/") fail(`plugins/mainmind: skills is ${JSON.stringify(claude.skills)}, expected "./skills/"`);
+
+// Anthropic's directory builds the listing from these five plugin.json fields:
+// without them it shows no icon and no privacy, terms or support link. They
+// belong in plugin.json only; marketplace.json flags them as unknown.
+// https://code.claude.com/docs/en/plugins-reference#directory-listing-fields
+for (const key of ["documentationUrl", "supportUrl", "privacyPolicyUrl", "termsOfServiceUrl"]) {
+  if (!/^https:\/\//.test(claude[key] || "")) fail(`plugins/mainmind: ${key} must be an https:// URL`);
+  if (marketplaceEntry && key in marketplaceEntry) fail(`.claude-plugin/marketplace.json: ${key} belongs in plugin.json only`);
+}
+if (!/\.(png|jpe?g|gif|webp|svg)$/.test(claude.icon || "") || !existsSync(join(root, "plugins/mainmind", claude.icon))) {
+  fail(`plugins/mainmind: icon ${JSON.stringify(claude.icon)} must name an image file inside the plugin`);
+}
 if (!existsSync(join(root, "plugins/mainmind/skills"))) fail("plugins/mainmind/skills does not exist; run npm run sync");
 
 // The hooks that keep an agent synced when the model forgets to: a Stop hook

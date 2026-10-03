@@ -59,7 +59,10 @@ reviewer too. The way out, if it ever matters, is to publish the plugin from
 a repository of its own with the plugin at the root.
 
 **Listing details step**: read from `plugin.json` and `plugins/mainmind/README.md`;
-nothing to type. Name `mainmind`, shown as **Mainmind**.
+nothing to type. Name `mainmind`, shown as **Mainmind**. The icon
+(`plugins/mainmind/logo.png`) and the documentation, support, privacy and terms
+links come from the directory listing fields in `plugin.json`, which
+`npm run check` requires.
 
 **Data handling step**
 
