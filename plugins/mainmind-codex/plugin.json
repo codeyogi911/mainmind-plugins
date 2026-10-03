@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "mainmind",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "description": "Continue with your agents across AI apps, use your space's knowledge, and keep work in sync.",
   "author": {
     "name": "Shashwat Jain",
