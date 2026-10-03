@@ -19,7 +19,7 @@ you know with you." [How it works](https://mainmind.app/docs/persistent-agents#s
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
 | **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version. The OpenAI package includes the Mainmind connection, the seven shared workflows and a connection-check setup skill. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command. [Setup and validation status](plugins/mainmind-codex/README.md) |
-| **Grok Bot** and **Cursor** | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins**, in the editor or in Grok Bot. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
+| **Grok Bot** and **Cursor** | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins** in the editor, or from **Marketplace** in Grok Bot's sidebar. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
 | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
 | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Grok Bot, xAI's always-on agents, takes plugins from Cursor's marketplace, so it uses the Grok Bot and Cursor row |
 | **ChatGPT**, including its dots | OpenAI's public plugin directory supports the same skills-and-connection package as Codex. This repository's package is [`plugins/mainmind-codex`](plugins/mainmind-codex); a public Mainmind listing has not been verified here. An existing developer connection can still use `https://mainmind.app/mcp`, but that connection alone does not install these packaged skills. Installed skill loading and setup activation were tested in Codex CLI; ChatGPT desktop and dots remain untested. [Distribution and review checklist](submissions/openai-directory.md) |
@@ -172,10 +172,12 @@ with the Mainmind connection in the sibling `mcp.json`. Cursor's is
 Plugin as it is, but Cursor's own plugin template
 ([cursor/plugin-template](https://github.com/cursor/plugin-template)) and its
 validator expect every plugin listed in `.cursor-plugin/marketplace.json` to
-carry that manifest, so the two sit side by side and share `mcp.json` and
-`skills/`. The two manifests name the plugin differently on purpose: `mainmind`
-is what Cursor lists and must match the marketplace entry, and `mainmind-mount`
-is the Agent Plugins name that directory has always had. Grok's is `.grok-plugin/plugin.json`,
+carry that manifest, so the two sit side by side, share `skills/`, and both
+name the plugin `mainmind`, the name Cursor lists. The Cursor manifest points at
+its own `cursor-mcp.json`, a bare `url` the way Cursor documents remote servers,
+because the Agent Plugins `mcp.json` must say `streamable-http`. Grok Bot, xAI's
+always-on agents, takes plugins from Cursor's marketplace, so it reads the
+Cursor manifest. Grok's is `.grok-plugin/plugin.json`,
 with the Mainmind connection in `.mcp.json` at the plugin root — xAI's marketplace guide says
 *"local plugins include a `README.md` and a valid `.grok-plugin/plugin.json`
 manifest"*, and the plugins xAI already lists ship that layout. **Muse is the

@@ -256,13 +256,16 @@ if (cursor?.logo && !existsSync(join(root, "plugins/mainmind-mount", cursor.logo
   fail(`${CURSOR_MANIFEST}: logo ${cursor.logo} does not exist`);
 }
 // Cursor's own plugin format infers the transport from `url` and documents no
-// `type` for a remote server, while the Agent Plugins mcp.json beside it must say
-// "streamable-http". Declaring the server in the Cursor manifest replaces mcp.json
-// discovery for Cursor and Grok Bot only, so each host reads its own shape.
+// "streamable-http", which the Agent Plugins mcp.json beside it must say. So the
+// Cursor manifest points at its own file, the path form Cursor's own plugins
+// use; declaring it replaces mcp.json discovery for Cursor and Grok Bot only.
 // https://cursor.com/docs/reference/plugins
-const cursorServer = cursor?.mcpServers?.mainmind;
-if (cursor && (cursorServer?.url !== "https://mainmind.app/mcp" || "type" in (cursorServer || {}))) {
-  fail(`${CURSOR_MANIFEST}: mcpServers.mainmind must be { "url": "https://mainmind.app/mcp" } and nothing else`);
+const CURSOR_MCP = "./cursor-mcp.json";
+if (cursor && cursor.mcpServers !== CURSOR_MCP) fail(`${CURSOR_MANIFEST}: mcpServers must be "${CURSOR_MCP}"`);
+const cursorMcpPath = join(root, "plugins/mainmind-mount", CURSOR_MCP);
+const cursorServer = existsSync(cursorMcpPath) ? read(join("plugins/mainmind-mount", CURSOR_MCP)).mcpServers?.mainmind : null;
+if (cursor && (cursorServer?.url !== "https://mainmind.app/mcp" || ![undefined, "http"].includes(cursorServer?.type))) {
+  fail(`plugins/mainmind-mount/${CURSOR_MCP.slice(2)}: mcpServers.mainmind must be the url https://mainmind.app/mcp, with no type or "http"`);
 }
 if (cursor && cursor.name !== agentPlugins.name) {
   fail(`plugins/mainmind-mount: plugin.json is named ${JSON.stringify(agentPlugins.name)} but ${CURSOR_MANIFEST} ${JSON.stringify(cursor.name)}; one folder, one name`);

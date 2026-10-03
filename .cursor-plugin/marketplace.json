@@ -11,14 +11,7 @@
     {
       "name": "mainmind",
       "source": "./plugins/mainmind-mount",
-      "description": "Move freely between AIs: your agents travel with you into Grok Bot and Cursor, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off. You sign in as yourself.",
-      "category": "productivity",
-      "tags": [
-        "knowledge",
-        "agents",
-        "mcp",
-        "handoff"
-      ]
+      "description": "Move freely between AIs: your agents travel with you into Grok Bot and Cursor, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off. You sign in as yourself."
     }
   ]
 }

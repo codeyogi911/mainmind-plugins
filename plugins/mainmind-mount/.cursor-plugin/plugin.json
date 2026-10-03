@@ -18,9 +18,5 @@
     "governance"
   ],
   "logo": "assets/logo.svg",
-  "mcpServers": {
-    "mainmind": {
-      "url": "https://mainmind.app/mcp"
-    }
-  }
+  "mcpServers": "./cursor-mcp.json"
 }
