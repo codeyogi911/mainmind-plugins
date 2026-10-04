@@ -15,7 +15,7 @@ do anything for it.
 
 If the connection has no `sync` tool yet, do the same with `agent_home`
 (`remember`, `forget`, `handoff`, one action per call, each with its own
-`idempotency_key`) and read back with `boot` and `agent`.
+`idempotency_key`) and read back with `start` and `agent`.
 
 ## When
 
@@ -162,7 +162,7 @@ read-back: take its memory index (and new `sha`s) as current.
 - **Feedback.** The answer names the number each `friction` item was filed
   as. "New since you last synced" also brings replies on your reports and
   fixes that shipped. Replies keep coming back until you read them; a
-  shipped or closed notice comes once, and `boot` brings every outcome. Feedback is a
+  shipped or closed notice comes once, and `start` brings every outcome. Feedback is a
   conversation, so act on it:
   - A reply: read it with `feedback_status` and the number. If it asks you
     something or suggests a way round, answer with `feedback_reply` or use

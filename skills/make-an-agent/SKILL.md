@@ -11,7 +11,7 @@ Everything below the questions is your work, not theirs. The person answers at
 most three questions and sees one summary. They never see a slug, a path, a
 proposal or a tool.
 
-If the connection has no `sync` tool yet, use `boot` with `agent` where this
+If the connection has no `sync` tool yet, use `start` with `agent` where this
 says to pick up and `agent_home` `remember` where it says to sync memories.
 
 ## 1. Ask at most three questions
@@ -28,13 +28,13 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
 
 ## 2. Set it up (silently)
 
-1. **`boot`** with `session_kind: "persistent"` and `harness` set to this app
+1. **`start`** with `session_kind: "persistent"` and `harness` set to this app
    (`claude-code`, `claude-ai`, `codex`, `cursor`, `grok-bot`; any other app,
-   including ChatGPT and Muse, is `byo`). Obey what boot returns.
+   including ChatGPT and Muse, is `byo`). Obey what start returns.
 2. **Reuse before you register.** If `agents_you_can_resume` already lists an
    agent with this name (or one that plainly does this job), ask once: "You
    already have <Name>. Change that one, or make a new one?" Reuse means
-   carrying on with its slug; skip to step 4. For a Founder, boot also lists
+   carrying on with its slug; skip to step 4. For a Founder, start also lists
    `agents_you_can_take_over`: agents already in the space that no one
    has taken over, with their jobs. If one of them plainly does this job, even
    under a slightly different name (Books Steward for Books), ask once: "<Old
@@ -42,7 +42,7 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    `agent` and `agent_epoch`, keep that slug and skip to step 4.
 3. **`register_agent`** with `name`, a one-sentence `charter` (the job, in the
    person's words), and a `registration_key` that is a fresh UUID v4 you choose
-   *before* the call. If boot's team has an empty job this agent is plainly
+   *before* the call. If start's team has an empty job this agent is plainly
    for, also pass that job's short name as `job`: the agent is then in that job
    on the team at once. If the answer refuses the job, register without it.
    Keep that key and the exact name, charter and job for the rest
@@ -118,7 +118,7 @@ boundaries:
   widen what the agent may do.
 - `skills`: use `find_process` with the job's wording and list only
   Processes that exist and you can read. None is fine.
-- `access-scope` is `core` unless boot or the person's space says otherwise.
+- `access-scope` is `core` unless start or the person's space says otherwise.
 
 ## Routine template (one file per schedule)
 
@@ -127,7 +127,7 @@ boundaries:
 type: agent-routine
 routine: <kebab-case-id>
 when: <five-field cron, e.g. 0 8 * * 1-5>
-timezone: <IANA name, e.g. Asia/Kolkata; ask boot or the person only if unknown>
+timezone: <IANA name, e.g. Asia/Kolkata; ask start or the person only if unknown>
 do: <a Process path, or one plain instruction line>
 state: active
 access-scope: core
@@ -186,7 +186,7 @@ anything is stored.
   me to <Name> from this app yet; I've put it in <Name>'s instructions
   instead" (and do so, where it is an instruction), or that it did not sync.
 - If a call refuses an argument this skill names (for example `harness` on
-  `boot`, or `agent` on `propose_change`), retry once without it. Tell the
+  `start`, or `agent` on `propose_change`), retry once without it. Tell the
   person only what they lose, in plain words, if anything.
 - A refusal or an uncertain result is never reported as done. Retry it
   yourself; if it still fails, say plainly what was not kept and that you will

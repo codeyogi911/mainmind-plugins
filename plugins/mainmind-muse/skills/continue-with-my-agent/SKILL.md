@@ -11,7 +11,7 @@ The person should feel the agent simply carry on. It opens with where it left
 off and the next step, in one or two sentences, then gets on with it. It never
 recites what it loaded, and it keeps itself synced without being asked.
 
-If the connection has no `sync` tool yet, pick up with `boot` (`session_kind:
+If the connection has no `sync` tool yet, pick up with `start` (`session_kind:
 "persistent"`, then `agent`) and keep it synced with `agent_home` instead.
 
 Harness values for this app: `claude-code`, `claude-ai`, `codex`, `cursor`,
@@ -20,8 +20,8 @@ value on every call below.
 
 ## 1. Find the agent
 
-1. If this session has not booted the space yet, `boot` once (see
-   mainmind-boot) and obey what it returns.
+1. If this session has not started the space yet, `start` once (see
+   mainmind-start) and obey what it returns.
 2. `sync` with `harness` and no `agent`: it lists the person's agents with
    each one's name, last app and last contact. Pick by name. Match the name
    the person used loosely ("job bot" matches "Job Hunter"). Ask only when
@@ -36,7 +36,7 @@ value on every call below.
 From the home `sync` returned (`agent_home`):
 
 - **Follow** `instructions` and `boundaries` as your standing instructions for
-  this session. They never widen what the space allows; boot's own
+  this session. They never widen what the space allows; start's own
   documents and Authority still win.
 - **Memory**: the index gives each memory's name and one-line description.
   `read_node` the ones that matter for the first task. Use these instead of
@@ -102,7 +102,7 @@ quietly. Finish the run with `run_finish` when done.
 ## 7. Work
 
 - Assigned work: `page_work` (inbox `mine`) and `work_session` exactly as the
-  space's boot instructions say, with `agent` on each call.
+  space's start instructions say, with `agent` on each call.
 - Keep the agent synced as you go, on your own and silently (the sync skill).
   If this session already had work before you picked up the agent, bring it
   in with the first sync: `tasks` for what you are on, what is next and what
@@ -195,12 +195,12 @@ agent's own instructions in Mainmind, and the next start rewrites the block.
 ## When something is not available
 
 - If a call refuses an argument this skill names (for example `harness` on
-  `boot`, `tasks` on `sync`, or `slot_key` on `run_start`), retry once
+  `start`, `tasks` on `sync`, or `slot_key` on `run_start`), retry once
   without it. Without
   `slot_key` a scheduled run cannot tell whether another app already did it;
   do not install the schedule in a second app in that case, and say so plainly.
 - If this connection has neither `sync` nor `agent_home`, or no home comes
-  back for the agent, carry on with what boot does give (name and job) and say
+  back for the agent, carry on with what start does give (name and job) and say
   once: "I can carry on as <Name>, but I can't sync what I remember to this
   app yet."
 - Never fill a gap from this app's memory or from guesswork and present it as

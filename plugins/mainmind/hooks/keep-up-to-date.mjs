@@ -44,7 +44,9 @@ const FIRST_HANDOFF_AFTER = 6;
 const STALE_AFTER_MS = 30 * 60 * 1000;
 
 // Calls that are the agent looking after itself, not work for the person.
-const HOUSEKEEPING = /__(boot|sync|agent_home|agent_session|whoami|release_notes|run_start|run_heartbeat)$/;
+// `start` is the startup tool; `boot` is its older name, still in older
+// sessions and transcripts, so both count.
+const HOUSEKEEPING = /__(start|boot|sync|agent_home|agent_session|whoami|release_notes|run_start|run_heartbeat)$/;
 // work_session moving the agent's own request is looking after itself;
 // reviewing someone else's report (accept, request_changes, cancel) is work.
 const OWN_WORK_ACTIONS = new Set(["claim", "checkpoint", "recover", "release", "report"]);
@@ -133,9 +135,10 @@ function toolCalls(transcript) {
   return calls.map((call) => ({ ...call, result: results.get(call.id) || null }));
 }
 
-// The agent a call picks up as: `boot` or `sync` with `agent`.
+// The agent a call picks up as: `start` (or its older name `boot`) or `sync`
+// with `agent`.
 function pickedUpAs(call) {
-  if (!/__(boot|sync)$/.test(call.name)) return null;
+  if (!/__(start|boot|sync)$/.test(call.name)) return null;
   const agent = typeof call.input.agent === "string" ? call.input.agent.trim() : "";
   return agent || null;
 }

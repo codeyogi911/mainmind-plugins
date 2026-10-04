@@ -10,7 +10,7 @@ landed. Built entirely from reads through the Mainmind connection — never from
 
 ## Gather (in this order)
 
-1. `boot` if this session hasn't booted (see mainmind-boot); otherwise `whoami`
+1. `start` if this session hasn't started (see mainmind-start); otherwise `whoami`
    for freshness.
 2. `list_runs` — open runs (who is working on what right now), stalled runs
    (heartbeat stopped: name them — stalled is a fact, not a verdict), and

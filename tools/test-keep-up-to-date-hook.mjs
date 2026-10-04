@@ -78,6 +78,7 @@ test("booted without an agent", () => expect(run({ fixture: "boot-without-agent.
 test("under the threshold of work since boot", () => expect(run({ fixture: "few-calls.jsonl" }), ALLOWS));
 test("only the agent looking after itself", () => expect(run({ fixture: "housekeeping-only.jsonl" }), ALLOWS));
 test("enough work since boot and no handoff", () => expect(run({ fixture: "no-handoff-yet.jsonl" }), BLOCKS));
+test("enough work since start and no handoff", () => expect(run({ fixture: "start-no-handoff-yet.jsonl" }), BLOCKS));
 test("a handoff that failed does not count", () => expect(run({ fixture: "failed-handoff.jsonl" }), BLOCKS));
 test("a handoff the server refused does not count", () => expect(run({ fixture: "refused-handoff.jsonl" }), BLOCKS));
 test("the agent booted last is the one reminded", () => expect(run({ fixture: "switched-agent.jsonl" }), BLOCKS));

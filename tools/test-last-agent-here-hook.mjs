@@ -74,6 +74,7 @@ test("stdin is empty: nothing", () => silent(spawn(START, "", fresh().stateDir))
 test("no cwd: nothing", () => { const c = fresh(); stop(c, "no-handoff-yet.jsonl"); silent(start(c, "startup", { cwd: undefined })); });
 
 test("last ran as an agent (boot): names it", () => { const c = fresh(); stop(c, "no-handoff-yet.jsonl"); names(start(c), "job-hunter"); });
+test("last ran as an agent (start): names it", () => { const c = fresh(); stop(c, "start-no-handoff-yet.jsonl"); names(start(c), "job-hunter"); });
 test("last ran as an agent (sync): names it", () => { const c = fresh(); stop(c, "sync-stopped-recent.jsonl"); names(start(c), "job-hunter"); });
 test("after /clear and after compaction too", () => {
   const c = fresh(); stop(c, "sync-stopped-recent.jsonl");

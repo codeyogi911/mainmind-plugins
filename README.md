@@ -40,7 +40,7 @@ for one — a plugin is the wrong shape. Register a machine member instead
 
 Seven skills, in `skills/`:
 
-- **`mainmind-boot`** — how to work through the Mainmind connection. Boot before answering,
+- **`mainmind-start`** — Start with Mainmind: how to work through the Mainmind connection. Start before answering,
   route through `find_process`, cite the path and the projection commit, and
   put Founder decisions through `ask_founder` as one question.
 - **`morning-brief`** — a start-of-day digest built entirely from reads through the Mainmind connection:
@@ -70,7 +70,7 @@ home lives in the space's knowledge, and each app's own format is a
 translation of it, never the source.
 
 **An agent syncs itself; nobody has to ask.** On every host the skills tell it
-when, and `mainmind-boot` has a session sync at the start so a person's agent is
+when, and `mainmind-start` has a session sync at the start so a person's agent is
 simply there. In Claude Code the plugin adds three hooks (`plugins/mainmind/hooks/`):
 
 - **Stop**, a safety net for when the model forgets: only in a session acting as
@@ -113,7 +113,8 @@ An earlier version of the `mainmind-mount` plugin shipped none, deliberately, an
 
 That rule is right about everything the **server** can know, and it still
 governs: none of the space's rules, processes or authority live here.
-They arrive from `boot`, and when this repository disagrees with what Mainmind
+They arrive from `start` (the startup tool that quote calls by its older
+name, `boot`), and when this repository disagrees with what Mainmind
 serves, what Mainmind serves wins.
 
 It is wrong about one class of thing, and that class turned out to matter.
@@ -139,7 +140,7 @@ held a client that would have got it right.
 
 ```
 skills/                          canonical — edit here, only here
-  mainmind-boot/SKILL.md
+  mainmind-start/SKILL.md
   morning-brief/SKILL.md
   make-an-agent/SKILL.md
   continue-with-my-agent/SKILL.md
@@ -225,7 +226,7 @@ harness's copy and nowhere else is exactly the drift this layout invites.
 
 ## Verifying it works
 
-Ask the connected session for `whoami`, then `boot`. A healthy tool list is not
+Ask the connected session for `whoami`, then `start`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
 ## Licence
