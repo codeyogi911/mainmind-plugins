@@ -40,7 +40,7 @@ changes that, and nothing in this repository holds a credential.
 
 ## Verifying it works
 
-Ask the connected session for `whoami`, then `boot`. A healthy tool list is not
+Ask the connected session for `whoami`, then `start`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
 Muse has no shell, no filesystem and no Git client, so it works only

@@ -367,11 +367,14 @@ if (!existsSync(join(root, HOOKS))) {
   }
 }
 
-// The agent skills were renamed to the words people say. A stale copy under an
-// old name would load beside the new one and teach the old words.
-for (const retired of ["save-my-agent", "bring-back-my-agent", "move-my-agent-in", "keep-my-agent-up-to-date"]) {
+// The agent skills were renamed to the words people say, and mainmind-boot
+// became mainmind-start when the server's startup tool became `start`. A stale
+// copy under an old name would load beside the new one and teach the old words.
+for (const retired of ["save-my-agent", "bring-back-my-agent", "move-my-agent-in", "keep-my-agent-up-to-date",
+  "mainmind-boot"]) {
   for (const base of ["skills", ".agents/skills", "plugins/mainmind/skills", "plugins/mainmind-mount/skills",
-    "plugins/mainmind-grok/skills", "plugins/mainmind-muse/skills"]) {
+    "plugins/mainmind-grok/skills", "plugins/mainmind-muse/skills", "plugins/mainmind-codex/skills",
+    "tools/openai-skills"]) {
     if (existsSync(join(root, base, retired))) fail(`${base}/${retired} exists: that skill was renamed`);
   }
 }

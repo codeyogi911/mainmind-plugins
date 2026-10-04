@@ -6,7 +6,7 @@
 // It reads only the note the Stop hook (keep-up-to-date.mjs) leaves per
 // folder. No note, an unreadable note, a note about another folder, or a
 // resumed session (which already has its own history): it prints nothing.
-// Whether to actually pick up is the model's call (the mainmind-boot skill):
+// Whether to actually pick up is the model's call (the mainmind-start skill):
 // a plain coding or question session is never interrupted with agent talk.
 //
 // It must be fast and never fail a session: no network, one small file read,

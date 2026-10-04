@@ -1,5 +1,5 @@
 interface:
-  display_name: "Work in your Mainmind space"
+  display_name: "Start with Mainmind"
   short_description: "Use your space’s knowledge and work"
   default_prompt: "What is in my Mainmind space?"
 policy:

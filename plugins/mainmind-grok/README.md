@@ -112,7 +112,7 @@ SDK, so check which one your client speaks rather than assuming.
 
 ## Verifying it works
 
-Ask the connected session for `whoami`, then `boot`. A healthy tool list is not
+Ask the connected session for `whoami`, then `start`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
 ## Sources

@@ -21,7 +21,7 @@ becomes the agent's instructions only after the person says yes to them.
 This is a copy. The old setup stays as it was and doesn't sync with
 Mainmind.
 
-If the connection has no `sync` tool yet, use `boot` with `agent` where this
+If the connection has no `sync` tool yet, use `start` with `agent` where this
 says to pick up and `agent_home` `remember` and `handoff` where it says to sync.
 
 ## 1. Look, then preview
@@ -84,11 +84,11 @@ Proceed only on a yes. If they drop an item, drop it.
 
 ## 2. Register or reuse
 
-1. `boot` with `session_kind: "persistent"` and `harness` (`claude-code`,
+1. `start` with `session_kind: "persistent"` and `harness` (`claude-code`,
    `claude-ai`, `codex`, `cursor`, `grok-bot`; any other app is `byo`).
 2. If `agents_you_can_resume` has an agent with this name, ask once whether to
    move into that one or make a new one. Reuse is the default.
-3. For a Founder, boot also lists `agents_you_can_take_over`: agents already in
+3. For a Founder, start also lists `agents_you_can_take_over`: agents already in
    the space that no one has taken over, with their jobs. If one
    plainly does this agent's job, even under a slightly different name, ask
    once whether to use it; on yes, `adopt_agent` with its `agent` and

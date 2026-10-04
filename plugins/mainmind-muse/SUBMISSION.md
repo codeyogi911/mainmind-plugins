@@ -37,7 +37,7 @@ serves knowledge and records work. It does not act on anything by itself.
 **Functional.** The connector is a remote MCP server over streamable HTTP at
 `https://mainmind.app/mcp`, reachable on the public internet. It advertises its
 tools on connection; a reviewer can exercise the whole read surface end to end
-with `whoami` (identity and freshness), `boot` (the space's entry
+with `whoami` (identity and freshness), `start` (the space's entry
 documents and the projection commit), `search` and `read_node`. Those four are
 read-only and need no saved work to demonstrate.
 

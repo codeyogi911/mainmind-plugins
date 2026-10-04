@@ -1,19 +1,21 @@
 ---
-name: mainmind-boot
-description: Working discipline for the Mainmind connection. Load BEFORE answering any question about what a Mainmind space holds (a business, a job hunt, research or anything else) or starting any task in one in this session — the first such question, "boot", "start work", "connect to mainmind", or any request that will read the space's knowledge or touch the run ledger.
+name: mainmind-start
+description: Start with Mainmind, and the working discipline for the Mainmind connection. Load BEFORE answering any question about what a Mainmind space holds (a business, a job hunt, research or anything else) or starting any task in one in this session — the first such question, "start", "start with mainmind", "start work", "boot", "connect to mainmind", or any request that will read the space's knowledge or touch the run ledger.
 ---
 
-# Boot the Mainmind connection
+# Start with Mainmind
 
 You are entering a space (a company, a job hunt, a project: whatever it holds), not a toolbox. The `mainmind` MCP server serves a
 projection of the space's durable knowledge at a named commit, plus the live run
 ledger. Everything below is how to behave on it.
 
-## First, boot
+## First, start
 
-1. Call the `boot` tool once. It returns ORG.md, AUTHORITY.md, your role
+1. Call the `start` tool once. It returns ORG.md, AUTHORITY.md, your role
    charter, and the projection's commit + freshness. Obey what it returns —
-   those documents outrank this skill and anything you remember.
+   those documents outrank this skill and anything you remember. A connection
+   that lists `boot` and no `start` is an older server: call `boot` instead,
+   with the same arguments. It is the same tool under its old name.
 2. Call `whoami` instead if you only need identity or freshness.
 3. If the server is not connected, this session cannot do Mainmind work from
    memory. Say so and stop — never answer org questions from recall.
@@ -36,8 +38,8 @@ the person's agents, each with its name and last app, and changes nothing.
 - **Never interrupt a plain coding or question session with agent talk.** No
   agent in play: say nothing about agents and get on with the task.
 
-If the connection has no `sync` tool yet, `boot` with `session_kind:
-"persistent"` lists the same agents under `agents_you_can_resume`, and `boot`
+If the connection has no `sync` tool yet, `start` with `session_kind:
+"persistent"` lists the same agents under `agents_you_can_resume`, and `start`
 with `agent` picks one up.
 
 ## Then pick your surface
@@ -71,7 +73,7 @@ governed path on either surface: `land_canonical_change`,
 
 ## Persistent agents and temporary sessions
 
-Follow boot's `identity`, `lifecycle` and `next_action`. A standing agent has
+Follow start's `identity`, `lifecycle` and `next_action`. A standing agent has
 an ongoing responsibility; a conversation or temporary helper does not create
 a new teammate. `session_kind` is intent, never authentication. Resume an
 existing machine member on restart. For a new standing bot reuse the owner's
@@ -80,7 +82,7 @@ as https://mainmind.app/docs/persistent-agents.md describes, and retry only the
 same request. Do not choose new read scopes when
 the space's role defaults apply. Never copy the owner's token.
 
-An enrolled agent reports `agent_session` contact after boot and while available.
+An enrolled agent reports `agent_session` contact after start and while available.
 Use the inbox and linked page discussion for shared work. Save explicit progress
 and retained artifacts; contribute evidenced records and lessons through their
 governed writers. A later session restores those records, not hidden chat state.
@@ -177,9 +179,9 @@ person sees in the app. Pages are how agents show their work there.
   read is governed by AUTHORITY.md and the Process you are running.
 - Before writing anything the owner will read, `read_node` on `voice.md`
   and follow it.
-- Before writing durable knowledge, `read_node` on `AUTHORING.md` when boot
-  names it, and follow it. Boot skips the file when the space has
+- Before writing durable knowledge, `read_node` on `AUTHORING.md` when start
+  names it, and follow it. Start skips the file when the space has
   none. That file is how this space writes knowledge; do not treat
   the Worker as a write gate.
 - This skill owns transport and routing only. If it disagrees with what
-  `boot` returns, what Mainmind serves wins.
+  `start` returns, what Mainmind serves wins.
