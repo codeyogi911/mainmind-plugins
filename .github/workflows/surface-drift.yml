@@ -1,0 +1,20 @@
+name: surface drift
+on:
+  schedule:
+    # Monday 15:00 UTC. A live tool a skill names that has left
+    # https://mainmind.app/api/surface fails this job visibly.
+    - cron: "0 15 * * 1"
+  workflow_dispatch:
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm ci --ignore-scripts
+      - name: strict live surface comparison
+        run: node tools/check-surface-names.mjs
+        env:
+          MAINMIND_SURFACE_STRICT: "1"
