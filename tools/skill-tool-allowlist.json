@@ -1,0 +1,154 @@
+[
+  {
+    "name": "add_page_collaboration",
+    "reason": "Skills use page_work and work_session. Addressed page messages are that inbox, not a skill of their own."
+  },
+  {
+    "name": "archive_space",
+    "reason": "Archiving the space is an owner action. These skills do not archive a space."
+  },
+  {
+    "name": "checkout_change_status",
+    "reason": "Skills name the checkout and land_canonical_change. Polling one landing is that checkout's follow-up."
+  },
+  {
+    "name": "copy_to_github",
+    "reason": "A one-way GitHub copy is an Accounts action, not a skill workflow."
+  },
+  {
+    "name": "create_space",
+    "reason": "Creating a space is the start page. These skills enter a space that already exists."
+  },
+  {
+    "name": "explain_node",
+    "reason": "Skills say to read_node and cite the path. They do not add a plain-language rewrite."
+  },
+  {
+    "name": "export_agent_team",
+    "reason": "make-an-agent registers one profile. It does not export the whole team."
+  },
+  {
+    "name": "harvest_notes",
+    "reason": "Skills say when to leave a note. Gathering notes into one review is a separate pass."
+  },
+  {
+    "name": "invite_member",
+    "reason": "The README says a machine invite is refused. No skill invites a person."
+  },
+  {
+    "name": "issue_tool_permit",
+    "reason": "Skills name checkout and call_provider. A local gateway permit is that checkout's detail."
+  },
+  {
+    "name": "land_scoped_change",
+    "reason": "Skills name land_canonical_change. A member's scoped land is the other checkout path."
+  },
+  {
+    "name": "list_members",
+    "reason": "start already returns the team. Skills do not list members as their own step."
+  },
+  {
+    "name": "list_nodes",
+    "reason": "Skills route with find_process and search. They do not directory-list the space."
+  },
+  {
+    "name": "list_notes",
+    "reason": "Skills say when to leave a note. They do not list the notes already standing."
+  },
+  {
+    "name": "move_files_to_storage",
+    "reason": "Moving large files out of Git is owner maintenance, not a skill workflow."
+  },
+  {
+    "name": "onboarding_answer",
+    "reason": "First-run answers belong to setup. These skills assume the space already exists."
+  },
+  {
+    "name": "onboarding_propose",
+    "reason": "Raising the first-run decision belongs to setup. These skills assume the space already exists."
+  },
+  {
+    "name": "onboarding_review",
+    "reason": "Reviewing the first-run diff belongs to setup. These skills assume the space already exists."
+  },
+  {
+    "name": "open_mainmind",
+    "reason": "Opening the space view only reads. Skills call start."
+  },
+  {
+    "name": "page_collaboration",
+    "reason": "Skills read the inbox with page_work. The full page discussion is that inbox's detail."
+  },
+  {
+    "name": "page_history",
+    "reason": "Skills cite the current page from start. They do not walk earlier versions."
+  },
+  {
+    "name": "read_source_context",
+    "reason": "Skills copy files with source_file_upload. Extracted evidence from a saved original is a separate read."
+  },
+  {
+    "name": "renew_checkout_lease",
+    "reason": "Skills name the checkout. Renewing its lease is what the checkout says to do when it expires."
+  },
+  {
+    "name": "restore_agent_team",
+    "reason": "make-an-agent registers one profile. Restoring a whole team is the export's pair."
+  },
+  {
+    "name": "retire_members",
+    "reason": "Retiring bots needs the person's yes. No skill retires members."
+  },
+  {
+    "name": "retract_note",
+    "reason": "Skills say when to leave a note. Withdrawing one is the author's later correction."
+  },
+  {
+    "name": "review_checkout_tools",
+    "reason": "Previewing the tool inventory is a Founder checkout check. Skills do not review tools."
+  },
+  {
+    "name": "revoke_member",
+    "reason": "Removing a person is an owner proposal. No skill removes members."
+  },
+  {
+    "name": "revoke_provider_connection",
+    "reason": "connections-and-secrets adds and reseals a connection. It does not revoke one."
+  },
+  {
+    "name": "rotate_member_credential",
+    "reason": "Rotating a machine credential is team administration. Skills say not to hand over a token."
+  },
+  {
+    "name": "run_receipt",
+    "reason": "Skills finish a run with run_finish. Reading that run's receipt is not a step they teach."
+  },
+  {
+    "name": "save_source_file",
+    "reason": "Skills use source_file_upload. The small-byte save is that upload's other entry."
+  },
+  {
+    "name": "space_health",
+    "reason": "Health is the space dashboard. These skills do not open it."
+  },
+  {
+    "name": "under_strain",
+    "reason": "Strain is the health view's detail. These skills do not open it."
+  },
+  {
+    "name": "update_page_collaboration",
+    "reason": "Skills update addressed work with work_session. This tool updates an unaddressed page task."
+  },
+  {
+    "name": "what_changed",
+    "reason": "Skills cite the commit start returns. They do not ask what changed since a time."
+  },
+  {
+    "name": "what_points_here",
+    "reason": "Skills read the matched process. They do not ask what else links to it."
+  },
+  {
+    "name": "work_context",
+    "reason": "continue-with-my-agent reads the home sync returns. Page-conversation context is the inbox's detail."
+  }
+]
