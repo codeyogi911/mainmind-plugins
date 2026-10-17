@@ -40,7 +40,7 @@ in with GitHub.
 
 ## What it contains
 
-- **Six skills** that teach Claude how to work with a Mainmind space. They load
+- **Eight skills** that teach Claude how to work with a Mainmind space. They load
   in chat, Cowork and Claude Code.
 - **One connector**, `https://mainmind.app/mcp`, the Mainmind service itself.
 - **Three small hooks**, used in Cowork and Claude Code only. They remind the

@@ -1,0 +1,14 @@
+interface:
+  display_name: "Connect an account"
+  short_description: "Add a login without pasting a secret"
+  default_prompt: "Connect an account without pasting a password here."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp

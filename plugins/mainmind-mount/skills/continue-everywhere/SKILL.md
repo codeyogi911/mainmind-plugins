@@ -22,7 +22,7 @@ This is a copy. The old setup stays as it was and doesn't sync with
 Mainmind.
 
 If the connection has no `sync` tool yet, use `start` with `agent` where this
-says to pick up and `agent_home` `remember` and `handoff` where it says to sync.
+says to pick up. Do not call `agent_home`.
 
 ## 1. Look, then preview
 
@@ -182,9 +182,8 @@ sync skill).
 
 ## When something is not available
 
-- Neither `sync` nor `agent_home` on this connection: still register, copy
-  files and propose instructions; say "I couldn't sync what it remembers from
-  this app yet" and keep them out of the instructions unless they are
-  instructions.
+- No `sync` on this connection: still register, copy files and propose
+  instructions; say "I couldn't sync what it remembers from this app yet" and
+  keep them out of the instructions unless they are instructions.
 - A call refuses an argument this skill names: retry once without it, and tell
   the person only what they lose.

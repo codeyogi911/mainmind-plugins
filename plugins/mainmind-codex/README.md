@@ -20,7 +20,7 @@ details. Setup keeps your existing connection and does not start work.
 Once the connection is checked, ask “what's in my space?”, or say
 “Continue with Job Hunter” to pick up with an agent.
 
-This portable package includes the seven shared Mainmind workflows, a
+This portable package includes the eight shared Mainmind workflows, a
 read-only setup skill, and the Mainmind connection at `https://mainmind.app/mcp`.
 The skills teach ChatGPT and Codex how to use your space's knowledge and keep
 agent work in sync. You sign in through the app; the plugin carries no passwords

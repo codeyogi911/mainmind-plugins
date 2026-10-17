@@ -18,7 +18,7 @@ you know with you." [How it works](https://mainmind.app/docs/persistent-agents#s
 | Harness | How |
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
-| **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version. The OpenAI package includes the Mainmind connection, the seven shared workflows and a connection-check setup skill. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command. [Setup and validation status](plugins/mainmind-codex/README.md) |
+| **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version. The OpenAI package includes the Mainmind connection, the eight shared workflows and a connection-check setup skill. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command. [Setup and validation status](plugins/mainmind-codex/README.md) |
 | **Grok Bot** and **Cursor** | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins** in the editor, or from **Marketplace** in Grok Bot's sidebar. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
 | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
 | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Grok Bot, xAI's always-on agents, takes plugins from Cursor's marketplace, so it uses the Grok Bot and Cursor row |
@@ -32,17 +32,22 @@ hand instead? Prefer the complete per-space URL,
 `https://mainmind.app/mcp/<space>`, which fixes the space before
 authorization begins.
 
+The connector is one entry, `https://mainmind.app/mcp`. The Founder signs in
+with GitHub in the browser. No secret is pasted into the plugin or into chat.
+
 For a host that accepts only a static bearer — the xAI API's remote MCP tool,
-for one — a plugin is the wrong shape. Register a machine member instead
-(`invite_member` with `kind: machine`) and give that credential to the runner.
+for one — a plugin is the wrong shape. `invite_member` with `kind: machine`
+is refused (HTTP 403). A new agent joins through its owner with
+`register_agent`, from that person's own signed-in connection. Do not hand
+over a person's token.
 
 ## What it ships
 
-Seven skills, in `skills/`:
+Eight skills, in `skills/`:
 
 - **`mainmind-start`** — Start with Mainmind: how to work through the Mainmind connection. Start before answering,
   route through `find_process`, cite the path and the projection commit, and
-  put Founder decisions through `ask_founder` as one question.
+  put a change to a ruled file through `change`, asked in chat as one question.
 - **`morning-brief`** — a start-of-day digest built entirely from reads through the Mainmind connection:
   what needs you, what is in motion, what landed.
 - **`write-knowledge`** — before an agent saves or proposes a lesson, skill,
@@ -64,6 +69,9 @@ Seven skills, in `skills/`:
   existing setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom
   GPT) into a Mainmind agent after a preview of what comes along and what stays
   behind.
+- **`connections-and-secrets`** — add or replace a business login without
+  pasting a secret into chat. The owner posts the values from a shell to a
+  one-time seal link.
 
 The four agent skills follow Mainmind's agent-portability design: the agent's
 home lives in the space's knowledge, and each app's own format is a
@@ -147,6 +155,7 @@ skills/                          canonical — edit here, only here
   sync/SKILL.md
   continue-everywhere/SKILL.md
   write-knowledge/SKILL.md
+  connections-and-secrets/SKILL.md
 plugins/
   mainmind/                      Claude Code       .claude-plugin/plugin.json + hooks/hooks.json
   mainmind-codex/                ChatGPT / Codex   plugin.json + mcp.json + assets/
@@ -161,7 +170,7 @@ plugins/
 ```
 
 The portable OpenAI package has `plugin.json`, `mcp.json`, its logo and a generated
-copy of the seven shared skills plus OpenAI setup and skill metadata. Its listing
+copy of the eight shared skills plus OpenAI setup and skill metadata. Its listing
 lives under `extensions.com.openai` in the root manifest. It serves ChatGPT and
 Codex through OpenAI's shared public directory when reviewed and published.
 The current public ZIP submission path excludes lifecycle hooks and app references;
@@ -196,7 +205,7 @@ Agent Plugins schema enumerates `stdio | streamable-http | sse` and rejects
 `"http"`; Grok's takes `"http"`. That is why they are separate directories, and
 why the check asserts each spelling rather than asserting they agree.
 
-`skills/` remains the source for the seven shared workflows. Each host reads
+`skills/` remains the source for the eight shared workflows. Each host reads
 its own path, so the copies are generated. OpenAI-only setup and
 `agents/openai.yaml` files live in `tools/openai-skills/`; generation merges
 them into `plugins/mainmind-codex/skills/` and `.agents/skills/` only. An overlay

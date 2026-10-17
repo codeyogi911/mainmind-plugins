@@ -27,13 +27,14 @@ so this one plugin serves both.
 - **In Cursor on your own:** copy this folder into
   `~/.cursor/plugins/local/mainmind` and restart Cursor.
 
-Then sign in to Mainmind when asked and choose your space. Ask "what's in my
-space?" to check it works. You need a Mainmind space; start one at
+Then sign in to Mainmind when asked and choose your space. Sign-in is the
+Founder's GitHub account in the browser. No secret is pasted. Ask "what's in
+my space?" to check it works. You need a Mainmind space; start one at
 https://mainmind.app.
 
 ## What it contains
 
-- **Seven skills** that teach the agent how to work with a Mainmind space.
+- **Eight skills** that teach the agent how to work with a Mainmind space.
 - **One connection**, `https://mainmind.app/mcp`, the Mainmind service itself.
 
 ## Your data
