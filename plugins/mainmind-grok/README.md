@@ -103,7 +103,7 @@ value: xAI writes the `Authorization` header itself, so a value beginning
 `Bearer ` arrives doubled and Mainmind refuses it. That surface runs no OAuth,
 so a plugin is the wrong shape for it and no file here applies.
 
-`invite_member` with `kind: machine` is refused (HTTP 403). A new agent joins
+`invite_member` with `kind: machine` is refused. A new agent joins
 through its owner with `register_agent`, from that person's own signed-in
 connection. Never Mainmind's deployment credential, and never a person's
 token. Start by naming the read set and widen it once the bot behaves — that

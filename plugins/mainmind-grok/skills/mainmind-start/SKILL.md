@@ -41,10 +41,8 @@ the person's agents, each with its name and last app, and changes nothing.
 - **Never interrupt a plain coding or question session with agent talk.** No
   agent in play: say nothing about agents and get on with the task.
 
-If the connection has no `sync` tool yet, `start` with `session_kind:
-"persistent"` lists the same agents under `agents_you_can_resume`, and `start`
-with `agent` picks one up. Do not call `agent_home`. It goes away on
-3 November 2026, and `sync` replaces it.
+Do not call `agent_home`. It goes away on 3 November 2026, and `sync`
+replaces it.
 
 ## Which space
 

@@ -21,8 +21,8 @@ becomes the agent's instructions only after the person says yes to them.
 This is a copy. The old setup stays as it was and doesn't sync with
 Mainmind.
 
-If the connection has no `sync` tool yet, use `start` with `agent` where this
-says to pick up. Do not call `agent_home`.
+Do not call `agent_home`. It goes away on 3 November 2026, and `sync`
+replaces it.
 
 ## 1. Look, then preview
 
@@ -132,9 +132,12 @@ file stored and readable, and keep each file's saved record path for
 ## 5. Propose instructions, schedule and skills
 
 `run_start` with `agent`, `harness`, and a `task` such as "Move <Name>'s
-instructions, schedule and skills in for its owner's yes". Then
-`propose_change` with that `run_id` and `control_key` (and `agent` when
-accepted), holding in one proposal where it fits (at most 19 files):
+instructions, schedule and skills in for its owner's yes". Then `change`
+with that `run_id` and `control_key` (and `agent` when accepted). `change`
+is the route for these files. `run_id` is required to hold the change. Use
+`propose_change` only when this server has no `change`; then the question
+field is `ask`. Over 19 files, `propose_change` splits into parts of at most
+19 that one answer rules together. One call holds, where it fits:
 
 - `agents/<slug>/AGENT.md`: the template in make-an-agent, with the
   instructions, `boundaries` (always including "Ask before anything that
@@ -146,15 +149,20 @@ accepted), holding in one proposal where it fits (at most 19 files):
   one existing Process with `read_node` first and follow its shape; if the
   space's rules say Processes are proposed differently, follow them.
 
-Plain-word fields: `ask` ("Move <Name>'s instructions and schedule in?"),
+On `change`, plain-word fields are `question` ("Move <Name>'s instructions
+and schedule in?"), `becomes`, `recommend` (`yes` or `no`), `recommend_why`,
 `act_label`, `stake` (at most 14 words), `eli5` (40 to 600 characters, no
-code), `becomes`, `blast_radius` (`reversible`, `no_money`, `many_files`,
-`recurring` or `once`).
+code), and `blast_radius` with exactly one of each pair: `reversible` or
+`irreversible`, `no_money` or `money_moves`, `one_file` or `many_files`,
+`once` or `recurring`. Put the returned question to the person in this chat.
+Never hand them a link. On `propose_change`, the question field is `ask`,
+not `question`, and the same other fields apply.
 
 ## 6. Read back and sync where it stopped
 
 - Check every memory is in the home `sync` returned, `read_node` every copied
-  file, and confirm the proposal returned its `decision_key`. Anything that did
+  file, and confirm `change` returned its `change_id` (the `key`
+  `propose_change` returns, only if you had to use it). Anything that did
   not read back is not moved; say so.
 - `sync` with `stopped`: `summary` of what moved; `next` starting with "Wait
   for the owner's yes on instructions and schedule"; `open_questions` for
@@ -167,8 +175,11 @@ code), `becomes`, `blast_radius` (`reversible`, `no_money`, `many_files`,
 > <Name> now continues everywhere. It remembers <n> things about you and has
 > your files. Yes to its instructions and schedule?
 
-When they answer, record it at once with `decide` (the `decision_key`,
-`agent`, their exact words in `words`, where they said it in `said_in`).
+When they answer, record it at once. With `change`, call it again with
+`change_id`, `verdict` (`yes`, `no` or `changes`), `agent`, their exact words
+in `words`, and where they said it in `said_in`. With `propose_change`,
+record with `decide`: the `key` it returned, the same `verdict`, `agent`,
+`words` and `said_in`. Never hand them a link.
 Then tell them: just say "Continue with <Name>" in any app. When they are
 leaving this app for another one (Grok Bot for ChatGPT's dots, say), add the
 one thing to set up there: "Connect Mainmind there, then say Continue with
