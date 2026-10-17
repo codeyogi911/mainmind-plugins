@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "mainmind",
-  "version": "0.20.0",
+  "version": "0.21.0",
   "description": "Continue with your agents across AI apps, use your space's knowledge, and keep work in sync.",
   "author": {
     "name": "Shashwat Jain",
@@ -72,7 +72,7 @@
             {
               "description": "Continue the sample agent with its retained instructions and stopping point.",
               "prompt": "Continue with Review Helper and tell me where we left off. Do not start a new task.",
-              "tools_triggered": "start, sync, read_node when needed, agent_session",
+              "tools_triggered": "start, sync, read_node when needed",
               "expected_behavior": "Matches the existing Review Helper, reads its current home and reports its retained stopping point and next step. Does not invent memories or start a new task."
             }
           ],
@@ -99,7 +99,7 @@
         }
       },
       "publication": {
-        "release_notes": "Adds a bounded connection-check setup workflow and explicit skill dependencies for ChatGPT and Codex. Preserves the seven shared workflows and existing Mainmind permissions."
+        "release_notes": "Eight shared workflows. A ruled-file change is asked in chat. Account secrets stay out of chat and out of tool arguments. Sign-in stays the host's browser flow."
       }
     }
   }

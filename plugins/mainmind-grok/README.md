@@ -103,10 +103,11 @@ value: xAI writes the `Authorization` header itself, so a value beginning
 `Bearer ` arrives doubled and Mainmind refuses it. That surface runs no OAuth,
 so a plugin is the wrong shape for it and no file here applies.
 
-Register a machine member instead — `invite_member` with `kind: machine` — and
-give the runner that member's own credential. Never Mainmind's deployment
-credential, and never a person's token. Start by naming the read set and widen
-it once the bot behaves — that field is `allowed_tools` on the
+`invite_member` with `kind: machine` is refused (HTTP 403). A new agent joins
+through its owner with `register_agent`, from that person's own signed-in
+connection. Never Mainmind's deployment credential, and never a person's
+token. Start by naming the read set and widen it once the bot behaves — that
+field is `allowed_tools` on the
 OpenAI-compatible Responses API shape and `allowed_tool_names` in xAI's own
 SDK, so check which one your client speaks rather than assuming.
 

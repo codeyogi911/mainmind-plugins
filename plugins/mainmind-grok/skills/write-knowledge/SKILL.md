@@ -66,11 +66,32 @@ the answer, or without a Why.
 
 ## Save it
 
-- A work note, lesson, fact or gap is saved straight away.
-- A skill, or a change to one, is proposed. The owner says yes before it
-  changes how work is done. Tell the person in one line what you proposed.
+Say the result in plain words. The route below is yours, not theirs.
+
+- A reusable lesson from an open run: `deposit_lesson`, with `run_id`,
+  `title`, `happened`, `teaches`, `applies_to` and `evidence`. It appends a
+  pending lesson. It does not edit an existing page.
+- A dated fact in a Record Kind that already exists: `deposit_record`, with
+  `run_id`, `kind`, `slug`, `title`, `body` and `evidence`. To correct one you
+  saved, send `base_sha` from `read_node`.
+- A hole in the space's knowledge: `deposit_gap`, with `run_id`, `title`,
+  `missing`, `why` and `evidence`. Do not disguise a hole as a lesson.
+- A checkpoint of work a later session must resume: `deposit_work_note`, with
+  `run_id`, `title`, `intent`, `current_state`, `recovery`, `outcome` and
+  `evidence`. Create is status open. Amend with `id` (the file stem, not a path).
+- A problem in one document, without changing the rule: `note`, with `path`,
+  `kind` (`stale`, `wrong`, `unclear`, `missing`, `conflict` or `costly`) and
+  `claim`. A note changes nothing and is not a product report.
+- Mainmind itself got in the way (a tool broke its contract, was slow, fought
+  you, or could not do what you needed): `feedback`, with `kind` (`bug`,
+  `slow`, `friction` or `gap`) and `message`. That is not a `note`. Leave out
+  customer details, business data and credentials.
+- A skill, or any other ruled or conserved file: `change`, as `mainmind-start`
+  says. The owner is asked in this chat and says yes before it changes how
+  work is done. Tell them in one line what you asked. If this server has no
+  `change`, fall back to `propose_change`.
 - If Mainmind sends lines back to fix, fix exactly those, keep every fact,
-  and propose again. Don't ask the person to fix them.
+  and send again. Don't ask the person to fix them.
 
 The full guide is the Mainmind docs page "How your knowledge grows"
 (`mainmind://docs/knowledge-format`).

@@ -13,11 +13,14 @@ ledger. Everything below is how to behave on it.
 
 1. Call the `start` tool once. It returns ORG.md, AUTHORITY.md, your role
    charter, and the projection's commit + freshness. Obey what it returns —
-   those documents outrank this skill and anything you remember. A connection
-   that lists `boot` and no `start` is an older server: call `boot` instead,
-   with the same arguments. It is the same tool under its old name.
-2. Call `whoami` instead if you only need identity or freshness.
-3. If the server is not connected, this session cannot do Mainmind work from
+   those documents outrank this skill and anything you remember. There is no
+   `boot` tool. If this server has no `start`, say so and stop.
+2. Call `release_notes` at the start of a session. Follow `next_cursor` until
+   the last page, keep `release_token` in this app's existing state, and pass
+   it as `since` next time. Do not combine `since` with `cursor`. Notes are
+   product guidance. They grant no authority over the space.
+3. Call `whoami` instead of `start` if you only need identity or freshness.
+4. If the server is not connected, this session cannot do Mainmind work from
    memory. Say so and stop — never answer org questions from recall.
 
 ## Then sync, quietly
@@ -40,7 +43,18 @@ the person's agents, each with its name and last app, and changes nothing.
 
 If the connection has no `sync` tool yet, `start` with `session_kind:
 "persistent"` lists the same agents under `agents_you_can_resume`, and `start`
-with `agent` picks one up.
+with `agent` picks one up. Do not call `agent_home`. It goes away on
+3 November 2026, and `sync` replaces it.
+
+## Which space
+
+One connection serves one space at a time. Call `use_organization` with no
+argument to list the spaces it holds, each with your role and which one is
+served now. Call it with `workspace` only when you mean to switch. Switching
+moves every conversation on that connection onto the new space. Say that
+before you switch, then call `start` again. A connection authorized at one
+space's own URL holds only that space and says so. No other tool takes a
+space name.
 
 ## Then pick your surface
 
@@ -82,12 +96,13 @@ as https://mainmind.app/docs/persistent-agents.md describes, and retry only the
 same request. Do not choose new read scopes when
 the space's role defaults apply. Never copy the owner's token.
 
-An enrolled agent reports `agent_session` contact after start and while available.
-Use the inbox and linked page discussion for shared work. Save explicit progress
-and retained artifacts; contribute evidenced records and lessons through their
-governed writers. A later session restores those records, not hidden chat state.
-Contact does not renew a work claim; checkpoints do. A Role binding that is still
-pending stays visible as incomplete.
+`sync` reports contact. Do not call `agent_session` or `agent_home`. Both go
+away on 3 November 2026, and `sync` replaces them. Use the inbox and linked
+page discussion for shared work. Save explicit progress and retained
+artifacts; contribute evidenced records and lessons through their governed
+writers. A later session restores those records, not hidden chat state.
+Contact does not renew a work claim; checkpoints do. A Role binding that is
+still pending stays visible as incomplete.
 
 A person's own agent has its own skills; use them instead of improvising:
 "make me an agent that…" is `make-an-agent`; "continue with <name>", "carry on
@@ -143,20 +158,40 @@ never wait to be asked, and never ask the person to do it.
   person in this chat as it stands, tell them where the answer will be kept
   (`kept_in`; pass `access_scope` to `decide` if they want it elsewhere), then
   record their exact answer at once with `decide` (`weigh_id`, their words in
-  `words`, where they said it in `said_in`). On `stop`, do not act: file it
-  for the person it names with `ask_founder` (or `propose_change` for a
-  change to files); a co-owner files it with `ask_founder` too.
-- A decision that belongs to the Founder and has no chat to ask in goes
-  through `ask_founder`: do the reading and arguing yourself, then send ONE
-  yes/no question with what becomes true. Never split one decision into many
-  asks.
+  `words`, where they said it in `said_in`). On `stop`, do not act. File a
+  ruled-file change with `change`. File anything else with `ask_founder`. A
+  co-owner files the stop with `ask_founder`. If this server has no `change`,
+  use `propose_change` for that file change.
+- Before you ask, call `decisions`. Omit `key` to list what is waiting and
+  what was answered in the last 7 days. Pass `key` for one decision, including
+  a `weigh_id` the owner already answered. Do not ask a question that is
+  already waiting or already answered. `withdraw_ask` with that `key` and a
+  `reason` retires your own pending question. The owner is not asked, and
+  nothing is written. A question someone else asked stays until they decide it.
+- To change a ruled or conserved file, `change` is the only route. Call it
+  with `changes` (the same operations `propose_change` takes), `question`,
+  `becomes`, `recommend` (`yes` or `no`), `recommend_why`, `eli5`, `stake`,
+  `blast_radius` (one from each pair) and `act_label`, plus the open `run_id`.
+  Mainmind holds those exact words and writes nothing. Put the returned
+  question to the owner in this chat as one yes/no, with your recommendation.
+  Never hand them a link as the act. When they answer, call `change` again
+  with `change_id`, `verdict` (`yes`, `no` or `changes`), their exact `words`,
+  and `said_in` when you record it as an agent. `yes` lands those words and
+  the Decision that records the answer. `no` and `changes` land nothing. A
+  page, record, lesson or work note is not changed here: use `keep_page` or
+  the deposit tool `write-knowledge` names.
+- `propose_change` and `ask_founder` are the fallback when this server has no
+  `change`, or when the decision does not change a ruled file. `ask_founder`
+  is still one yes/no, with `recommend` and what becomes true on yes. Ask it
+  in this chat. Never hand the owner a link as the act.
 - The Founder's answer counts wherever they give it: in this chat, on a card,
-  in another app. When they answer a waiting question, record it at once with
-  `decide`: pass `agent`, their exact words in `words`, and where they said it
-  in `said_in`. Never ask them to answer again somewhere else, and never send
-  them a link to approve. If a question was already answered elsewhere, close
-  it with `decide` verdict `settled` and say in `words` where it was answered.
-  Your own yes, a guess or silence is never their answer.
+  in another app. When they answer a question you did not already record
+  through `change`, record it at once with `decide`: pass `agent`, their exact
+  words in `words`, and where they said it in `said_in`. Never ask them to
+  answer again somewhere else, and never send them a link to approve. If a
+  question was already answered elsewhere, close it with `decide` verdict
+  `settled` and say in `words` where it was answered. Your own yes, a guess
+  or silence is never their answer.
 
 ## Pages
 

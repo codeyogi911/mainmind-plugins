@@ -13,10 +13,6 @@ on from the newest version, whichever app wrote it. Nobody asks for it and
 nobody hears about it. The person never waits through it and is never told to
 do anything for it.
 
-If the connection has no `sync` tool yet, do the same with `agent_home`
-(`remember`, `forget`, `handoff`, one action per call, each with its own
-`idempotency_key`) and read back with `start` and `agent`.
-
 ## When
 
 - **The first sync in a session that already has work** (you were busy

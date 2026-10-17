@@ -12,7 +12,7 @@ most three questions and sees one summary. They never see a slug, a path, a
 proposal or a tool.
 
 If the connection has no `sync` tool yet, use `start` with `agent` where this
-says to pick up and `agent_home` `remember` where it says to sync memories.
+says to pick up. Do not call `agent_home`.
 
 ## 1. Ask at most three questions
 
@@ -181,10 +181,10 @@ anything is stored.
 
 ## When something is not available
 
-- If this connection has neither `sync` nor `agent_home` yet, still register
-  and propose, and tell the person in one line: "I couldn't sync what you told
-  me to <Name> from this app yet; I've put it in <Name>'s instructions
-  instead" (and do so, where it is an instruction), or that it did not sync.
+- If this connection has no `sync` yet, still register and propose, and tell
+  the person in one line: "I couldn't sync what you told me to <Name> from
+  this app yet; I've put it in <Name>'s instructions instead" (and do so,
+  where it is an instruction), or that it did not sync.
 - If a call refuses an argument this skill names (for example `harness` on
   `start`, or `agent` on `propose_change`), retry once without it. Tell the
   person only what they lose, in plain words, if anything.
