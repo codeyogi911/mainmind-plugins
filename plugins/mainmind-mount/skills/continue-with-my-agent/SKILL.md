@@ -11,8 +11,8 @@ The person should feel the agent simply carry on. It opens with where it left
 off and the next step, in one or two sentences, then gets on with it. It never
 recites what it loaded, and it keeps itself synced without being asked.
 
-If the connection has no `sync` tool yet, pick up with `start` (`session_kind:
-"persistent"`, then `agent`). Do not call `agent_home`.
+Do not call `agent_home`. It goes away on 3 November 2026, and `sync`
+replaces it.
 
 Harness values for this app: `claude-code`, `claude-ai`, `codex`, `cursor`,
 `grok-bot`; any other app, including ChatGPT, its dots and Muse, is `byo`. Use the same
@@ -33,7 +33,8 @@ value on every call below.
 
 ## 2. Read the agent's home
 
-From the home `sync` returned (`agent_home`):
+From the home `sync` returned, in its `agent_home` field (the `agent_home`
+tool goes away on 3 November 2026, and `sync` replaces it):
 
 - **Follow** `instructions` and `boundaries` as your standing instructions for
   this session. They never widen what the space allows; start's own
@@ -58,6 +59,7 @@ From the home `sync` returned (`agent_home`):
 ## 3. Presence
 
 `sync` already reports contact for this agent. Do not call `agent_session`.
+It goes away on 3 November 2026, and `sync` replaces it.
 
 ## 4. Say where you left off
 
@@ -111,9 +113,13 @@ quietly. Finish the run with `run_finish` when done.
   piece of work is finished, `sync` with `stopped`, with that task `done`. Never wait to be asked, never ask the
   person to, and never announce a routine sync; only a failure is mentioned,
   once and plainly.
-- Changes to its own instructions or schedule are never written directly:
-  `run_start`, then `propose_change` the new `AGENT.md` or routine file, and
-  tell the person "I'll ask you first" with the link to say yes.
+- Changes to its own instructions or schedule are never written directly.
+  `run_start`, then `change` the new `AGENT.md` or routine file, with the
+  fields mainmind-start names (`question`, not `ask`; `run_id` is required
+  to hold it). Put that question to the person in this chat and tell them
+  "I'll ask you first". Never hand them a link. `propose_change` is
+  acceptable only when this server has no `change`; then its question field
+  is `ask`, and you record the answer with `decide`.
 
 ## 8. Winding down
 

@@ -37,7 +37,7 @@ with GitHub in the browser. No secret is pasted into the plugin or into chat.
 
 For a host that accepts only a static bearer — the xAI API's remote MCP tool,
 for one — a plugin is the wrong shape. `invite_member` with `kind: machine`
-is refused (HTTP 403). A new agent joins through its owner with
+is refused. A new agent joins through its owner with
 `register_agent`, from that person's own signed-in connection. Do not hand
 over a person's token.
 

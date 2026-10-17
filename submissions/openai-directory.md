@@ -9,7 +9,7 @@ is not evidence that OpenAI has reviewed or published a directory version.
 - Root `plugin.json`: Agent Plugins 1.0.0 identity and inline
   `extensions.com.openai` listing, setup and review cases.
 - Root `mcp.json`: explicit `streamable-http`, `https://mainmind.app/mcp`.
-- Seven shared workflows from `skills/`; OpenAI setup and skill
+- Eight shared workflows from `skills/`; OpenAI setup and skill
   `agents/openai.yaml` dependencies from `tools/openai-skills/`.
 - Generated copies are checked before release. Skill dependencies refer to
   the same Mainmind endpoint and do not grant additional permissions.

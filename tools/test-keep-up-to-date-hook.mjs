@@ -53,7 +53,7 @@ function expect(result, outcome) {
   if (!/\bsync skill\b/.test(decision.reason) || !/\bcall sync as job-hunter\b/.test(decision.reason)) {
     throw new Error(`reason does not name the sync skill, the sync tool and the agent: ${decision.reason}`);
   }
-  if (!/\bagent_home\b/.test(decision.reason)) throw new Error("reason gives no way to sync where the sync tool is not served yet");
+  if (/\bagent_home\b/.test(decision.reason)) throw new Error(`reason still tells the model to use agent_home: ${decision.reason}`);
   // The reason shows in the person's transcript, so it speaks the same words.
   if (/\b(save|saved|handoff|hand off|bring back|restore|export|commit|git)\b/i.test(decision.reason)) {
     throw new Error(`reason uses a word people no longer read: ${decision.reason}`);
@@ -84,10 +84,11 @@ test("a handoff the server refused does not count", () => expect(run({ fixture: 
 test("the agent booted last is the one reminded", () => expect(run({ fixture: "switched-agent.jsonl" }), BLOCKS));
 test("malformed transcript lines are skipped", () => expect(run({ fixture: "malformed-lines.jsonl" }), BLOCKS));
 
-// A handoff already written.
-test("recent handoff, work since", () => expect(run({ fixture: "recent-handoff.jsonl" }), ALLOWS));
-test("old handoff, no work since", () => expect(run({ fixture: "stale-handoff-idle.jsonl" }), ALLOWS));
-test("old handoff, only its read-back since", () => expect(run({ fixture: "stale-handoff-read-back.jsonl" }), ALLOWS));
+// An older agent_home call is not where the agent stopped. These sessions
+// still need sync.
+test("an agent_home handoff does not count as stopped", () => expect(run({ fixture: "recent-handoff.jsonl" }), BLOCKS));
+test("an old agent_home handoff, idle since, still needs sync", () => expect(run({ fixture: "stale-handoff-idle.jsonl" }), BLOCKS));
+test("a read-back after an agent_home handoff is not a kept stop", () => expect(run({ fixture: "stale-handoff-read-back.jsonl" }), BLOCKS));
 test("old handoff, work since", () => expect(run({ fixture: "stale-handoff.jsonl" }), BLOCKS));
 
 // At most once per window in one session, even across turns.

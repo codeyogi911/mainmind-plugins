@@ -11,8 +11,8 @@ Everything below the questions is your work, not theirs. The person answers at
 most three questions and sees one summary. They never see a slug, a path, a
 proposal or a tool.
 
-If the connection has no `sync` tool yet, use `start` with `agent` where this
-says to pick up. Do not call `agent_home`.
+Do not call `agent_home`. It goes away on 3 November 2026, and `sync`
+replaces it.
 
 ## 1. Ask at most three questions
 
@@ -62,24 +62,31 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
 5. **`run_start`** with `agent`, `harness`, and `task` such as "Write
    <Name>'s instructions and schedule for its owner's yes". Keep the
    `run_id` and the private `control_key`.
-6. **`propose_change`** with that `run_id` and `control_key`, and `agent` when
-   the call accepts it. One proposal holds every file:
+6. **`change`** with that `run_id` and `control_key`, and `agent` when the
+   call accepts it. `change` is the route for these files. Use
+   `propose_change` only when this server has no `change`. One call holds
+   every file:
    - `agents/<slug>/AGENT.md` (create), from the template below.
    - One `agents/<slug>/routines/<id>.md` (create) per schedule they asked
      for. None if they did not ask.
 
-   Fill the proposal's person-facing fields in plain words: `ask` ("Set up
-   <Name> with these instructions and this schedule?"), `act_label` ("Set up
-   <Name>"), `stake` (at most 14 words), `eli5` (40 to 600 characters, no
-   code or identifiers), `becomes` (what will be true), and `blast_radius`
-   with exactly one of each pair: `reversible`, `no_money`, `one_file` or
-   `many_files`, `once` or `recurring` (recurring when it has a schedule).
+   On `change`, `run_id` is required to hold it. The person-facing fields are
+   `question` ("Set up <Name> with these instructions and this schedule?"),
+   `becomes`, `recommend` (`yes` or `no`), `recommend_why`, `act_label`
+   ("Set up <Name>"), `stake` (at most 14 words), `eli5` (40 to 600
+   characters, no code or identifiers), and `blast_radius` with exactly one
+   of each pair: `reversible` or `irreversible`, `no_money` or `money_moves`,
+   `one_file` or `many_files`, `once` or `recurring` (recurring when it has a
+   schedule). Put the returned question to the person in this chat. Never
+   hand them a link. On `propose_change`, the question field is `ask`, not
+   `question`, and the same other fields apply.
 7. **`sync`** with `memories` for anything the person told you about
    themselves or the job that is a fact or preference, not an instruction
    (see "Keeping what they told you"). Nothing to keep is fine; skip it.
 8. Read back: check each memory is in the home `sync` returned ("Synced."
-   with no "except"), and confirm the proposal came back with a `decision_key`.
-   Do not report anything as done that you have not read back.
+   with no "except"), and confirm `change` came back with a `change_id`
+   (the `key` `propose_change` returns, only when you had to use it). Do not
+   report anything as done that you have not read back.
 
 ## AGENT.md template
 
@@ -172,9 +179,12 @@ Then say, exactly:
 From here on <Name> syncs on its own (the sync skill); never tell the person
 they have to do anything for that.
 
-If the app can show a card or a button, use it. When they say yes (or no), record
-it at once with `decide`: the `decision_key`, `agent`, their exact words in
-`words`, and where they said it in `said_in`. Their answer here is enough.
+If the app can show a card or a button, use it. When they say yes (or no),
+record it at once. With `change`, call it again with `change_id`, `verdict`
+(`yes`, `no` or `changes`), `agent`, their exact words in `words`, and where
+they said it in `said_in`. With `propose_change`, record with `decide`: the
+`key` it returned, the same `verdict`, `agent`, `words` and `said_in`. Their
+answer here is enough. Never hand them a link.
 Anything you chose for them (the name, a default limit, a time zone) is on the
 card, not asked about. Do not mention the approval mechanics, the slug or where
 anything is stored.
@@ -186,7 +196,7 @@ anything is stored.
   this app yet; I've put it in <Name>'s instructions instead" (and do so,
   where it is an instruction), or that it did not sync.
 - If a call refuses an argument this skill names (for example `harness` on
-  `start`, or `agent` on `propose_change`), retry once without it. Tell the
+  `start`, or `agent` on `change`), retry once without it. Tell the
   person only what they lose, in plain words, if anything.
 - A refusal or an uncertain result is never reported as done. Retry it
   yourself; if it still fails, say plainly what was not kept and that you will
