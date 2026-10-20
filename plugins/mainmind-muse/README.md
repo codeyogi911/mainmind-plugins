@@ -1,26 +1,27 @@
 # Mainmind on Muse
 
-[Muse](https://muse.ai) is Meta's assistant, and it takes connectors. Mainmind
-is already the shape a connector takes there — a remote MCP server over
-streamable HTTP, reachable on the public internet, with authorization in the
-browser — so this directory is the connection itself plus everything the
-directory listing asks for.
+[Host compatibility and evidence](https://github.com/codeyogi911/mainmind-plugins/blob/main/HOST-COMPATIBILITY.md) covers the
+current setup, reconnect and delivery limits (checked 20 October 2026).
 
-**Meta publishes no connector manifest format.** The platform page describes a
+This directory carries source material for a candidate [Muse](https://muse.ai)
+connection: Mainmind's remote MCP URL, portable skills and a submission
+dossier. Actual authentication, skill activation and directory publication
+remain unverified here.
+
+**No verified native manifest is packaged here.** The source dossier describes a
 three-stage program in prose and links no developer documentation, no schema
 and no submission form. So there is no manifest here and no file shaped like
-one. With no published format, no file in this directory could be the one Muse
-reads: it would be read by nothing and would only look supported. What this
-directory holds is the connection URL, the skills for a surface that works only
-through the Mainmind connection, and
+one. Do not invent a native loading format from those materials. What this
+directory holds is the connection URL, portable skills for use where the host can load them, and
 [`SUBMISSION.md`](./SUBMISSION.md), the dossier the review stage asks for. If
 Meta publishes a manifest schema, that is the file to add, and it belongs
 here.
 
-## Add it yourself today
+## Connection candidate
 
-You do not have to wait for the directory. Muse takes custom connectors from
-users directly: give it the connection URL.
+The source dossier describes a custom-connector route. Its authentication
+and actual skill loading remain unverified here; use the current host
+controls if that route is available, with the connection URL.
 
 ```text
 https://mainmind.app/mcp
@@ -43,8 +44,9 @@ changes that, and nothing in this repository holds a credential.
 Ask the connected session for `whoami`, then `start`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
-Muse has no shell, no filesystem and no Git client, so it works only
-through the Mainmind connection: `read_node`, `search` and `call_provider`, and no checkout. The
+Inspect the tools actually enabled in this session. If shell, filesystem or
+Git access is absent, use only the exposed Mainmind connection: `read_node`,
+`search` and granted `call_provider`, without a checkout. The
 skills in [`skills/`](./skills) say so, and an agent on this surface should say
 plainly that it is working only through the Mainmind connection, so nobody reads a partial answer as a complete
 one. In particular the space's own command-line tools, under `tools/`,
@@ -54,8 +56,8 @@ An agent syncs itself here with no one asking: the `sync` skill has it sync
 what it learns and where it stopped after each finished piece of work, when
 the person winds down and before they switch apps, silently unless something
 could not sync. Saying "sync" syncs right away. To pick it up in any other app,
-the person says "Continue with <Name>". Muse gets the skills only; the hooks are
-Claude Code's.
+the person says "Continue with <Name>". These are portable skill files; their activation in Muse remains unverified.
+The hooks belong to Claude Code.
 
 ## Getting listed
 
@@ -64,7 +66,7 @@ names: describe the product, pass functional, security and legal review with
 end-to-end testing, appear in the directory. It also records what the form is
 reported to ask for — connection type, endpoint, authentication, listing
 assets — clearly marked as third-party reporting rather than Meta-published
-spec, since none exists. Three things are still missing before it can be sent,
+spec, since none exists. The remaining requirements are listed before it can be sent,
 listed at the end of that file; one of them is that only Shashwat can open the
 form.
 

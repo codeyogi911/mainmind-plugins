@@ -1,6 +1,6 @@
 # Mainmind on Grok Build.
 #
-# Grok Build has no plugin manifest format. It reads TOML: merge this block
+# Connection-only alternative to this folder's Grok Build plugin. Merge this block
 # into ~/.grok/config.toml for your user, or .grok/config.toml for one
 # project. Merge it — do not replace the file, and do not add a second entry
 # if one for this URL is already there.

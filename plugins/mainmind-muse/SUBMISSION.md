@@ -105,9 +105,12 @@ cannot keep.
 
 1. **Shashwat has to open the form.** It is behind a Meta login; nobody else
    can reach it.
-2. **Privacy and terms pages.** `https://mainmind.app` is the support URL and
-   the icon is settled (below); these two are the remaining assets, and they
-   need to exist at stable addresses before the listing can name them.
+2. **Complete the legal facts.** Privacy and terms source pages exist at
+   `https://mainmind.app/privacy` and `https://mainmind.app/terms`, but their
+   legal entity, address, date and contact placeholders need the owner's
+   facts. Verify the public pages and finish those facts before submission;
+   do not invent them. `https://mainmind.app` is the support URL and the icon
+   is settled below.
 
 The **512×512 icon** is already deployed at
 `https://mainmind.app/icon-512.png`, a genuine 512×512 PNG. Confirm the URL in a browser before

@@ -9,6 +9,7 @@
 // Which files those are is decided from each vendor's own published guide and
 // from plugins they already ship, not from what looks consistent across our
 // own directories; the two disagree more often than not.
+import { hostGuidanceSnapshot, hostGuidanceProblems, testHostGuidance } from "./check-host-guidance.mjs";
 import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -233,8 +234,8 @@ for (const entry of marketplace.plugins || []) {
   if (!existsSync(join(root, manifest))) fail(`marketplace entry ${entry.name}: ${manifest} does not exist`);
 }
 
-// Cursor, and xAI's Grok Bot (which takes plugins from Cursor's marketplace),
-// find Mainmind through this file: an admin's
+// Cursor finds Mainmind through this file. Grok Bot loading remains
+// unverified; this check establishes only Cursor's declared package. An admin's
 // Import from Repo reads it, and so does a Cursor Marketplace submission.
 if (!cursorMarketplace) fail(`${CURSOR_MARKETPLACE} is missing: Cursor cannot import this repository without it`);
 if (!cursor) fail(`${CURSOR_MANIFEST} is missing: Cursor lists only a plugin directory that carries it`);
@@ -258,7 +259,7 @@ if (cursor?.logo && !existsSync(join(root, "plugins/mainmind-mount", cursor.logo
 // Cursor's own plugin format infers the transport from `url` and documents no
 // "streamable-http", which the Agent Plugins mcp.json beside it must say. So the
 // Cursor manifest points at its own file, the path form Cursor's own plugins
-// use; declaring it replaces mcp.json discovery for Cursor and Grok Bot only.
+// use; declaring it replaces mcp.json discovery for Cursor only.
 // https://cursor.com/docs/reference/plugins
 const CURSOR_MCP = "./cursor-mcp.json";
 if (cursor && cursor.mcpServers !== CURSOR_MCP) fail(`${CURSOR_MANIFEST}: mcpServers must be "${CURSOR_MCP}"`);
@@ -417,6 +418,10 @@ for (const [label, description] of [
   const word = typeof description === "string" && description.match(PLUMBING)?.[0];
   if (word) fail(`${label}: description says "${word}"; people read it, so say what they get instead`);
 }
+
+const hostGuidance = hostGuidanceSnapshot(root);
+failures.push(...hostGuidanceProblems(hostGuidance));
+if (!failures.length) console.log(`PASS host guidance (${testHostGuidance(hostGuidance)} negative cases; no installed-host claim)`);
 
 if (failures.length) {
   for (const failure of failures) console.error(`FAIL ${failure}`);

@@ -1,9 +1,15 @@
 # Mainmind for ChatGPT and Codex
 
+[Host compatibility and evidence](https://github.com/codeyogi911/mainmind-plugins/blob/main/HOST-COMPATIBILITY.md) covers the
+current setup, reconnect and delivery limits (checked 20 October 2026).
+
 Continue with your agents and the work they remember, wherever you use AI.
 
 In Codex, install `mainmind@mainmind` from the Mainmind marketplace and sign in
 to your Mainmind space.
+
+For a new installation, follow the [install steps](https://github.com/codeyogi911/mainmind-plugins#install)
+for your app, then return here to check the connection.
 
 Already installed? Paste this into a Codex conversation:
 

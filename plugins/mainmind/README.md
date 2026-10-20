@@ -1,5 +1,8 @@
 # Mainmind
 
+[Host compatibility and evidence](https://github.com/codeyogi911/mainmind-plugins/blob/main/HOST-COMPATIBILITY.md) covers the
+current setup, reconnect and delivery limits (checked 20 October 2026).
+
 Move freely between AIs. Mainmind keeps your agents, your knowledge and the
 work in progress in one space, so you can start a task in Claude and carry on in
 another app without explaining it again. A space can hold a company, a job hunt,

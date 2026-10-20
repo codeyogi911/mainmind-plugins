@@ -1,11 +1,15 @@
-# Mainmind for Grok Bot and Cursor
+# Mainmind for Cursor and portable clients
+
+[Host compatibility and evidence](https://github.com/codeyogi911/mainmind-plugins/blob/main/HOST-COMPATIBILITY.md) covers the
+current setup, reconnect and delivery limits (checked 20 October 2026).
 
 Move freely between AIs. Mainmind keeps your agents, your knowledge and the
 work in progress in one space, so you can start a task in Claude or Codex and
-carry on in Grok Bot or Cursor without explaining it again.
+carry on through another supported Mainmind connection.
 
-Grok Bot, xAI's always-on agents, takes its plugins from Cursor's marketplace,
-so this one plugin serves both.
+This folder targets Cursor and clients implementing Agent Plugins 1.0.0.
+Grok Bot is a distinct cloud host; this package has no verified Bot-specific
+installation, authentication or receiving contract.
 
 ## What you can do with it
 
@@ -20,15 +24,15 @@ so this one plugin serves both.
 
 ## How to add it
 
-- **On a Cursor team (this includes Grok Bot on that team):** an admin opens
+- **On a Cursor team:** an admin opens
   **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** and enters
   `https://github.com/codeyogi911/mainmind-plugins`. Members then add Mainmind
-  from **Plugins**, or from **Marketplace** in Grok Bot's sidebar.
+  from **Plugins** in Cursor.
 - **In Cursor on your own:** copy this folder into
   `~/.cursor/plugins/local/mainmind` and restart Cursor.
 
-Then sign in to Mainmind when asked and choose your space. Sign-in is the
-Founder's GitHub account in the browser. No secret is pasted. Ask "what's in
+Then sign in to Mainmind when asked and choose your space. You sign in as yourself
+through Mainmind's browser flow. No secret is pasted. Ask "what's in
 my space?" to check it works. You need a Mainmind space; start one at
 https://mainmind.app.
 

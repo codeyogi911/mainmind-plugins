@@ -1,12 +1,16 @@
 # Mainmind on Grok
 
+[Host compatibility and evidence](https://github.com/codeyogi911/mainmind-plugins/blob/main/HOST-COMPATIBILITY.md) covers the
+current setup, reconnect and delivery limits (checked 20 October 2026).
+
 Three surfaces, three setups, one Mainmind connection. Grok reaches Mainmind the way it
 reaches any connector: as a remote MCP server over the public internet, with
 authorization completed in a browser. Nothing here ships a secret.
 
-This folder is for Grok Build, Grok on the web and the API. **Grok Bot** takes
-its plugins from Cursor's marketplace instead, so it uses
-[`plugins/mainmind-mount`](../mainmind-mount).
+This folder packages Grok Build and separately documents Grok web and API
+setup. **Grok Bot** is a distinct cloud host. Its custom Mainmind loading,
+authentication and receiving contract remain unverified here; do not treat
+this Build plugin or Cursor's package as a verified Bot installation.
 
 **The manifest is metadata only, and it is still required.** An earlier version
 of this repository removed `.grok-plugin/plugin.json` on the reading that no
@@ -85,8 +89,9 @@ Grok Build also reads Cursor's `.cursor/mcp.json`. If you already configured
 Cursor on this host, look for the entry you have before adding a second one.
 
 This is the surface where the skills in [`skills/`](./skills) earn their place:
-Grok Build has a shell and a filesystem, so it can hold a checkout, and the
-Mainmind connection alone cannot tell it that. See the repository README for why.
+When this Build session has permitted shell, filesystem and Git tools, it
+can use a checkout. Inspect the actual tools; the connection alone cannot
+establish those local capabilities. See the repository README for why.
 
 An agent syncs itself here with no one asking: the `sync` skill has it sync
 what it learns and where it stopped after each finished piece of work, when
@@ -102,6 +107,11 @@ The xAI API's remote MCP tool takes `server_url`, `server_label` and
 value: xAI writes the `Authorization` header itself, so a value beginning
 `Bearer ` arrives doubled and Mainmind refuses it. That surface runs no OAuth,
 so a plugin is the wrong shape for it and no file here applies.
+
+This API route works only for a bot that already holds its own authorized
+Mainmind key. Creating an agent profile does not establish that API connection.
+Without an existing bot key, stop at this boundary and use a supported
+interactive sign-in route instead.
 
 `invite_member` with `kind: machine` is refused (HTTP 403). A new agent joins
 through its owner with `register_agent`, from that person's own signed-in
