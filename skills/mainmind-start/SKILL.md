@@ -61,10 +61,11 @@ space name.
 Mainmind cannot tell whether this session has a shell, a filesystem or a Git
 client. You can. Decide once, before you start reading, and say which you took.
 
-If this session has no shell, no filesystem and no Git client — a chat
-surface such as Grok on the web, Muse, Claude chat or ChatGPT — step 1 cannot
-apply to you. You are working only through the Mainmind connection. Go to
-step 2 and say so.
+Inspect the actual tools and permissions in this session. Do not infer shell,
+filesystem or Git access from an app's name. If the permitted execution tools
+are unavailable, step 1 cannot apply: work only through the exposed Mainmind
+connection, go to step 2 and say so. Local configuration does not prove a
+cloud or remote task has the same connection.
 
 1. **Try a checkout first.** Call `checkout_canonical_repo` (Founder) or
    `checkout_member_repo` (everyone else) and clone what it returns. A checkout
@@ -84,6 +85,30 @@ only through the Mainmind connection. You cannot see `tools/` from there; not fi
 A checkout is a working copy, not permission. Durable writes go through the
 governed path on either surface: `land_canonical_change`,
 `submit_checkout_change` and the deposit tools.
+
+## Connection and delivery evidence
+
+Discover the Mainmind tools actually enabled here. If a required tool is
+missing or sign-in expires, preserve the work, report what could not be
+checked and use the host's normal connection controls. Do not guess a tool
+name, switch accounts or widen permissions. After reconnecting, rediscover
+and verify the returned identity and space with the existing read-only
+`whoami` before continuing. Retry reads after recovery. Inspect the original
+receipt and destination before retrying an uncertain write with its original
+idempotency key; a connection error does not prove nothing happened.
+
+Distinguish a saved profile, reported activity, contact, retained message,
+callback acceptance, consumer acknowledgment and a reply. None proves the
+next. Do not call an app connected or able to receive merely because a
+profile or recent contact exists. Installing a plugin does not subscribe to
+events, start a receiver or grant permission to create persistent work.
+
+Use the receiving contract documented for this host and surface. Event
+support in one app does not establish it in another. Keep version-specific
+compatibility evidence in the [host guide](https://github.com/codeyogi911/mainmind-plugins/blob/main/HOST-COMPATIBILITY.md).
+If actual session delivery is unverified, say so and use only the retained
+workflow the connection supports. Do not install monitors, subscriptions or
+another integration to manufacture delivery.
 
 ## Persistent agents and temporary sessions
 
