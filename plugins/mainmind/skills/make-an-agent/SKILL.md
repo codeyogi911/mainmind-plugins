@@ -12,7 +12,7 @@ most three questions and sees one summary. They never see a slug, a path, a
 proposal or a tool.
 
 If the connection has no `sync` tool yet, use `start` with `agent` where this
-says to pick up. Do not call `agent_home`.
+says to pick up.
 
 ## 1. Ask at most three questions
 

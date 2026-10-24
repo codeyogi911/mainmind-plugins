@@ -22,7 +22,7 @@ This is a copy. The old setup stays as it was and doesn't sync with
 Mainmind.
 
 If the connection has no `sync` tool yet, use `start` with `agent` where this
-says to pick up. Do not call `agent_home`.
+says to pick up.
 
 ## 1. Look, then preview
 
