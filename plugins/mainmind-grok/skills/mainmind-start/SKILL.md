@@ -43,8 +43,7 @@ the person's agents, each with its name and last app, and changes nothing.
 
 If the connection has no `sync` tool yet, `start` with `session_kind:
 "persistent"` lists the same agents under `agents_you_can_resume`, and `start`
-with `agent` picks one up. Do not call `agent_home`. It goes away on
-3 November 2026, and `sync` replaces it.
+with `agent` picks one up.
 
 ## Which space
 
@@ -121,8 +120,7 @@ as https://mainmind.app/docs/persistent-agents.md describes, and retry only the
 same request. Do not choose new read scopes when
 the space's role defaults apply. Never copy the owner's token.
 
-`sync` reports contact. Do not call `agent_session` or `agent_home`. Both go
-away on 3 November 2026, and `sync` replaces them. Use the inbox and linked
+`sync` reports contact. Use the inbox and linked
 page discussion for shared work. Save explicit progress and retained
 artifacts; contribute evidenced records and lessons through their governed
 writers. A later session restores those records, not hidden chat state.

@@ -53,7 +53,7 @@ function expect(result, outcome) {
   if (!/\bsync skill\b/.test(decision.reason) || !/\bcall sync as job-hunter\b/.test(decision.reason)) {
     throw new Error(`reason does not name the sync skill, the sync tool and the agent: ${decision.reason}`);
   }
-  if (!/\bagent_home\b/.test(decision.reason)) throw new Error("reason gives no way to sync where the sync tool is not served yet");
+  if (/\bagent_(home|session)\b/.test(decision.reason)) throw new Error(`reason names a retired tool: ${decision.reason}`);
   // The reason shows in the person's transcript, so it speaks the same words.
   if (/\b(save|saved|handoff|hand off|bring back|restore|export|commit|git)\b/i.test(decision.reason)) {
     throw new Error(`reason uses a word people no longer read: ${decision.reason}`);
@@ -81,6 +81,7 @@ test("enough work since boot and no handoff", () => expect(run({ fixture: "no-ha
 test("enough work since start and no handoff", () => expect(run({ fixture: "start-no-handoff-yet.jsonl" }), BLOCKS));
 test("a handoff that failed does not count", () => expect(run({ fixture: "failed-handoff.jsonl" }), BLOCKS));
 test("a handoff the server refused does not count", () => expect(run({ fixture: "refused-handoff.jsonl" }), BLOCKS));
+test("a call to the retired agent_home does not count", () => expect(run({ fixture: "retired-agent-home.jsonl" }), BLOCKS));
 test("the agent booted last is the one reminded", () => expect(run({ fixture: "switched-agent.jsonl" }), BLOCKS));
 test("malformed transcript lines are skipped", () => expect(run({ fixture: "malformed-lines.jsonl" }), BLOCKS));
 

@@ -12,7 +12,7 @@ off and the next step, in one or two sentences, then gets on with it. It never
 recites what it loaded, and it keeps itself synced without being asked.
 
 If the connection has no `sync` tool yet, pick up with `start` (`session_kind:
-"persistent"`, then `agent`). Do not call `agent_home`.
+"persistent"`, then `agent`).
 
 Harness values for this app: `claude-code`, `claude-ai`, `codex`, `cursor`,
 `grok-bot`; any other app, including ChatGPT, its dots and Muse, is `byo`. Use the same
@@ -57,7 +57,7 @@ From the home `sync` returned (`agent_home`):
 
 ## 3. Presence
 
-`sync` already reports contact for this agent. Do not call `agent_session`.
+`sync` already reports contact for this agent.
 
 ## 4. Say where you left off
 

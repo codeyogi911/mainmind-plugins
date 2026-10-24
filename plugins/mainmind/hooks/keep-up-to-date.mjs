@@ -46,7 +46,7 @@ const STALE_AFTER_MS = 30 * 60 * 1000;
 // Calls that are the agent looking after itself, not work for the person.
 // `start` is the startup tool; `boot` is its older name, still in older
 // sessions and transcripts, so both count.
-const HOUSEKEEPING = /__(start|boot|sync|agent_home|agent_session|whoami|release_notes|run_start|run_heartbeat)$/;
+const HOUSEKEEPING = /__(start|boot|sync|whoami|release_notes|run_start|run_heartbeat)$/;
 // work_session moving the agent's own request is looking after itself;
 // reviewing someone else's report (accept, request_changes, cancel) is work.
 const OWN_WORK_ACTIONS = new Set(["claim", "checkpoint", "recover", "release", "report"]);
@@ -64,10 +64,6 @@ function resultText(content) {
   if (!Array.isArray(content)) return "";
   return content.map((part) => (typeof part?.text === "string" ? part.text : "")).join("\n");
 }
-
-// An agent_home write the server refused comes back as an ordinary result
-// whose receipt says so, not only as an error.
-const REFUSED = /"state"\s*:\s*"refused"/;
 
 // sync's structured answer, `{synced_at, sent: [receipts], agent_home}`, where
 // the transcript carries it: on the entry's `toolUseResult`, on the result
@@ -144,14 +140,12 @@ function pickedUpAs(call) {
 }
 
 // A call that synced where the agent stopped: `sync` with `stopped` whose
-// answer kept it, or the older `agent_home` handoff that was not refused. A
-// sync with no answer in the transcript is not known to be kept.
+// answer kept it. A sync with no answer in the transcript is not known to be
+// kept. The retired agent_home tool now answers only with what replaced it,
+// so a call to it never counts.
 function syncsWhereItStopped(call) {
-  if (/__sync$/.test(call.name)) {
-    return Boolean(call.input.stopped && typeof call.input.stopped === "object") && stoppedKept(call.result);
-  }
-  if (!/__agent_home$/.test(call.name) || call.input.action !== "handoff") return false;
-  return !call.result || (!call.result.isError && !REFUSED.test(call.result.text));
+  if (!/__sync$/.test(call.name)) return false;
+  return Boolean(call.input.stopped && typeof call.input.stopped === "object") && stoppedKept(call.result);
 }
 
 const housekeeping = (call) => HOUSEKEEPING.test(call.name) || HOUSEKEEPING_TOOLS.has(call.name)
@@ -261,7 +255,6 @@ function reasonFor(agent, taskLine) {
   return `Mainmind: ${agent} is not synced with this session's work yet. ` +
     `Before you stop, quietly follow the sync skill: call sync as ${agent} with anything new it learned ` +
     "and with stopped (where you stopped, what is next), then check the home it returns shows them. " +
-    "If this connection has no sync tool yet, use agent_home instead. " +
     "Do not tell the person about it. Only if something could not be kept, say that once, plainly, " +
     "and that you will try again. Then stop as you were going to." +
     (taskLine ? `\n${taskLine}` : "");
