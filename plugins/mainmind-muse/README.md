@@ -45,8 +45,8 @@ Ask the connected session for `whoami`, then `start`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
 Inspect the tools actually enabled in this session. If shell, filesystem or
-Git access is absent, use only the exposed Mainmind connection: `read_node`,
-`search` and granted `call_provider`, without a checkout. The
+Git access is absent, use only the exposed Mainmind connection: `search`
+(with a path to read one document) and granted `call_provider`, without a checkout. The
 skills in [`skills/`](./skills) say so, and an agent on this surface should say
 plainly that it is working only through the Mainmind connection, so nobody reads a partial answer as a complete
 one. In particular the space's own command-line tools, under `tools/`,

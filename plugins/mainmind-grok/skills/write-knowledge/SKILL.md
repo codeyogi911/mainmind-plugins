@@ -15,8 +15,8 @@ skills and decisions when they are saved and sends back any line that needs fixi
 
 | Type | Holds | Where | Who may change it |
 |---|---|---|---|
-| Work note | One piece of work: what was asked, what was done, what happened | `work/` | Anyone, freely |
-| Lesson | What work taught, and the page it should improve (`applies-to`) | `lessons/` | Anyone; folding it in needs the owner's yes |
+| Work note | One piece of work: what was asked, what was done, what happened | `work/` | Only the session that did the work |
+| Lesson | What work taught, and the page it should improve (`applies-to`) | `lessons/` | Anyone adds one; it never changes once saved; folding it in needs the owner's yes |
 | Fact or record | Something true about the world, with its source and date | `records/<type>/` | As the type says |
 | Gap | Something missing that work ran into | `records/gaps/` | Anyone; closing it needs the owner's yes |
 | Skill | How one kind of work is done | `skills/<name>/SKILL.md` | The owner's yes |
@@ -68,30 +68,38 @@ the answer, or without a Why.
 
 Say the result in plain words. The route below is yours, not theirs.
 
-- A reusable lesson from an open run: `deposit_lesson`, with `run_id`,
-  `title`, `happened`, `teaches`, `applies_to` and `evidence`. It appends a
-  pending lesson. It does not edit an existing page.
-- A dated fact in a Record Kind that already exists: `deposit_record`, with
-  `run_id`, `kind`, `slug`, `title`, `body` and `evidence`. To correct one you
-  saved, send `base_sha` from a read with `search` and its path.
-- A hole in the space's knowledge: `deposit_gap`, with `run_id`, `title`,
-  `missing`, `why` and `evidence`. Do not disguise a hole as a lesson.
-- A checkpoint of work a later session must resume: `deposit_work_note`, with
-  `run_id`, `title`, `intent`, `current_state`, `recovery`, `outcome` and
-  `evidence`. Create is status open. Amend with `id` (the file stem, not a path).
-- A problem in one document, without changing the rule: `note`, with `path`,
-  `kind` (`stale`, `wrong`, `unclear`, `missing`, `conflict` or `costly`) and
-  `claim`. A note changes nothing and is not a product report.
+- A page, record, gap, work note or new lesson is saved by committing its
+  file and pushing it. The owner pushes to `main` with `shell` or a checkout.
+  Another member pushes a branch from `checkout_member_repo` in a terminal and
+  lands it with `land_scoped_change`. Mainmind checks the push and answers
+  file by file. Read a file first with `search` and its path.
+  - Lesson: `lessons/<today>-<a-few-words>.md`, with today's date on the
+    space's clock and lower-case hyphenated words. Frontmatter: `id` (the file
+    name without `.md`), `type: Lesson`, `status: stable`, `state: pending`,
+    `date` (today), `source-process` (a Process id), `access-scope: core` (or
+    another scope you hold), `write-class: ledger` and `applies-to` (the path
+    it would improve, or `unresolved`). Then a `#` title and `## What
+    happened`, `## What it teaches`, `## Where it applies` (the `applies-to`
+    value and nothing else) and `## Evidence` (one `-` line per piece).
+    Never change or remove a saved lesson.
+  - Fact or record: `records/<kind>/<name>.md`, in a Record Kind that already
+    exists.
+  - Gap: `records/gaps/<day>-<title>.md`. Do not disguise a hole as a lesson.
+  - Work note: `work/<today>-<a-few-words>.md`. Only the session that did the
+    work changes it later.
+  - Page: `pages/<name>.md`.
+- A problem in one page, without changing the rule: comment on it with
+  `add_page_collaboration` (`kind: "comment"`), or fix the page and push it.
 - Mainmind itself got in the way (a tool broke its contract, was slow, fought
   you, or could not do what you needed): `feedback`, with `kind` (`bug`,
-  `slow`, `friction` or `gap`) and `message`. That is not a `note`. Leave out
-  customer details, business data and credentials.
+  `slow`, `friction` or `gap`) and `message`. That is not a comment on a
+  page. Leave out customer details, business data and credentials.
 - A skill, or any other ruled or conserved file: `change`, as `mainmind-start`
   says. The owner is asked in this chat and says yes before it changes how
   work is done. Tell them in one line what you asked. If this server has no
   `change`, fall back to `propose_change`.
 - If Mainmind sends lines back to fix, fix exactly those, keep every fact,
-  and send again. Don't ask the person to fix them.
+  and send or push again. Don't ask the person to fix them.
 
 The full guide is the Mainmind docs page "How your knowledge grows"
 (`mainmind://docs/knowledge-format`).

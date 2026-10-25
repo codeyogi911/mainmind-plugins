@@ -122,8 +122,8 @@ the space's role defaults apply. Never copy the owner's token.
 
 `sync` reports contact. Use the inbox and linked
 page discussion for shared work. Save explicit progress and retained
-artifacts; contribute evidenced records and lessons through their governed
-writers. A later session restores those records, not hidden chat state.
+artifacts; contribute evidenced records and lessons by pushing their
+files. A later session restores those records, not hidden chat state.
 Contact does not renew a work claim; checkpoints do. A Role binding that is
 still pending stays visible as incomplete.
 
@@ -203,8 +203,8 @@ never wait to be asked, and never ask the person to do it.
   with `change_id`, `verdict` (`yes`, `no` or `changes`), their exact `words`,
   and `said_in` when you record it as an agent. `yes` lands those words and
   the Decision that records the answer. `no` and `changes` land nothing. A
-  page, record, lesson or work note is not changed here: use `keep_page` or
-  the deposit tool `write-knowledge` names.
+  page, record, lesson or work note is not changed here: commit it and push
+  it, as `write-knowledge` says.
 - `propose_change` and `ask_founder` are the fallback when this server has no
   `change`, or when the decision does not change a ruled file. `ask_founder`
   is still one yes/no, with `recommend` and what becomes true on yes. Ask it
@@ -223,13 +223,16 @@ never wait to be asked, and never ask the person to do it.
 A space's Home is a page, `pages/home.md`, and it is the first thing the
 person sees in the app. Pages are how agents show their work there.
 
-- **No Home yet?** Write it with `keep_page` (name `home`): what changed, what
+- **Keep a page by pushing it.** Read it with `search` and its path, commit
+  your change, and push it: the owner to `main` with `shell` or a checkout,
+  another member as a branch landed with `land_scoped_change`.
+- **No Home yet?** Write `pages/home.md` and push it: what changed, what
   waits on the person, and what the team is doing. When you make a new space,
   write Home before anything else.
-- **A topic that needs its own place gets its own page.** Use `parent` to put
-  it inside another page. Use `purpose` to say what you keep current on it,
-  from which sources and how often, then follow that purpose each time you
-  update it.
+- **A topic that needs its own place gets its own page,** `pages/<name>.md`.
+  In its frontmatter, `parent` puts it inside another page and `purpose` says
+  what you keep current on it, from which sources and how often. Follow that
+  purpose each time you update it.
 - **Comments on a page come to its keeper,** or to the owner of the part,
   through `page_work`. Answer there, and change the page when the comment asks.
 
