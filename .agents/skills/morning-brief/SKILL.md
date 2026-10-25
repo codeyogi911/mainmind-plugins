@@ -17,8 +17,8 @@ landed. Built entirely from reads through the Mainmind connection — never from
    what recently ended, with outcomes.
 3. `list_events` (limit 30) — every event with `needs_you: true` that is
    still plausibly open, plus notable deposits and rulings since yesterday.
-4. If anything needs deeper context, `read_node` the paths the events and
-   runs name. Do not expand beyond what the brief needs.
+4. If anything needs deeper context, read the paths the events and runs
+   name with `search`. Do not expand beyond what the brief needs.
 
 ## Compose
 

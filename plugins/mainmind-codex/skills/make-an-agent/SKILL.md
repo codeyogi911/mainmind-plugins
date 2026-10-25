@@ -116,7 +116,7 @@ boundaries:
 - `boundaries` always includes "Ask before anything that spends, sends or
   signs." Add each thing they named. Boundaries restate limits; they never
   widen what the agent may do.
-- `skills`: use `find_process` with the job's wording and list only
+- `skills`: use `search` with kind `process` and the job's wording and list only
   Processes that exist and you can read. None is fine.
 - `access-scope` is `core` unless start or the person's space says otherwise.
 

@@ -39,7 +39,7 @@ From the home `sync` returned (`agent_home`):
   this session. They never widen what the space allows; start's own
   documents and Authority still win.
 - **Memory**: the index gives each memory's name and one-line description.
-  `read_node` the ones that matter for the first task. Use these instead of
+  Read the ones that matter for the first task with `search` and their path. Use these instead of
   this app's own memory for this agent.
 - **Tasks**: `tasks`, when the home has them, is the agent's working list:
   what it is on, what is next, who asked, and what was done lately. Carry on
@@ -48,8 +48,8 @@ From the home `sync` returned (`agent_home`):
   `next`, `open_questions`, `unresolved_effects`. **Before doing anything that
   could repeat something outside Mainmind** (send, submit, pay, post), check
   each unresolved effect first; never retry one blind.
-- **Skills and working material**: `skills` are Processes; `read_node` one
-  before running it. `works_on` names the records and brought-in files it works
+- **Skills and working material**: `skills` are Processes; read one with
+  `search` and its path before running it. `works_on` names the records and brought-in files it works
   from; anything marked unreadable, tell the person once, plainly.
 - **`missing`**: `no_home` or `no_agent_md` means this agent has no
   instructions yet; offer to write them (see make-an-agent) after the opener.
@@ -126,7 +126,7 @@ that, once: "Couldn't sync the two new things you told me. Trying again."
 
 ## "What do you remember about me?"
 
-Answer from the memory index (and `read_node` for detail), as a plain list of
+Answer from the memory index (and `search` with a path for detail), as a plain list of
 sentences, grouped if long:
 
 > Here's what I remember:
@@ -141,7 +141,7 @@ index was cut short, say "Here's some of what I remember" and offer the rest.
 1. Work out which memory "that" means from the conversation. If more than one
    could match, ask which, in plain words.
 2. `sync` with `agent`, `harness`, `idempotency_key` and
-   `forget: [{name, expected_sha}]` (the `sha` from the index or `read_node`).
+   `forget: [{name, expected_sha}]` (the `sha` from the index or a read with `search`).
    If it comes back "Synced, except" with a newer `sha`, retry once with it.
 3. Check the memory is gone from the home that came back, then say exactly:
 

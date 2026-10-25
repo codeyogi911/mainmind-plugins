@@ -89,6 +89,8 @@ test("malformed transcript lines are skipped", () => expect(run({ fixture: "malf
 test("recent handoff, work since", () => expect(run({ fixture: "recent-handoff.jsonl" }), ALLOWS));
 test("old handoff, no work since", () => expect(run({ fixture: "stale-handoff-idle.jsonl" }), ALLOWS));
 test("old handoff, only its read-back since", () => expect(run({ fixture: "stale-handoff-read-back.jsonl" }), ALLOWS));
+test("old handoff, only a search read of it since", () => expect(run({ fixture: "stale-handoff-search-read-back.jsonl" }), ALLOWS));
+test("old handoff, a search for something else since", () => expect(run({ fixture: "stale-handoff-search-query.jsonl" }), BLOCKS));
 test("old handoff, work since", () => expect(run({ fixture: "stale-handoff.jsonl" }), BLOCKS));
 
 // At most once per window in one session, even across turns.
