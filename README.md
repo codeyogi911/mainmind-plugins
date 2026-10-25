@@ -52,7 +52,7 @@ over a person's token.
 Eight skills, in `skills/`:
 
 - **`mainmind-start`** — Start with Mainmind: how to work through the Mainmind connection. Start before answering,
-  route through `find_process`, cite the path and the projection commit, and
+  route through `search` with kind `process`, cite the path and the projection commit, and
   put a change to a ruled file through `change`, asked in chat as one question.
 - **`morning-brief`** — a start-of-day digest built entirely from reads through the Mainmind connection:
   what needs you, what is in motion, what landed.

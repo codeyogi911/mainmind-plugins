@@ -73,7 +73,7 @@ Say the result in plain words. The route below is yours, not theirs.
   pending lesson. It does not edit an existing page.
 - A dated fact in a Record Kind that already exists: `deposit_record`, with
   `run_id`, `kind`, `slug`, `title`, `body` and `evidence`. To correct one you
-  saved, send `base_sha` from `read_node`.
+  saved, send `base_sha` from a read with `search` and its path.
 - A hole in the space's knowledge: `deposit_gap`, with `run_id`, `title`,
   `missing`, `why` and `evidence`. Do not disguise a hole as a lesson.
 - A checkpoint of work a later session must resume: `deposit_work_note`, with

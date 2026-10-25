@@ -73,7 +73,7 @@ cloud or remote task has the same connection.
    `knowledge/` and nothing else, so the space's own command-line tools,
    under `tools/`, exist only in a checkout.**
 2. **If you cannot, work only through the Mainmind connection.** No shell, no disk, or the clone fails:
-   use `read_node`, `search` and `call_provider`. That is a supported way to
+   use `search` and `call_provider`. That is a supported way to
    work, not a lesser one — say plainly that you are working only through the Mainmind
    connection, so nobody
    reads a partial answer as a complete one.
@@ -139,9 +139,11 @@ never wait to be asked, and never ask the person to do it.
 
 ## Reading
 
-- Route any task through `find_process` first — task language in, the right
-  Process out. Read the matched Process with `read_node` before acting.
-- `search` to locate evidence; `read_node` to read it. **Cite the path and the
+- Route any task through `search` with kind `process` first — task language
+  in, the right Process out. Read the matched Process with `search` and its
+  path before acting.
+- `search` with a query locates evidence; `search` with a path reads it; with
+  neither it lists what the space holds. **Cite the path and the
   projection commit** for every material claim.
 - The projection is derived, never canonical. If something looks missing,
   stale, or contradicts what the human says, report that as a fact — do not
@@ -235,9 +237,9 @@ person sees in the app. Pages are how agents show their work there.
 
 - Tool access is capability, not permission — what you may *do* with what you
   read is governed by AUTHORITY.md and the Process you are running.
-- Before writing anything the owner will read, `read_node` on `voice.md`
+- Before writing anything the owner will read, read `voice.md` with `search`
   and follow it.
-- Before writing durable knowledge, `read_node` on `AUTHORING.md` when start
+- Before writing durable knowledge, read `AUTHORING.md` with `search` when start
   names it, and follow it. Start skips the file when the space has
   none. That file is how this space writes knowledge; do not treat
   the Worker as a write gate.

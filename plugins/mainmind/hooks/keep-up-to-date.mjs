@@ -52,8 +52,10 @@ const HOUSEKEEPING = /__(start|boot|sync|whoami|release_notes|run_start|run_hear
 const OWN_WORK_ACTIONS = new Set(["claim", "checkpoint", "recover", "release", "report"]);
 const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "ToolSearch"]);
 // The skill reads a journal entry back to check it landed; reads straight
-// after one are that check, not new work.
-const READ_BACK = /__read_node$/;
+// after one are that check, not new work. search with a path is that read
+// now; read_node is kept for transcripts from before.
+const readsBack = (call) => /__read_node$/.test(call.name) ||
+  (/__search$/.test(call.name) && typeof call.input.path === "string");
 
 const quietExit = () => { process.exitCode = 0; };
 process.on("uncaughtException", quietExit);
@@ -176,7 +178,7 @@ function needsSync(calls, { agent, start }, now) {
   let after = calls.slice(since + 1);
   if (handoffIndex >= 0) {
     let checked = 0;
-    while (checked < after.length && (READ_BACK.test(after[checked].name) || housekeeping(after[checked]))) checked += 1;
+    while (checked < after.length && (readsBack(after[checked]) || housekeeping(after[checked]))) checked += 1;
     after = after.slice(checked);
   }
   const work = after.filter((call) => !housekeeping(call)).length;

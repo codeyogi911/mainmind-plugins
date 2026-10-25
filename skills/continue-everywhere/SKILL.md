@@ -143,7 +143,7 @@ accepted), holding in one proposal where it fits (at most 19 files):
   from make-an-agent. Translate the old schedule to a five-field cron `when`
   and an IANA `timezone`.
 - One new Process per skill folder or playbook that does not exist yet. Read
-  one existing Process with `read_node` first and follow its shape; if the
+  one existing Process with `search` and its path first and follow its shape; if the
   space's rules say Processes are proposed differently, follow them.
 
 Plain-word fields: `ask` ("Move <Name>'s instructions and schedule in?"),
@@ -153,8 +153,8 @@ code), `becomes`, `blast_radius` (`reversible`, `no_money`, `many_files`,
 
 ## 6. Read back and sync where it stopped
 
-- Check every memory is in the home `sync` returned, `read_node` every copied
-  file, and confirm the proposal returned its `decision_key`. Anything that did
+- Check every memory is in the home `sync` returned, read every copied
+  file with `search` and its path, and confirm the proposal returned its `decision_key`. Anything that did
   not read back is not moved; say so.
 - `sync` with `stopped`: `summary` of what moved; `next` starting with "Wait
   for the owner's yes on instructions and schedule"; `open_questions` for
