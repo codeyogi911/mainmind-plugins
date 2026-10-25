@@ -79,8 +79,9 @@ Say the result in plain words. The route below is yours, not theirs.
     `date` (today), `source-process` (a Process id), `access-scope: core` (or
     another scope you hold), `write-class: ledger` and `applies-to` (the path
     it would improve, or `unresolved`). Then a `#` title and `## What
-    happened`, `## What it teaches`, `## Where it applies` and `## Evidence`
-    (one `-` line per piece). A push never changes a saved lesson.
+    happened`, `## What it teaches`, `## Where it applies` (the `applies-to`
+    value and nothing else) and `## Evidence` (one `-` line per piece).
+    Never change or remove a saved lesson.
   - Fact or record: `records/<kind>/<name>.md`, in a Record Kind that already
     exists.
   - Gap: `records/gaps/<day>-<title>.md`. Do not disguise a hole as a lesson.
