@@ -57,8 +57,8 @@ Eight skills, in `skills/`:
 - **`morning-brief`** — a start-of-day digest built entirely from reads through the Mainmind connection:
   what needs you, what is in motion, what landed.
 - **`write-knowledge`** — before an agent saves or proposes a lesson, skill,
-  decision, fact, gap or work note: which page type, and how to write it so a
-  person and an AI can both follow it.
+  decision, fact, gap or work note: which page type, how to write it so a
+  person and an AI can both follow it, and how to save it by pushing the file.
 - **`make-an-agent`** — "make me an agent that…": three plain questions, then
   a registered agent with proposed instructions, limits and schedule, shown as
   one summary card.

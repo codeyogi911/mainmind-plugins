@@ -111,9 +111,9 @@ Use the connection's folder copy: `source_file_upload` with
 `action: "authorize"` for the folder helper (preview, copy and recovery), or
 `begin` / `append` / `finalize` per file (10 MiB each) with a stable
 `idempotency_key` and a `description` of why the agent needs it. Never copy
-anything on the stays-behind list. Wait until `source_file_status` shows each
-file stored and readable, and keep each file's saved record path for
-`works_on` (as `source:<record path>`).
+anything on the stays-behind list. Wait until `source_file_upload` with
+`action: "status"` shows each file stored and readable, and keep each file's
+saved record path for `works_on` (as `source:<record path>`).
 
 ## 4. Carry over the memories
 

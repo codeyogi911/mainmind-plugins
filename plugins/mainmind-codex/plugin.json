@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "mainmind",
-  "version": "0.21.3",
+  "version": "0.22.0",
   "description": "Continue with your agents across AI apps, use your space's knowledge, and keep work in sync.",
   "author": {
     "name": "Shashwat Jain",
@@ -54,13 +54,13 @@
             {
               "description": "Answer a knowledge question from an accessible sample policy.",
               "prompt": "What does our sample travel policy say about expenses?",
-              "tools_triggered": "start, find_process, search, read_node",
+              "tools_triggered": "start, search",
               "expected_behavior": "Reads the sample policy in the demo space, answers from that content and cites the returned source. Does not invent unavailable facts or change the policy."
             },
             {
               "description": "Give a read-only morning brief from sample work.",
               "prompt": "Give me my Mainmind morning brief.",
-              "tools_triggered": "start or whoami, list_runs, list_events, read_node when needed",
+              "tools_triggered": "start or whoami, list_runs, list_events, search when needed",
               "expected_behavior": "Shows what needs attention, what is in motion and what landed. Marks stale or incomplete reads and does not treat missing results as an empty queue."
             },
             {
@@ -72,7 +72,7 @@
             {
               "description": "Continue the sample agent with its retained instructions and stopping point.",
               "prompt": "Continue with Review Helper and tell me where we left off. Do not start a new task.",
-              "tools_triggered": "start, sync, read_node when needed",
+              "tools_triggered": "start, sync, search when needed",
               "expected_behavior": "Matches the existing Review Helper, reads its current home and reports its retained stopping point and next step. Does not invent memories or start a new task."
             }
           ],
