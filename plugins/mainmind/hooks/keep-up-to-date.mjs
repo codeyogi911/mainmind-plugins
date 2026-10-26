@@ -44,11 +44,22 @@ const FIRST_HANDOFF_AFTER = 6;
 const STALE_AFTER_MS = 30 * 60 * 1000;
 
 // Calls that are the agent looking after itself, not work for the person.
-// `start` is the startup tool; `boot` is its older name, still in older
-// sessions and transcripts, so both count.
-const HOUSEKEEPING = /__(start|boot|sync|whoami|release_notes|run_start|run_heartbeat)$/;
-// work_session moving the agent's own request is looking after itself;
-// reviewing someone else's report (accept, request_changes, cancel) is work.
+// `start` is the startup tool, in every mode (whoami, run, ...); `boot` is its
+// older name, still in older sessions and transcripts, so both count. Since
+// the eight-tool cut most calls are a mode of `sync`, `start`, `decide`,
+// `feedback` or `call_provider`, so a call is matched on its mode as well as
+// its name; the old names stay for older transcripts.
+const HOUSEKEEPING = /__(start|boot|whoami|release_notes|run_start|run_heartbeat)$/;
+// Plain `sync` (no mode) and `sync` with mode heartbeat look after the agent;
+// sync in chat, inbox, task or another mode is work for the person.
+const SYNC_HOUSEKEEPING_MODES = new Set([undefined, "heartbeat"]);
+const modeOf = (call) => (typeof call.input.mode === "string" ? call.input.mode : undefined);
+const isTool = (call, tool, mode) => new RegExp(`__${tool}$`).test(call.name) && modeOf(call) === mode;
+const isPlainSync = (call) => /__sync$/.test(call.name) && modeOf(call) === undefined;
+// work_session (now sync with mode session) moving the agent's own request is
+// looking after itself; reviewing someone else's report (accept,
+// request_changes, cancel) is work.
+const isWorkSession = (call) => /__work_session$/.test(call.name) || isTool(call, "sync", "session");
 const OWN_WORK_ACTIONS = new Set(["claim", "checkpoint", "recover", "release", "report"]);
 const HOUSEKEEPING_TOOLS = new Set(["TodoWrite", "TaskCreate", "TaskUpdate", "TaskList", "TaskGet", "ToolSearch"]);
 // The skill reads a journal entry back to check it landed; reads straight
@@ -136,7 +147,7 @@ function toolCalls(transcript) {
 // The agent a call picks up as: `start` (or its older name `boot`) or `sync`
 // with `agent`.
 function pickedUpAs(call) {
-  if (!/__(start|boot|sync)$/.test(call.name)) return null;
+  if (!/__(start|boot|sync)$/.test(call.name) || modeOf(call) !== undefined) return null;
   const agent = typeof call.input.agent === "string" ? call.input.agent.trim() : "";
   return agent || null;
 }
@@ -146,12 +157,14 @@ function pickedUpAs(call) {
 // kept. The retired agent_home tool now answers only with what replaced it,
 // so a call to it never counts.
 function syncsWhereItStopped(call) {
-  if (!/__sync$/.test(call.name)) return false;
+  if (!isPlainSync(call)) return false;
   return Boolean(call.input.stopped && typeof call.input.stopped === "object") && stoppedKept(call.result);
 }
 
 const housekeeping = (call) => HOUSEKEEPING.test(call.name) || HOUSEKEEPING_TOOLS.has(call.name)
-  || (/__work_session$/.test(call.name) && OWN_WORK_ACTIONS.has(call.input.action));
+  || (/__sync$/.test(call.name) && SYNC_HOUSEKEEPING_MODES.has(modeOf(call)))
+  || isTool(call, "feedback", "releases")
+  || (isWorkSession(call) && OWN_WORK_ACTIONS.has(call.input.action));
 
 // The agent this session is acting as now, and the call where it was picked
 // up. After "Continue with A" and then "Continue with B", that is B. Picking
@@ -209,7 +222,7 @@ function requestMoved(call, task) {
 
 // The request this session holds as the agent, and the call after which
 // work counts against its checkpoint: the claim, or its latest checkpoint.
-// Claimed by work_session claim or recover, or by a sync task that is doing
+// Claimed by work_session (sync with mode session) claim or recover, or by a sync task that is doing
 // with a request; let go by release, report or cancel, or a sync task done.
 // Only calls the transcript shows succeeding count.
 function heldRequest(calls, start) {
@@ -218,14 +231,14 @@ function heldRequest(calls, start) {
   for (let i = Math.max(start, 0); i < calls.length; i += 1) {
     const call = calls[i];
     if (!ok(call)) continue;
-    if (/__work_session$/.test(call.name)) {
+    if (isWorkSession(call)) {
       const id = call.input.id;
       if (id === undefined || id === null) continue;
       const action = call.input.action;
       if (action === "claim" || action === "recover") held = { id: String(id), since: i };
       else if (held && String(id) === held.id && action === "checkpoint") held.since = i;
       else if (held && String(id) === held.id && ["release", "report", "cancel"].includes(action)) held = null;
-    } else if (/__sync$/.test(call.name) && Array.isArray(call.input.tasks)) {
+    } else if (isPlainSync(call) && Array.isArray(call.input.tasks)) {
       for (const task of call.input.tasks) {
         if (!task || task.request === undefined || task.request === null || !requestMoved(call, task)) continue;
         const id = String(task.request);
@@ -250,7 +263,7 @@ function checkpointDue(calls, acting) {
 function requestLineFor(id) {
   return `You hold request ${id}: in that same sync, give its task status doing, request ${id} and a checkpoint ` +
     "(summary, plan, pending, unresolved_effects), with your run_id and control_key, so the next session can " +
-    "pick it up from there. If sync does not take checkpoint yet, use work_session checkpoint instead.";
+    "pick it up from there. If sync does not take checkpoint yet, use sync with mode session and action checkpoint instead.";
 }
 
 function reasonFor(agent, taskLine) {

@@ -70,8 +70,8 @@ Say the result in plain words. The route below is yours, not theirs.
 
 - A page, record, gap, work note or new lesson is saved by committing its
   file and pushing it. The owner pushes to `main` with `shell` or a checkout.
-  Another member pushes a branch from `checkout_member_repo` in a terminal and
-  lands it with `land_scoped_change`. Mainmind checks the push and answers
+  Another member pushes a branch from `checkout` with mode `member`, with the
+  task's control key, and the push lands it. Mainmind checks the push and answers
   file by file. Read a file first with `search` and its path.
   - Lesson: `lessons/<today>-<a-few-words>.md`, with today's date on the
     space's clock and lower-case hyphenated words. Frontmatter: `id` (the file
@@ -89,15 +89,16 @@ Say the result in plain words. The route below is yours, not theirs.
     work changes it later.
   - Page: `pages/<name>.md`.
 - A problem in one page, without changing the rule: comment on it with
-  `add_page_collaboration` (`kind: "comment"`), or fix the page and push it.
+  `sync` with mode `task` (`kind: "comment"`), or fix the page and push it.
 - Mainmind itself got in the way (a tool broke its contract, was slow, fought
   you, or could not do what you needed): `feedback`, with `kind` (`bug`,
   `slow`, `friction` or `gap`) and `message`. That is not a comment on a
   page. Leave out customer details, business data and credentials.
-- A skill, or any other ruled or conserved file: `change`, as `mainmind-start`
-  says. The owner is asked in this chat and says yes before it changes how
-  work is done. Tell them in one line what you asked. If this server has no
-  `change`, fall back to `propose_change`.
+- A skill, or any other ruled or conserved file: the owner's push of it is
+  held as one question, as `mainmind-start` says. The owner is asked in this
+  chat and says yes before it changes how work is done; record their words
+  with `decide` and the key the push gave. Another member asks the owner with
+  `decide` with mode `ask` instead.
 - If Mainmind sends lines back to fix, fix exactly those, keep every fact,
   and send or push again. Don't ask the person to fix them.
 

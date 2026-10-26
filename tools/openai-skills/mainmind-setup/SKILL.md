@@ -8,7 +8,7 @@ description: Check the existing Mainmind connection after installing the plugin 
 Follow the person's explicit instructions before these workflow guidelines.
 This is a bounded connection check. It ends with the result and one next step.
 
-1. Use the existing Mainmind connection's `whoami` tool with no arguments.
+1. Use the existing Mainmind connection's `start` call with mode `whoami` with no arguments.
    Resolve the tool from the connected server; do not guess a host-prefixed
    name or substitute a tool from another account.
 2. On success, say which space is connected and who is signed in using only
@@ -21,7 +21,7 @@ This is a bounded connection check. It ends with the result and one next step.
 
 If the host explicitly reports that the connection is missing, say “Mainmind
 isn’t connected here yet. Open the plugin’s settings to connect it.” If
-`whoami` is unavailable but the connection state is unknown or other Mainmind
+`start` with mode `whoami` is unavailable but the connection state is unknown or other Mainmind
 tools are present, say “I can’t check your Mainmind space from this app yet.
 Check the connection in the plugin’s settings.” A missing tool does not prove
 that the connection is absent. Include both sentences in the final reply,

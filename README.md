@@ -42,9 +42,9 @@ with GitHub in the browser. No secret is pasted into the plugin or into chat.
 For a host that accepts only a static bearer — the xAI API's remote MCP tool,
 for one — a plugin is the wrong shape. This route requires an existing bot key;
 creating an agent profile does not establish the API connection.
-`invite_member` with `kind: machine`
+`start` with mode `invite` and `kind: machine`
 is refused (HTTP 403). A new agent joins through its owner with
-`register_agent`, from that person's own signed-in connection. Do not hand
+`sync` with mode `register`, from that person's own signed-in connection. Do not hand
 over a person's token.
 
 ## What it ships
@@ -53,7 +53,7 @@ Nine skills, in `skills/`:
 
 - **`mainmind-start`** — Start with Mainmind: how to work through the Mainmind connection. Start before answering,
   route through `search` with kind `process`, cite the path and the projection commit, and
-  put a change to a ruled file through `change`, asked in chat as one question.
+  put a change to a ruled file to the owner in chat as one question, from the held push.
 - **`morning-brief`** — a start-of-day digest built entirely from reads through the Mainmind connection:
   what needs you, what is in motion, what landed.
 - **`write-knowledge`** — before an agent saves or proposes a lesson, skill,
@@ -244,7 +244,7 @@ harness's copy and nowhere else is exactly the drift this layout invites.
 
 ## Verifying it works
 
-Ask the connected session for `whoami`, then `start`. A healthy tool list is not
+Ask the connected session for `start` with mode `whoami`, then a plain `start`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
 ## Licence

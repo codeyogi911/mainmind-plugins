@@ -38,9 +38,9 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    `agents_you_can_take_over`: agents already in the space that no one
    has taken over, with their jobs. If one of them plainly does this job, even
    under a slightly different name (Books Steward for Books), ask once: "<Old
-   name> already does this job. Use it?" On yes, `adopt_agent` with its
+   name> already does this job. Use it?" On yes, `sync` with mode `adopt` with its
    `agent` and `agent_epoch`, keep that slug and skip to step 4.
-3. **`register_agent`** with `name`, a one-sentence `charter` (the job, in the
+3. **`sync`** with mode `register` and `name`, a one-sentence `charter` (the job, in the
    person's words), and a `registration_key` that is a fresh UUID v4 you choose
    *before* the call. If start's team has an empty job this agent is plainly
    for, also pass that job's short name as `job`: the agent is then in that job
@@ -53,27 +53,27 @@ job ("Job Hunter", "Inbox Keeper") unless they gave one.
    it as `agent` on every call that accepts it from here on. If it answers
    that an agent with this name already exists, do not pick a new name to get
    round it: continue with yours, or, when it says to take one over, ask once
-   and `adopt_agent` with the agent and agent_epoch it names. Only a Founder
+   and `sync` with mode `adopt` with the agent and agent_epoch it names. Only a Founder
    can take one over: if the answer says to ask a Founder, or that someone
    else's agent has the name, stop and tell the person in one plain line.
 4. **`sync`** with `agent: <slug>` and the same `harness` to pick the agent
    up. Read the home it returns. `missing: ["no_home"]` or `["no_agent_md"]`
    is expected for a new agent.
-5. **`run_start`** with `agent`, `harness`, and `task` such as "Write
+5. **`start`** with mode `run` and `agent`, `harness`, and `task` such as "Write
    <Name>'s instructions and schedule for its owner's yes". Keep the
    `run_id` and the private `control_key`.
-6. **`propose_change`** with that `run_id` and `control_key`, and `agent` when
-   the call accepts it. One proposal holds every file:
+6. **Write the files and push them.** Commit, in one push to `main` from
+   `shell` or a checkout:
    - `agents/<slug>/AGENT.md` (create), from the template below.
    - One `agents/<slug>/routines/<id>.md` (create) per schedule they asked
      for. None if they did not ask.
 
-   Fill the proposal's person-facing fields in plain words: `ask` ("Set up
-   <Name> with these instructions and this schedule?"), `act_label` ("Set up
-   <Name>"), `stake` (at most 14 words), `eli5` (40 to 600 characters, no
-   code or identifiers), `becomes` (what will be true), and `blast_radius`
-   with exactly one of each pair: `reversible`, `no_money`, `one_file` or
-   `many_files`, `once` or `recurring` (recurring when it has a schedule).
+   An agent's instructions are the owner's to rule on, so the push is held as
+   one question, which it prints. Put it to the person in this chat as one
+   plain yes or no ("Set up <Name> with these instructions and this
+   schedule?"), with what will be true on yes. Record their exact answer with
+   `decide`, the key the push gave, their words in `words` and where they said
+   it in `said_in`; on yes the files land.
 7. **`sync`** with `memories` for anything the person told you about
    themselves or the job that is a fact or preference, not an instruction
    (see "Keeping what they told you"). Nothing to keep is fine; skip it.
@@ -186,7 +186,7 @@ anything is stored.
   this app yet; I've put it in <Name>'s instructions instead" (and do so,
   where it is an instruction), or that it did not sync.
 - If a call refuses an argument this skill names (for example `harness` on
-  `start`, or `agent` on `propose_change`), retry once without it. Tell the
+  `start`, or `agent` on `sync`), retry once without it. Tell the
   person only what they lose, in plain words, if anything.
 - A refusal or an uncertain result is never reported as done. Retry it
   yourself; if it still fails, say plainly what was not kept and that you will

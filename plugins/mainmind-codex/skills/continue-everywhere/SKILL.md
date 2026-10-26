@@ -91,10 +91,10 @@ Proceed only on a yes. If they drop an item, drop it.
 3. For a Founder, start also lists `agents_you_can_take_over`: agents already in
    the space that no one has taken over, with their jobs. If one
    plainly does this agent's job, even under a slightly different name, ask
-   once whether to use it; on yes, `adopt_agent` with its `agent` and
+   once whether to use it; on yes, `sync` with mode `adopt` and its `agent` and
    `agent_epoch`. Moving a whole team in, ask once for all the matches
    together, not one question per agent.
-4. Otherwise `register_agent` with `name`, a one-sentence `charter`, and a
+4. Otherwise `sync` with mode `register` and `name`, a one-sentence `charter`, and a
    UUID v4 `registration_key` chosen before the call. Retry only with that
    same key and details; never register again on a restart. If it answers
    that an agent with this name already exists, take that one (as above)
@@ -131,10 +131,12 @@ saved record path for `works_on` (as `source:<record path>`).
 
 ## 5. Propose instructions, schedule and skills
 
-`run_start` with `agent`, `harness`, and a `task` such as "Move <Name>'s
-instructions, schedule and skills in for its owner's yes". Then
-`propose_change` with that `run_id` and `control_key` (and `agent` when
-accepted), holding in one proposal where it fits (at most 19 files):
+`start` with mode `run` and `agent`, `harness`, and a `task` such as "Move <Name>'s
+instructions, schedule and skills in for its owner's yes". Then commit these
+files and push them to `main` from `shell` or a checkout, in one push where it
+fits (at most 19 files). The push is held as one question for the owner: put
+it to them in this chat and record their exact answer with `decide` and the
+key the push gave.
 
 - `agents/<slug>/AGENT.md`: the template in make-an-agent, with the
   instructions, `boundaries` (always including "Ask before anything that
