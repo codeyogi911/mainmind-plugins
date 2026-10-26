@@ -38,7 +38,7 @@ https://mainmind.app.
 
 ## What it contains
 
-- **Eight skills** that teach the agent how to work with a Mainmind space.
+- **Nine skills** that teach the agent how to work with a Mainmind space.
 - **One connection**, `https://mainmind.app/mcp`, the Mainmind service itself.
 
 ## Your data

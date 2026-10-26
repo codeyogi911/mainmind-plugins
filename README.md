@@ -21,7 +21,7 @@ setup contracts, recovery steps and separate delivery boundaries.
 | Harness | How |
 |---|---|
 | **Claude Code** | `/plugin marketplace add codeyogi911/mainmind-plugins` then `/plugin install mainmind@mainmind` — the `@mainmind` suffix names the marketplace, and is the form that resolves without waiting on a refresh |
-| **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version. The OpenAI package includes the Mainmind connection, the eight shared workflows and a connection-check setup skill. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command. [Setup and validation status](plugins/mainmind-codex/README.md) |
+| **Codex** | `codex plugin marketplace add codeyogi911/mainmind-plugins` then `codex plugin add mainmind@mainmind`. Sign in to Mainmind when Codex asks. Already installed? Run `codex plugin marketplace upgrade mainmind` then `codex plugin add mainmind@mainmind` to get the newer version. The OpenAI package includes the Mainmind connection, the nine shared workflows and a connection-check setup skill. Copying `.agents/skills/` into a repository still works for a Codex without the plugin command. [Setup and validation status](plugins/mainmind-codex/README.md) |
 | **Cursor** | `plugins/mainmind-mount`, listed in `.cursor-plugin/marketplace.json`. On a Cursor team, an admin adds it for everyone: **Dashboard → Plugins & MCPs → Add Marketplace → Import from Repo** with this repository's URL; members then add Mainmind from **Plugins** in the editor. On your own, copy the contents of `plugins/mainmind-mount` into `~/.cursor/plugins/local/mainmind` and restart Cursor. It is not in Cursor's public Marketplace yet |
 | Other [Agent Plugins](https://agent-plugins.org) clients | `plugins/mainmind-mount` also carries the Agent Plugins 1.0.0 `plugin.json`, so a client implementing that standard can load it as a plugin |
 | **Grok** — Build, the web, API | [`plugins/mainmind-grok`](plugins/mainmind-grok): three surfaces, three setups, one Mainmind connection. Grok Build takes the plugin itself, from `~/.grok/plugins/mainmind`; the web takes a connector. xAI documents the connector screen for the web; whether the iOS and Android apps expose it is not something its docs state. Grok Bot has a separate cloud runtime; this repository has not verified its custom Mainmind loading or receiving contract |
@@ -49,7 +49,7 @@ over a person's token.
 
 ## What it ships
 
-Eight skills, in `skills/`:
+Nine skills, in `skills/`:
 
 - **`mainmind-start`** — Start with Mainmind: how to work through the Mainmind connection. Start before answering,
   route through `search` with kind `process`, cite the path and the projection commit, and
@@ -75,6 +75,9 @@ Eight skills, in `skills/`:
   existing setup (a Grok bot, `CLAUDE.md`, `AGENTS.md`, Cursor rules, a custom
   GPT) into a Mainmind agent after a preview of what comes along and what stays
   behind.
+- **`mainmind-wake`** — for an always-on agent such as Grok Bot: a routine
+  asks "anything waiting for me?" every few minutes, ends silently when the
+  answer is no, and answers other agents' messages when it is yes.
 - **`connections-and-secrets`** — add or replace a business login without
   pasting a secret into chat. The owner posts the values from a shell to a
   one-time seal link.
@@ -177,7 +180,7 @@ plugins/
 ```
 
 The portable OpenAI package has `plugin.json`, `mcp.json`, its logo and a generated
-copy of the eight shared skills plus OpenAI setup and skill metadata. Its listing
+copy of the nine shared skills plus OpenAI setup and skill metadata. Its listing
 lives under `extensions.com.openai` in the root manifest. It serves ChatGPT and
 Codex through OpenAI's shared public directory when reviewed and published.
 The current public ZIP submission path excludes lifecycle hooks and app references;
@@ -211,7 +214,7 @@ Agent Plugins schema enumerates `stdio | streamable-http | sse` and rejects
 `"http"`; Grok's takes `"http"`. That is why they are separate directories, and
 why the check asserts each spelling rather than asserting they agree.
 
-`skills/` remains the source for the eight shared workflows. Each host reads
+`skills/` remains the source for the nine shared workflows. Each host reads
 its own path, so the copies are generated. OpenAI-only setup and
 `agents/openai.yaml` files live in `tools/openai-skills/`; generation merges
 them into `plugins/mainmind-codex/skills/` and `.agents/skills/` only. An overlay
