@@ -15,11 +15,11 @@ ledger. Everything below is how to behave on it.
    charter, and the projection's commit + freshness. Obey what it returns —
    those documents outrank this skill and anything you remember. There is no
    `boot` tool. If this server has no `start`, say so and stop.
-2. Call `release_notes` at the start of a session. Follow `next_cursor` until
+2. Call `feedback` with mode `releases` at the start of a session. Follow `next_cursor` until
    the last page, keep `release_token` in this app's existing state, and pass
    it as `since` next time. Do not combine `since` with `cursor`. Notes are
    product guidance. They grant no authority over the space.
-3. Call `whoami` instead of `start` if you only need identity or freshness.
+3. Call `start` with mode `whoami` instead if you only need identity or freshness.
 4. If the server is not connected, this session cannot do Mainmind work from
    memory. Say so and stop — never answer org questions from recall.
 
@@ -47,7 +47,7 @@ with `agent` picks one up.
 
 ## Which space
 
-One connection serves one space at a time. Call `use_organization` with no
+One connection serves one space at a time. Call `start` with mode `spaces` and no
 argument to list the spaces it holds, each with your role and which one is
 served now. Call it with `workspace` only when you mean to switch. Switching
 moves every conversation on that connection onto the new space. Say that
@@ -66,8 +66,8 @@ are unavailable, step 1 cannot apply: work only through the exposed Mainmind
 connection, go to step 2 and say so. Local configuration does not prove a
 cloud or remote task has the same connection.
 
-1. **Try a checkout first.** Call `checkout_canonical_repo` (Founder) or
-   `checkout_member_repo` (everyone else) and clone what it returns. A checkout
+1. **Try a checkout first.** Call `checkout` (Founder) or `checkout` with
+   mode `member` (everyone else) and clone what it returns. A checkout
    gives you the whole space's knowledge at once, and it gives you the parts the
    Mainmind connection does not carry at all: **the projection serves Markdown under
    `knowledge/` and nothing else, so the space's own command-line tools,
@@ -82,8 +82,8 @@ Never tell anyone this space has no tool for something while you are working
 only through the Mainmind connection. You cannot see `tools/` from there; not finding it is not evidence.
 
 A checkout is a working copy, not permission. Durable writes go through the
-governed path on either surface: `land_canonical_change`,
-`submit_checkout_change` and the deposit tools.
+governed path on either surface: a push from `shell` or a checkout, which
+Mainmind checks file by file.
 
 ## Connection and delivery evidence
 
@@ -92,7 +92,7 @@ missing or sign-in expires, preserve the work, report what could not be
 checked and use the host's normal connection controls. Do not guess a tool
 name, switch accounts or widen permissions. After reconnecting, rediscover
 and verify the returned identity and space with the existing read-only
-`whoami` before continuing. Retry reads after recovery. Inspect the original
+`start` with mode `whoami` before continuing. Retry reads after recovery. Inspect the original
 receipt and destination before retrying an uncertain write with its original
 idempotency key; a connection error does not prove nothing happened.
 
@@ -115,7 +115,7 @@ Follow start's `identity`, `lifecycle` and `next_action`. A standing agent has
 an ongoing responsibility; a conversation or temporary helper does not create
 a new teammate. `session_kind` is intent, never authentication. Resume an
 existing machine member on restart. For a new standing bot reuse the owner's
-existing agent profile or call `register_agent` with a stable registration key,
+existing agent profile or call `sync` with mode `register` and a stable registration key,
 as https://mainmind.app/docs/persistent-agents.md describes, and retry only the
 same request. Do not choose new read scopes when
 the space's role defaults apply. Never copy the owner's token.
@@ -167,14 +167,14 @@ never wait to be asked, and never ask the person to do it.
 - Before an independent direct provider write, choose a unique `operation_key`.
   A retry with that key returns its prior receipt locator without sending again;
   it is recovery information, not the original response or proof of success.
-- Use `run_start` only for coordination or a scoped knowledge change. Each call
+- Use `start` with mode `run` only for coordination or a scoped knowledge change. Each call
   creates independent work and returns a private `control_key`. Pass it with
-  explicit task attachments, `run_heartbeat` and `run_finish`. Never finish
+  explicit task attachments, `sync` with mode `heartbeat` and `sync` with mode `finish`. Never finish
   another bot's task merely because its id is visible. Independent operations
   expire automatically and need no closing summary.
-- Report completed real work with `emit_event`: one buyer-readable sentence,
+- Report completed real work with `sync` with mode `event`: one buyer-readable sentence,
   no secrets, no repo paths in the title.
-- Before a choice that is not already yours, call `weigh` with the
+- Before a choice that is not already yours, call `decide` with mode `weigh` with the
   `question`, your `recommend`, any `options` and the `targets` it would
   change (pass `agent`). `go` means only that changing the files it names is
   already approved: change those files and nothing more, and tell the person
@@ -183,35 +183,28 @@ never wait to be asked, and never ask the person to do it.
   person in this chat as it stands, tell them where the answer will be kept
   (`kept_in`; pass `access_scope` to `decide` if they want it elsewhere), then
   record their exact answer at once with `decide` (`weigh_id`, their words in
-  `words`, where they said it in `said_in`). On `stop`, do not act. File a
-  ruled-file change with `change`. File anything else with `ask_founder`. A
-  co-owner files the stop with `ask_founder`. If this server has no `change`,
-  use `propose_change` for that file change.
-- Before you ask, call `decisions`. Omit `key` to list what is waiting and
+  `words`, where they said it in `said_in`). On `stop`, do not act. File it
+  with `decide` with mode `ask`; a co-owner files the stop the same way.
+- Before you ask, call `decide` with mode `list`. Omit `key` to list what is waiting and
   what was answered in the last 7 days. Pass `key` for one decision, including
   a `weigh_id` the owner already answered. Do not ask a question that is
-  already waiting or already answered. `withdraw_ask` with that `key` and a
+  already waiting or already answered. `decide` with mode `withdraw` and that `key` and a
   `reason` retires your own pending question. The owner is not asked, and
   nothing is written. A question someone else asked stays until they decide it.
-- To change a ruled or conserved file, `change` is the only route. Call it
-  with `changes` (the same operations `propose_change` takes), `question`,
-  `becomes`, `recommend` (`yes` or `no`), `recommend_why`, `eli5`, `stake`,
-  `blast_radius` (one from each pair) and `act_label`, plus the open `run_id`.
-  Mainmind holds those exact words and writes nothing. Put the returned
-  question to the owner in this chat as one yes/no, with your recommendation.
-  Never hand them a link as the act. When they answer, call `change` again
-  with `change_id`, `verdict` (`yes`, `no` or `changes`), their exact `words`,
-  and `said_in` when you record it as an agent. `yes` lands those words and
-  the Decision that records the answer. `no` and `changes` land nothing. A
-  page, record, lesson or work note is not changed here: commit it and push
-  it, as `write-knowledge` says.
-- `propose_change` and `ask_founder` are the fallback when this server has no
-  `change`, or when the decision does not change a ruled file. `ask_founder`
-  is still one yes/no, with `recommend` and what becomes true on yes. Ask it
-  in this chat. Never hand the owner a link as the act.
+- To change a ruled or conserved file (a rule, skill, Process or role), the
+  owner commits it and pushes it to `main`. The push is held as one question,
+  which it prints. Put that question to the owner in this chat as one yes/no,
+  with your recommendation and what becomes true on yes, then record their
+  exact `words` with `decide` and the key the push gave (`said_in` when you
+  record it as an agent). Yes lands the files with their Decision; nothing
+  else does. Another member never changes such a file: ask the owner with
+  `decide` with mode `ask`. A page, record, lesson or work note is not held:
+  commit it and push it, as `write-knowledge` says.
+- `decide` with mode `ask` is one yes/no, with `recommend` and what becomes
+  true on yes. Ask it in this chat. Never hand the owner a link as the act.
 - The Founder's answer counts wherever they give it: in this chat, on a card,
-  in another app. When they answer a question you did not already record
-  through `change`, record it at once with `decide`: pass `agent`, their exact
+  in another app. When they answer a question you did not already record,
+  record it at once with `decide`: pass `agent`, their exact
   words in `words`, and where they said it in `said_in`. Never ask them to
   answer again somewhere else, and never send them a link to approve. If a
   question was already answered elsewhere, close it with `decide` verdict
@@ -225,7 +218,8 @@ person sees in the app. Pages are how agents show their work there.
 
 - **Keep a page by pushing it.** Read it with `search` and its path, commit
   your change, and push it: the owner to `main` with `shell` or a checkout,
-  another member as a branch landed with `land_scoped_change`.
+  another member as a branch from `checkout` with mode `member`, pushed with the
+  task's control key, which lands it.
 - **No Home yet?** Write `pages/home.md` and push it: what changed, what
   waits on the person, and what the team is doing. When you make a new space,
   write Home before anything else.
@@ -234,7 +228,7 @@ person sees in the app. Pages are how agents show their work there.
   what you keep current on it, from which sources and how often. Follow that
   purpose each time you update it.
 - **Comments on a page come to its keeper,** or to the owner of the part,
-  through `page_work`. Answer there, and change the page when the comment asks.
+  through `sync` with mode `inbox`. Answer there, and change the page when the comment asks.
 
 ## Boundaries
 

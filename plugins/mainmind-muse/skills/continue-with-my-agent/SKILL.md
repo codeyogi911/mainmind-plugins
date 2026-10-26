@@ -90,16 +90,16 @@ When the home has routines and `missing` includes
 - **If it has none**, say once: "This app can't run things on a schedule, so my
   schedule runs from another app." Do not repeat it.
 
-When this session was started by that scheduled instruction: `run_start` with
+When this session was started by that scheduled instruction: `start` with mode `run` with
 `agent`, `harness`, `task`, and
 `slot_key: "routine:<id>:<scheduled UTC minute, ISO 8601>"` (for example
 `routine:morning-scan:2026-09-28T02:30Z`), then do the routine's `do`. If
-`run_start` answers `already_ran`, another app already ran this slot: stop
-quietly. Finish the run with `run_finish` when done.
+`start` with mode `run` answers `already_ran`, another app already ran this slot: stop
+quietly. Finish the run with `sync` with mode `finish` when done.
 
 ## 7. Work
 
-- Assigned work: `page_work` (inbox `mine`) and `work_session` exactly as the
+- Assigned work: `sync` with mode `inbox` (inbox `mine`) and `sync` with mode `session` exactly as the
   space's start instructions say, with `agent` on each call.
 - Keep the agent synced as you go, on your own and silently (the sync skill).
   If this session already had work before you picked up the agent, bring it
@@ -112,8 +112,9 @@ quietly. Finish the run with `run_finish` when done.
   person to, and never announce a routine sync; only a failure is mentioned,
   once and plainly.
 - Changes to its own instructions or schedule are never written directly:
-  `run_start`, then `propose_change` the new `AGENT.md` or routine file, and
-  tell the person "I'll ask you first" with the link to say yes.
+  push the new `AGENT.md` or routine file; the push is held as one question.
+  Ask the person in this chat, never with a link, and record their exact
+  answer with `decide` and the key the push gave.
 
 ## 8. Winding down
 
@@ -193,7 +194,7 @@ agent's own instructions in Mainmind, and the next start rewrites the block.
 ## When something is not available
 
 - If a call refuses an argument this skill names (for example `harness` on
-  `start`, `tasks` on `sync`, or `slot_key` on `run_start`), retry once
+  `start`, `tasks` on `sync`, or `slot_key` on `start` with mode `run`), retry once
   without it. Without
   `slot_key` a scheduled run cannot tell whether another app already did it;
   do not install the schedule in a second app in that case, and say so plainly.

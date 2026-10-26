@@ -115,8 +115,8 @@ keeps them in this order:
   - `expected`: what you expected instead, at most 300.
   - Mainmind only, not the business's own systems. Never include customer
     details, business data or credentials.
-  - Already reported? `feedback_status` lists this space's reports; add to
-    one with `feedback_reply` instead of filing it again.
+  - Already reported? `feedback` with mode `status` lists this space's reports; add to
+    one with `feedback` with mode `reply` instead of filing it again.
   - The answer neither numbers it nor names it as not kept (an older
     Mainmind that does not take `friction` yet): send it with `feedback`
     instead.
@@ -134,7 +134,7 @@ step: give its task `status: "doing"`, `request` (its number) and `checkpoint`
 (`summary`, `plan`, `pending`, `unresolved_effects`), with `run_id` and
 `control_key`. A session that ends without warning then loses at most that
 step. `stopped` does not replace it. Where sync does not take `checkpoint`
-yet, checkpoint with `work_session` as usual.
+yet, checkpoint with `sync` with mode `session` as usual.
 
 ## 2. Check what came back
 
@@ -160,11 +160,11 @@ read-back: take its memory index (and new `sha`s) as current.
   fixes that shipped. Replies keep coming back until you read them; a
   shipped or closed notice comes once, and `start` brings every outcome. Feedback is a
   conversation, so act on it:
-  - A reply: read it with `feedback_status` and the number. If it asks you
-    something or suggests a way round, answer with `feedback_reply` or use
+  - A reply: read it with `feedback` with mode `status` and the number. If it asks you
+    something or suggests a way round, answer with `feedback` with mode `reply` or use
     the way round.
   - A fix shipped: when you next do the thing that failed, try it again. If
-    it still fails, say so with `feedback_reply` on that number. If you will
+    it still fails, say so with `feedback` with mode `reply` on that number. If you will
     not do it again this session, keep a `lesson` memory to retry it, since
     the news comes only once.
   - Closed as not planned or as a duplicate: no fix is coming, so keep

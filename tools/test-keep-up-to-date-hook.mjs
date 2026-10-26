@@ -120,7 +120,7 @@ test("held request, work since its claim: asks for its checkpoint", () => {
   const result = run({ fixture: "holds-request-no-checkpoint.jsonl" });
   expect(result, BLOCKS);
   const { reason } = JSON.parse(result.stdout);
-  if (!/You hold request 42\b/.test(reason) || !/\bcheckpoint\b/.test(reason) || !/\bwork_session checkpoint\b/.test(reason)) {
+  if (!/You hold request 42\b/.test(reason) || !/\bcheckpoint\b/.test(reason) || !/\bsync with mode session and action checkpoint\b/.test(reason)) {
     throw new Error(`reason does not ask for request 42's checkpoint: ${reason}`);
   }
 });
@@ -129,6 +129,18 @@ test("held request reported", () => expect(run({ fixture: "holds-request-reporte
 test("a refused claim holds nothing", () => expect(run({ fixture: "holds-request-claim-refused.jsonl" }), ALLOWS));
 test("a sync whose request move was refused holds nothing (receipts)", () => expect(run({ fixture: "holds-request-move-refused.jsonl" }), ALLOWS));
 test("a sync whose request move was refused holds nothing (text)", () => expect(run({ fixture: "holds-request-move-refused-text.jsonl" }), ALLOWS));
+
+// The eight-tool cut (Mainmind #1992): most calls are now a mode of sync,
+// start, feedback or decide, so housekeeping and work are told apart by mode.
+test("eight tools: start whoami and run, sync heartbeat and feedback releases are housekeeping",
+  () => expect(run({ fixture: "eight-tools-housekeeping-only.jsonl" }), ALLOWS));
+test("eight tools: sync in chat mode is work, not the agent syncing itself",
+  () => expect(run({ fixture: "eight-tools-chat-is-work.jsonl" }), BLOCKS));
+test("eight tools: a claim through sync mode session holds the request", () => {
+  const result = run({ fixture: "eight-tools-holds-request-session.jsonl" });
+  expect(result, BLOCKS);
+  if (!/You hold request 42\b/.test(JSON.parse(result.stdout).reason)) throw new Error(`reason does not name request 42: ${result.stdout}`);
+});
 
 let failures = 0;
 for (const [name, fn] of cases) {

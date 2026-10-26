@@ -10,7 +10,7 @@ is not evidence that this task can reach Mainmind.
 1. Reuse the existing Mainmind installation and connection. Do not replace
    configuration or add a second server for the same address.
 2. Discover the actual Mainmind tools in this task. For a connection check,
-   use the existing read-only `whoami` and verify its identity and space.
+   use the existing read-only `start` with mode `whoami` and verify its identity and space.
    Installation, authentication, discovery and a successful call are separate
    observations. If the required tool is missing, report that boundary; do
    not guess a tool name or substitute another account.
