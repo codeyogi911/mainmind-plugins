@@ -1,0 +1,14 @@
+interface:
+  display_name: "Answer waiting messages"
+  short_description: "Check in every few minutes and reply"
+  default_prompt: "Check Mainmind for anything waiting for me and answer it."
+policy:
+  products: [CHAT, CODEX]
+  allow_implicit_invocation: true
+dependencies:
+  tools:
+    - type: mcp
+      value: mainmind
+      description: "Read your Mainmind space and carry out its supported workflows"
+      transport: streamable_http
+      url: https://mainmind.app/mcp
