@@ -16,10 +16,10 @@ skills and decisions when they are saved and sends back any line that needs fixi
 | Type | Holds | Where | Who may change it |
 |---|---|---|---|
 | Work note | One piece of work: what was asked, what was done, what happened | `work/` | Only the session that did the work |
-| Lesson | What work taught, and the page it should improve (`applies-to`) | `lessons/` | Anyone adds one; it never changes once saved; folding it in needs the owner's yes |
+| Lesson | What work taught, and the page it should improve (`applies-to`) | `lessons/` | Anyone adds one; the owner's agents fold it in |
 | Fact or record | Something true about the world, with its source and date | `records/<type>/` | As the type says |
 | Gap | Something missing that work ran into | `records/gaps/` | Anyone; closing it needs the owner's yes |
-| Skill | How one kind of work is done | `skills/<name>/SKILL.md` | The owner's yes |
+| Skill | How one kind of work is done | `skills/<name>/SKILL.md` | The owner's agents, while it says what good looks like; removing or loosening one needs the owner's yes |
 | Decision | What the owner decided and why | `decisions/` | Written when the owner rules |
 
 One thing per page. Link to a page instead of copying it. Name where each
@@ -81,7 +81,7 @@ Say the result in plain words. The route below is yours, not theirs.
     it would improve, or `unresolved`). Then a `#` title and `## What
     happened`, `## What it teaches`, `## Where it applies` (the `applies-to`
     value and nothing else) and `## Evidence` (one `-` line per piece).
-    Never change or remove a saved lesson.
+    Never remove a saved lesson, or change it except to fold it in or close it.
   - Fact or record: `records/<kind>/<name>.md`, in a Record Kind that already
     exists.
   - Gap: `records/gaps/<day>-<title>.md`. Do not disguise a hole as a lesson.
@@ -94,11 +94,21 @@ Say the result in plain words. The route below is yours, not theirs.
   you, or could not do what you needed): `feedback`, with `kind` (`bug`,
   `slow`, `friction` or `gap`) and `message`. That is not a comment on a
   page. Leave out customer details, business data and credentials.
-- A skill, or any other ruled or conserved file: the owner's push of it is
-  held as one question, as `mainmind-start` says. The owner is asked in this
-  chat and says yes before it changes how work is done; record their words
-  with `decide` and the key the push gave. Another member asks the owner with
-  `decide` with mode `ask` instead.
+- A skill is yours to improve. Know the way from its `## What good looks
+  like`, and ask the owner only when the right change is unclear. The owner's
+  push to `main` saves the skill's change when it still says what good looks
+  like and nothing in its boundaries (Boundaries, Don't, Limits, Authority)
+  is taken out. Removing a skill, or loosening what it lets an agent do, is
+  held as one question, as `mainmind-start` says.
+- To fold a lesson into the skill it improves, change the skill and set the
+  lesson's `state: absorbed`, `absorbed-into` (the skill's path) and
+  `updated` (today), and push them together. To close one that no longer
+  applies, set `state: retired` and `updated`, and add a `## Closure
+  reason`. One push can fold many lessons.
+- Any other ruled or conserved file (a rule, Process or role): the owner's
+  push of it is held as one question. The owner says yes before it changes
+  how work is done; record their words with `decide` and the key the push
+  gave. Another member asks the owner with `decide` with mode `ask` instead.
 - If Mainmind sends lines back to fix, fix exactly those, keep every fact,
   and send or push again. Don't ask the person to fix them.
 
