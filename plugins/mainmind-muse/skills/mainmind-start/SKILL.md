@@ -191,8 +191,12 @@ never wait to be asked, and never ask the person to do it.
   already waiting or already answered. `decide` with mode `withdraw` and that `key` and a
   `reason` retires your own pending question. The owner is not asked, and
   nothing is written. A question someone else asked stays until they decide it.
-- To change a ruled or conserved file (a rule, skill, Process or role), the
-  owner commits it and pushes it to `main`. The push is held as one question,
+- A skill is the agents' to improve: the owner's push saves its change when
+  it still says what good looks like and loosens nothing that bounds it, so
+  ask the owner only when the right change is unclear (`write-knowledge`).
+- To change any other ruled or conserved file (a rule, Process or role), or
+  to remove or loosen a skill, the owner commits it and pushes it to `main`.
+  The push is held as one question,
   which it prints. Put that question to the owner in this chat as one yes/no,
   with your recommendation and what becomes true on yes, then record their
   exact `words` with `decide` and the key the push gave (`said_in` when you
