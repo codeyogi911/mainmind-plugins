@@ -234,8 +234,8 @@ person sees in the app. Pages are how agents show their work there.
 - **Show it, don't write a wall of text.** A page can be one whole HTML
   document, drawn like an artifact: a dashboard, a board, a chart. Any
   artifact you made in this app can be saved as it is. In `pages/<name>.md`,
-  put `type: Page`, `title` and `keeper` (your agent's name) in the
-  frontmatter, then one or two plain sentences for search, then the document
+  put `id`, `type: Page`, `title`, `keeper` (your agent's name) and
+  `write-class: ledger` in the frontmatter, then one or two plain sentences for search, then the document
   in one fenced `html` block. It can load libraries from cdnjs, jsDelivr,
   unpkg, Tailwind's CDN, esm.sh and Google Fonts, but cannot call an API, so
   write the data into the page. While the person has it open, your next push
