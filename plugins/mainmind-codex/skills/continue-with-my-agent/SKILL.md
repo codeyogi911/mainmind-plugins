@@ -90,6 +90,27 @@ When the home has routines and `missing` includes
 - **If it has none**, say once: "This app can't run things on a schedule, so my
   schedule runs from another app." Do not repeat it.
 
+**Mainmind's schedule is the only schedule.** What this app's scheduler holds
+is a trigger, never the job: the job is read from Mainmind on each run. Each
+time you pick up the agent, and at the start of every scheduled run, compare
+this app's scheduled jobs for the agent with the home's routines and settle
+every difference in the same turn, without asking:
+
+- **A job here that Mainmind does not hold**, or one that carries its own
+  prompt: record it with `sync` `setup` (`id`, `when`, `timezone`, a one-line
+  `do`, and the full prompt in `why`), then replace the job here with the one
+  instruction above.
+- **A job here whose time differs from Mainmind's**: the routine was changed
+  in an app. Record this app's time in Mainmind if the person changed it here;
+  otherwise change the job here to match.
+- **An active routine with no job here** and no run elsewhere since its last
+  scheduled time (`last_run`): install it, or say once that it is not running.
+- **A routine Mainmind holds as paused or no longer holds**: remove the job
+  here.
+
+To add, change or stop a routine, change it in Mainmind first, then this
+app's trigger. Never edit only the app's copy.
+
 When this session was started by that scheduled instruction: `start` with mode `run` with
 `agent`, `harness`, `task`, and
 `slot_key: "routine:<id>:<scheduled UTC minute, ISO 8601>"` (for example
