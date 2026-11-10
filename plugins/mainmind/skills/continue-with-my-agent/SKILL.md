@@ -118,6 +118,10 @@ When this session was started by that scheduled instruction: `start` with mode `
 `start` with mode `run` answers `already_ran`, another app already ran this slot: stop
 quietly. Finish the run with `sync` with mode `finish` when done.
 
+A routine whose `when` is `on-event` was started by an event, such as a
+message waking you, not by a clock: leave `slot_key` out for it. `start`
+refuses one there, because there is no scheduled minute to name.
+
 ## 7. Work
 
 - Assigned work: `sync` with mode `inbox` (inbox `mine`) and `sync` with mode `session` exactly as the
