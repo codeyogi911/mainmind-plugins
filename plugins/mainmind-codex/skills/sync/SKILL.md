@@ -80,7 +80,7 @@ keeps them in this order:
   - More than 20: several calls, each with its own key.
 - `forget`: up to 20 `{name, expected_sha}` for memories that should go.
 - `tasks`: the agent's working list, at most 20 per call, each
-  `{title, status, asked_by?, part_of?, id?, note?}`. Mainmind updates each
+  `{title, status, asked_by?, part_of?, id?, note?, source?}`. Mainmind updates each
   one by its `id`.
   - Send what you are on (`doing`), what is next (`todo`) and what is done
     (`done`). A task that is finished goes as `done`; never just drop it.
@@ -95,6 +95,19 @@ keeps them in this order:
     `part_of` set to the whole's `id` (or to the number of a request on your
     to-do list that it is part of).
   - `note` (optional): one line, at most 300 characters.
+  - `source`: set it when the task came from an email, an order or a ticket,
+    as `kind:id` with that thing's own id: `gmail:<conversation id>`,
+    `shopify-order:8472`, `zoho-desk:<ticket id>`. Other apps see the same
+    email, so **send the task with its `source` before you start the work**,
+    and read the answer first:
+    - Kept: it is yours. Do the work, and send it again as it moves
+      (`doing`, then `done`) so the others see it is in hand.
+    - "Not yours to start" (`tasks_held`): another agent has it. Do not do
+      it again. If you have something to add, message that agent with `sync`
+      mode `chat`.
+    - "Carried on from a stalled holder" (`tasks_moved`): the agent that had
+      it went quiet for six hours and it is yours now. Read what they left
+      before you act, and tell the person it moved.
   - More than 20: several calls, each with its own key.
 - `stopped`: where you stopped.
   - `summary`: one line, at most 300 characters, what happened this session.
