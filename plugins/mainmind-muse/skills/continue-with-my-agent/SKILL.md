@@ -80,33 +80,50 @@ this app's memory.
 
 ## 6. Schedule
 
-When the home has routines and `missing` includes
-`routines_not_installed_here`:
+Mainmind holds every routine. **One app owns each routine**: that app builds
+the trigger in its own scheduler and runs it. Each routine in the home says
+`owner` (an app), `owner_here`, `last_due` and `owner_quiet`.
 
-- **If this app has a scheduler**, install each active routine there at its
-  `when` and `timezone`, with the instruction:
-  "Carry on as <Name> from Mainmind and run routine `<id>`". Tell the person
-  once: "I've set up my schedule here: <every weekday at 8>."
-- **If it has none**, say once: "This app can't run things on a schedule, so my
-  schedule runs from another app." Do not repeat it.
+Each time you pick up the agent, and at the start of every scheduled run,
+go through the home's active routines:
 
-**Mainmind's schedule is the only schedule.** What this app's scheduler holds
-is a trigger, never the job: the job is read from Mainmind on each run. Each
-time you pick up the agent, and at the start of every scheduled run, compare
-this app's scheduled jobs for the agent with the home's routines and settle
-every difference in the same turn, without asking:
+- **This app owns it** (`owner_here` true) and this app has no job for it:
+  install it in this app's scheduler at its `when` and `timezone`, with the
+  one instruction "Carry on as <Name> from Mainmind and run routine `<id>`".
+- **Nobody owns it** (`owner` is null): if this app has a scheduler and
+  everything the routine needs (the accounts, a signed-in browser, a
+  connector), install it the same way and record it with `sync` `setup`.
+  Recording it makes this app the owner. If this app lacks something the
+  routine needs, leave it unowned and tell the person once what is missing.
+- **Another app owns it**: leave it alone. Do not install it here and do not
+  change it; `setup` refuses.
+- **Another app owns it and `owner_quiet` is true** (`missing` includes
+  `routines_owner_quiet`): the owner missed its last scheduled time. Ask the
+  person once, naming the routines and the app: "<App> has not run <these>
+  since <when>. Shall I take them over here?" Only on their yes, send each
+  in `setup` with `takeover` set to their words, then install it here. Never
+  take one over without asking, and never send `takeover` with your own
+  words.
+- **A routine Mainmind holds as paused or no longer holds**, or one another
+  app has taken over from this app: remove the job here.
+
+If this app has no scheduler, say once: "This app can't run things on a
+schedule, so my schedule runs from another app." Do not repeat it. Tell the
+person once what you set up: "I've set up my schedule here: <every weekday
+at 8>."
+
+**Mainmind's copy is the only copy.** What this app's scheduler holds is a
+trigger, never the job: the job is read from Mainmind on each run. For a
+routine this app owns, settle every difference in the same turn, without
+asking:
 
 - **A job here that Mainmind does not hold**, or one that carries its own
   prompt: record it with `sync` `setup` (`id`, `when`, `timezone`, a one-line
   `do`, and the full prompt in `why`), then replace the job here with the one
   instruction above.
-- **A job here whose time differs from Mainmind's**: the routine was changed
-  in an app. Record this app's time in Mainmind if the person changed it here;
-  otherwise change the job here to match.
-- **An active routine with no job here** and no run elsewhere since its last
-  scheduled time (`last_run`): install it, or say once that it is not running.
-- **A routine Mainmind holds as paused or no longer holds**: remove the job
-  here.
+- **A job here whose time differs from Mainmind's**: record this app's time
+  in Mainmind if the person changed it here; otherwise change the job here to
+  match.
 
 To add, change or stop a routine, change it in Mainmind first, then this
 app's trigger. Never edit only the app's copy.
