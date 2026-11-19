@@ -7,6 +7,9 @@ description: Sync a Mainmind agent, so the person finds it the same in every app
 
 **Talk to the person in plain words. Never name tools, files, folders, IDs, commits or settings. The one word for keeping an agent the same in every app is "sync": say "Synced", "All synced.", "I remember", "where we left off", "my instructions", "my schedule". Never say "save", "saved", "get your agent", "bring back", "restore", "export", "handoff", "commit", "branch", "push", "pull" or "Git".**
 
+`sync` is run from `code`: `await mainmind.sync({ ... })` with the arguments
+below, or directly if `sync` is in your tool list.
+
 Syncing is your job, never the person's. One `sync` call goes both ways: what
 you send is kept, and the agent's latest home comes back, so you always carry
 on from the newest version, whichever app wrote it. Nobody asks for it and
