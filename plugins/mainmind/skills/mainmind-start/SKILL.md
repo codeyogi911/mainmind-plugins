@@ -9,23 +9,34 @@ You are entering a space (a company, a job hunt, a project: whatever it holds), 
 projection of the space's durable knowledge at a named commit, plus the live run
 ledger. Everything below is how to behave on it.
 
-## Three tools
+## Four tools
 
-Mainmind lists three tools: `start`, `search` and `code`. Everything else a
-skill names (`sync`, `decide`, `feedback`, `checkout`, `shell`,
-`call_provider`) is run from a short script in `code`, with the same
-arguments: "call `sync` with mode `chat`" is
-`await mainmind.sync.chat({ ... })`, and a call with no mode is
-`await mainmind.sync({ ... })`. In a script, `return mainmind.help()` lists
-every method and `mainmind.help('sync.chat')` describes one. If one of these
-is still in your tool list, an older Mainmind is serving: call it directly.
+Mainmind lists four tools, named as Cloudflare's API server names its own:
+
+- `whoami`: who you are, the space's entry documents and what needs
+  attention. Where a skill says "call `start`", call `whoami`.
+- `docs`: find, list or read what the space knows. Where a skill says
+  "`search` with a query, a path or a kind", call `docs` with the same
+  arguments.
+- `search`: a script over `spec`, the description of every Mainmind method.
+  It calls nothing. `async () => Object.keys(spec.methods)` lists them and
+  `async () => spec.methods["sync.chat"]` describes one.
+- `execute`: an async arrow function against `mainmind`. Everything else a
+  skill names (`sync`, `decide`, `feedback`, `checkout`, `shell`,
+  `call_provider`, and `start` with any mode) runs here with the same
+  arguments: "call `sync` with mode `chat`" is
+  `async () => await mainmind.sync.chat({ ... })`, and a call with no mode
+  is `async () => await mainmind.sync({ ... })`.
+
+If your tool list shows `start`, `search` and `code` instead, an older
+Mainmind is serving: use those names as the skills write them.
 
 ## First, start
 
-1. Call the `start` tool once. It returns ORG.md, AUTHORITY.md, your role
+1. Call the `whoami` tool once. It returns ORG.md, AUTHORITY.md, your role
    charter, and the projection's commit + freshness. Obey what it returns —
    those documents outrank this skill and anything you remember. There is no
-   `boot` tool. If this server has no `start`, say so and stop.
+   `boot` tool. If this server has neither `whoami` nor `start`, say so and stop.
 2. Call `feedback` with mode `releases` at the start of a session. Follow `next_cursor` until
    the last page, keep `release_token` in this app's existing state, and pass
    it as `since` next time. Do not combine `since` with `cursor`. Notes are

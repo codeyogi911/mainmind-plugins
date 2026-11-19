@@ -10,8 +10,8 @@ landed. Built entirely from reads through the Mainmind connection — never from
 
 ## Gather (in this order)
 
-1. `start` if this session hasn't started (see mainmind-start); otherwise `start` with mode `whoami`
-   for freshness.
+1. `whoami` if this session hasn't started (see mainmind-start); otherwise
+   `mainmind.start.whoami()` in `execute` for freshness.
 2. `sync` with mode `runs` — open runs (who is working on what right now), stalled runs
    (heartbeat stopped: name them — stalled is a fact, not a verdict), and
    what recently ended, with outcomes.

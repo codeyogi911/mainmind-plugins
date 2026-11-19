@@ -244,7 +244,7 @@ harness's copy and nowhere else is exactly the drift this layout invites.
 
 ## Verifying it works
 
-Ask the connected session for `start` with mode `whoami`, then a plain `start`. A healthy tool list is not
+Ask the connected session for `whoami`. A healthy tool list is not
 success; a verified identity and a named commit are.
 
 ## Licence
