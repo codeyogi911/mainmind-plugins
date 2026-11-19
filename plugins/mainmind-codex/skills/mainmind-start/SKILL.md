@@ -9,6 +9,17 @@ You are entering a space (a company, a job hunt, a project: whatever it holds), 
 projection of the space's durable knowledge at a named commit, plus the live run
 ledger. Everything below is how to behave on it.
 
+## Three tools
+
+Mainmind lists three tools: `start`, `search` and `code`. Everything else a
+skill names (`sync`, `decide`, `feedback`, `checkout`, `shell`,
+`call_provider`) is run from a short script in `code`, with the same
+arguments: "call `sync` with mode `chat`" is
+`await mainmind.sync.chat({ ... })`, and a call with no mode is
+`await mainmind.sync({ ... })`. In a script, `return mainmind.help()` lists
+every method and `mainmind.help('sync.chat')` describes one. If one of these
+is still in your tool list, an older Mainmind is serving: call it directly.
+
 ## First, start
 
 1. Call the `start` tool once. It returns ORG.md, AUTHORITY.md, your role
