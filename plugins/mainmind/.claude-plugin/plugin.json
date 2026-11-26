@@ -1,8 +1,8 @@
 {
   "name": "mainmind",
   "displayName": "Mainmind",
-  "description": "Move freely between AIs: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. Continue with any agent where you left off, ask what your space knows, and put a decision to its owner as one question. You sign in as yourself, and the plugin holds no passwords or keys.",
-  "version": "0.24.10",
+  "description": "Connect Mainmind to Claude: your agents travel with you, your knowledge gets better with every task, and your passwords stay safe. Mainmind's skills come over the connection itself. You sign in as yourself, and the plugin holds no passwords or keys.",
+  "version": "0.25.0",
   "author": {
     "name": "Shashwat Jain",
     "url": "https://mainmind.app"
@@ -11,11 +11,16 @@
   "repository": "https://github.com/codeyogi911/mainmind-plugins",
   "license": "MIT",
   "mcpServers": "./.mcp.json",
-  "skills": "./skills/",
   "icon": "./logo.png",
   "documentationUrl": "https://mainmind.app/docs",
   "supportUrl": "https://github.com/codeyogi911/mainmind-plugins/issues",
   "privacyPolicyUrl": "https://mainmind.app/privacy",
   "termsOfServiceUrl": "https://mainmind.app/terms",
-  "keywords": ["mainmind", "operating-agent", "mcp", "business", "governance"]
+  "keywords": [
+    "mainmind",
+    "operating-agent",
+    "mcp",
+    "business",
+    "governance"
+  ]
 }
