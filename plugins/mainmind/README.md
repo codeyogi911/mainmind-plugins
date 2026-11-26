@@ -43,12 +43,10 @@ in with GitHub.
 
 ## What it contains
 
-- **Nine skills** that teach Claude how to work with a Mainmind space. They load
-  in chat, Cowork and Claude Code.
 - **One connector**, `https://mainmind.app/mcp`, the Mainmind service itself.
-- **Three small hooks**, used in Cowork and Claude Code only. They remind the
-  agent to sync before a session stops, note the app's task list so the agent
-  can sync it, and say which agent last worked in a folder. Chat ignores them.
+  That is all. Mainmind's skills, which teach Claude how to work with a space,
+  come over the connection itself, so they stay current without updating the
+  plugin.
 
 ## Your data
 
@@ -59,10 +57,6 @@ in with GitHub.
   goes where.
 - You sign in as yourself. The plugin holds no passwords, keys or tokens, and
   Mainmind shows the assistant only what your role in the space allows.
-- The hooks make no network calls. They keep a few small notes on your own
-  computer (which agent last worked in a folder, when it was last reminded, and
-  the current task list) in Claude Code's plugin data folder, or in a private
-  folder under your temporary directory when that is not set.
 - Privacy policy: https://mainmind.app/privacy. Terms:
   https://mainmind.app/terms.
 

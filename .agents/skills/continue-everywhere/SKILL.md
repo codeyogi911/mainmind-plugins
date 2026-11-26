@@ -107,13 +107,12 @@ Proceed only on a yes. If they drop an item, drop it.
 
 ## 3. Copy the working files
 
-Use the connection's folder copy: `source_file_upload` with
-`action: "authorize"` for the folder helper (preview, copy and recovery), or
-`begin` / `append` / `finalize` per file (10 MiB each) with a stable
-`idempotency_key` and a `description` of why the agent needs it. Never copy
-anything on the stays-behind list. Wait until `source_file_upload` with
-`action: "status"` shows each file stored and readable, and keep each file's
-saved record path for `works_on` (as `source:<record path>`).
+Copy each file the agent needs, never anything on the stays-behind list. In
+a Mainmind checkout with Git LFS, add, commit and push the files. Otherwise, in
+`execute`, run `mainmind.files.put({ path, base64, message })` per file (up
+to 10 MiB each), with a message saying why the agent needs it. Read each file
+back with `mainmind.files.get({ path })` before going on, and keep its path for
+`works_on` (as `source:<record path>`).
 
 ## 4. Carry over the memories
 

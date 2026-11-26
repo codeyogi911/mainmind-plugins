@@ -36,8 +36,6 @@ function walk(directory) {
   }
 }
 for (const path of SKILL_ROOTS) walk(join(root, path));
-const agents = join(root, "plugins/mainmind/agents");
-if (existsSync(agents)) for (const name of readdirSync(agents)) retiredNames(readFileSync(join(agents, name), "utf8"), join(agents, name));
 if (problems.length) {
   for (const problem of problems) console.error(`FAIL ${problem}`);
   process.exit(1);

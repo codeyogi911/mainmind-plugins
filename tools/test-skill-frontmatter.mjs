@@ -105,7 +105,7 @@ try {
     assert.equal(readFileSync(join(sandbox, destination, name, "SKILL.md"), "utf8"), valid);
   }
   assert.equal(run("check-skills.mjs").status, 0);
-  const copy = join(sandbox, "plugins/mainmind/skills", name, "SKILL.md");
+  const copy = join(sandbox, "plugins/mainmind-mount/skills", name, "SKILL.md");
   writeFileSync(copy, valid.replace(/^description:.*$/m, 'description: "invalid > metadata"'));
   assert.equal(run("check-skills.mjs").status, 1, "shipped metadata must be checked too");
   assert.equal(run("sync-skills.mjs", "--check").status, 1, "copy drift must fail");

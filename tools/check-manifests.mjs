@@ -275,10 +275,6 @@ if (cursor && cursor.name !== agentPlugins.name) {
 if (!existsSync(join(root, "plugins/mainmind-mount/README.md"))) fail("plugins/mainmind-mount: no README.md");
 if (!existsSync(join(root, "plugins/mainmind-mount/skills"))) fail("plugins/mainmind-mount/skills does not exist; run npm run sync");
 
-// Claude Code loads a plugin's skills from this path; if it is wrong the plugin
-// installs and silently teaches nothing, which is the failure this repo exists
-// to stop.
-if (claude.skills !== "./skills/") fail(`plugins/mainmind: skills is ${JSON.stringify(claude.skills)}, expected "./skills/"`);
 
 // Anthropic's directory builds the listing from these five plugin.json fields:
 // without them it shows no icon and no privacy, terms or support link. They
@@ -291,14 +287,14 @@ for (const key of ["documentationUrl", "supportUrl", "privacyPolicyUrl", "termsO
 if (!/\.(png|jpe?g|gif|webp|svg)$/.test(claude.icon || "") || !existsSync(join(root, "plugins/mainmind", claude.icon))) {
   fail(`plugins/mainmind: icon ${JSON.stringify(claude.icon)} must name an image file inside the plugin`);
 }
-if (!existsSync(join(root, "plugins/mainmind/skills"))) fail("plugins/mainmind/skills does not exist; run npm run sync");
+// The Claude plugin is the MCP connection only: Mainmind serves its own skills
+// over MCP (skill://mainmind.app/), so skills, hooks and agent files here would
+// load twice or drift.
+for (const cut of ["skills", "hooks", "agents"]) {
+  if (existsSync(join(root, "plugins/mainmind", cut))) fail(`plugins/mainmind/${cut}: the Claude plugin is the MCP connection only`);
+  if (cut in claude) fail(`plugins/mainmind: plugin.json declares "${cut}"; the Claude plugin is the MCP connection only`);
+}
 
-// The hooks that keep an agent synced when the model forgets to: a Stop hook
-// that asks the model to sync before it stops, a SessionStart hook that names
-// the agent a folder last ran as, and a PostToolUse hook that follows this
-// app's task list so the Stop hook can ask for it as `tasks`. Claude Code discovers
-// `hooks/hooks.json` at the plugin root by convention; naming that same file
-// again in plugin.json's `hooks` field would register it twice.
 // Anthropic's directory lists plugins/mainmind on its own: it shows the
 // README in that folder as the listing, blocks one under 40 words (code blocks
 // not counted), and reads displayName for the label people see.
@@ -319,61 +315,12 @@ for (const junk of [".DS_Store", "Thumbs.db", "desktop.ini", "__MACOSX"]) {
   if (existsSync(join(root, "plugins/mainmind", junk))) fail(`plugins/mainmind/${junk}: the directory blocks system files`);
 }
 
-// https://code.claude.com/docs/en/plugins-reference#hooks
-const HOOKS = "plugins/mainmind/hooks/hooks.json";
-const HOOK_SCRIPTS = {
-  Stop: "keep-up-to-date.mjs",
-  SessionStart: "last-agent-here.mjs",
-  PostToolUse: "note-tasks.mjs",
-};
-// Every tool Claude Code keeps its task list with; a missing one means those
-// tasks never reach the agent.
-const TASK_TOOLS = ["TodoWrite", "TaskCreate", "TaskUpdate"];
-// How run.sh treats each hook's output: the Stop decision passes through, the
-// SessionStart hint keeps its stdout, and the task hook prints nothing.
-const HOOK_MODES = { Stop: "plain", SessionStart: "stdout", PostToolUse: "silent" };
-if ("hooks" in claude) fail(`plugins/mainmind: plugin.json declares "hooks"; ${HOOKS} is discovered by convention and would load twice`);
-for (const script of [...Object.values(HOOK_SCRIPTS), "state.mjs", "run.sh"]) {
-  if (!existsSync(join(root, "plugins/mainmind/hooks", script))) fail(`plugins/mainmind/hooks/${script} is missing`);
-}
-if (!existsSync(join(root, HOOKS))) {
-  fail(`${HOOKS} is missing: without it an agent in Claude Code is only kept synced when the model remembers`);
-} else {
-  const hooks = read(HOOKS).hooks || {};
-  for (const [event, script] of Object.entries(HOOK_SCRIPTS)) {
-    const commands = (hooks[event] || []).flatMap((group) => group.hooks || []);
-    const command = commands.find((hook) => hook.type === "command" && hook.command?.includes(`\${CLAUDE_PLUGIN_ROOT}/hooks/${script}`));
-    if (!command) { fail(`${HOOKS}: no ${event} command running \${CLAUDE_PLUGIN_ROOT}/hooks/${script}`); continue; }
-    // Anthropic's directory blocks a hook command in a plugin subfolder that
-    // names any path but one under ${CLAUDE_PLUGIN_ROOT}, so the command is
-    // only run.sh, a mode and the script; run.sh exits 0 when node is missing.
-    // https://claude.com/docs/plugins/pre-submission-checklist
-    const mode = HOOK_MODES[event];
-    if (command.command !== `sh "\${CLAUDE_PLUGIN_ROOT}/hooks/run.sh" ${mode} "\${CLAUDE_PLUGIN_ROOT}/hooks/${script}"`) {
-      fail(`${HOOKS}: the ${event} command must be exactly: sh "\${CLAUDE_PLUGIN_ROOT}/hooks/run.sh" ${mode} "\${CLAUDE_PLUGIN_ROOT}/hooks/${script}"`);
-    }
-  }
-  const start = (hooks.SessionStart || []).flatMap((group) => group.hooks || []);
-  if (start.some((hook) => !(hook.timeout <= 10))) fail(`${HOOKS}: a SessionStart hook must time out within 10 seconds; it runs before the person can type`);
-  // The task hook runs after every task-list change, so it is quick and silent.
-  const taskGroup = (hooks.PostToolUse || []).find((group) =>
-    (group.hooks || []).some((hook) => hook.command?.includes(`\${CLAUDE_PLUGIN_ROOT}/hooks/${HOOK_SCRIPTS.PostToolUse}`)));
-  if (taskGroup) {
-    const matched = String(taskGroup.matcher || "").split("|");
-    for (const tool of TASK_TOOLS) if (!matched.includes(tool)) fail(`${HOOKS}: the PostToolUse matcher does not name ${tool}`);
-    for (const hook of taskGroup.hooks || []) {
-      if (!(hook.timeout <= 10)) fail(`${HOOKS}: the PostToolUse task hook must time out within 10 seconds`);
-      if (!/run\.sh" silent /.test(hook.command || "")) fail(`${HOOKS}: the PostToolUse task hook must print nothing and never fail (run.sh silent)`);
-    }
-  }
-}
-
 // The agent skills were renamed to the words people say, and mainmind-boot
 // became mainmind-start when the server's startup tool became `start`. A stale
 // copy under an old name would load beside the new one and teach the old words.
 for (const retired of ["save-my-agent", "bring-back-my-agent", "move-my-agent-in", "keep-my-agent-up-to-date",
   "mainmind-boot"]) {
-  for (const base of ["skills", ".agents/skills", "plugins/mainmind/skills", "plugins/mainmind-mount/skills",
+  for (const base of ["skills", ".agents/skills", "plugins/mainmind-mount/skills",
     "plugins/mainmind-grok/skills", "plugins/mainmind-muse/skills", "plugins/mainmind-codex/skills",
     "tools/openai-skills"]) {
     if (existsSync(join(root, base, retired))) fail(`${base}/${retired} exists: that skill was renamed`);

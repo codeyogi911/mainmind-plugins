@@ -10,7 +10,6 @@ import { parseDocument } from "yaml";
 
 export const SKILL_ROOTS = [
   "skills",
-  "plugins/mainmind/skills",
   "plugins/mainmind-codex/skills",
   "plugins/mainmind-mount/skills",
   "plugins/mainmind-grok/skills",

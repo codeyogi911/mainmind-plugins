@@ -88,33 +88,13 @@ translation of it, never the source.
 
 **An agent syncs itself; nobody has to ask.** On every host the skills tell it
 when, and `mainmind-start` has a session sync at the start so a person's agent is
-simply there. In Claude Code the plugin adds three hooks (`plugins/mainmind/hooks/`):
+simply there.
 
-- **Stop**, a safety net for when the model forgets: only in a session acting as
-  an agent, it asks the model once to sync where it stopped before it stops —
-  when nothing has been synced as stopped after six or more tool calls of work,
-  or the last one is over thirty minutes old and work has happened since. It
-  never asks twice in a row and lets the session stop on any doubt. It also
-  notes which agent the folder last ran as.
-- **PostToolUse**, on Claude Code's own task list (`TodoWrite`, `TaskCreate`,
-  `TaskUpdate`): notes the list for this folder and session in one small local
-  file, each task as a title, todo, doing or done, and a stable id made from
-  its title (never the app's own id, which restarts every session). When the
-  Stop hook reminds an agent and that list has changed since its last
-  reminder, the reminder adds one line asking the agent to sync it as `tasks`,
-  with done ones marked done. It prints nothing and exits 0 on any doubt.
-- **SessionStart**: in a folder that last ran as an agent, one line of context
-  for the model: "Last time here you were job-hunter. Sync as job-hunter and
-  pick up where you left off." Silent otherwise, and on a resumed session. It
-  reads one small local file, never the network, and exits 0 on any doubt or
-  when `node` is missing.
-
-Two agents, in `plugins/mainmind/agents/`, for Claude Code: the **Librarian**
-and the **Toolsmith** that every Mainmind space has. Each file only starts the
-person's own agent from Mainmind. Its instructions, limits and memory come from
-Mainmind, the same in every app, so nothing here can drift from them. Every
-other app reaches them by saying "Continue with Librarian" or "Continue with
-Toolsmith".
+**Claude needs no skills, hooks or agent files from here.** Mainmind serves its
+own skills over MCP (the Skills extension, at `skill://mainmind.app/<name>/`),
+from `product-skills/` in the mainmind repository, so the Claude plugin is the
+connection only. Claude reaches the Librarian and the Toolsmith by saying
+"Continue with Librarian" or "Continue with Toolsmith", like every other app.
 
 Codex, Cursor and Grok Build packages carry the skills and a Mainmind server entry.
 Muse carries source material and a connector dossier; actual loading is unverified.
@@ -167,7 +147,7 @@ skills/                          canonical — edit here, only here
   write-knowledge/SKILL.md
   connections-and-secrets/SKILL.md
 plugins/
-  mainmind/                      Claude Code       .claude-plugin/plugin.json + hooks/hooks.json
+  mainmind/                      Claude            .claude-plugin/plugin.json + .mcp.json (connection only)
   mainmind-codex/                ChatGPT / Codex   plugin.json + mcp.json + assets/
   mainmind-mount/                Cursor and        .cursor-plugin/plugin.json + plugin.json + mcp.json
                                  Agent Plugins
@@ -183,8 +163,8 @@ The portable OpenAI package has `plugin.json`, `mcp.json`, its logo and a genera
 copy of the nine shared skills plus OpenAI setup and skill metadata. Its listing
 lives under `extensions.com.openai` in the root manifest. It serves ChatGPT and
 Codex through OpenAI's shared public directory when reviewed and published.
-The current public ZIP submission path excludes lifecycle hooks and app references;
-the Claude package keeps its own hooks. Claude Code's manifest is
+The current public ZIP submission path excludes lifecycle hooks and app references.
+Claude Code's manifest is
 `.claude-plugin/plugin.json`. The [Agent Plugins](https://agent-plugins.org)
 1.0.0 schema's is `plugin.json`, validated and `additionalProperties: false`,
 with the Mainmind connection in the sibling `mcp.json`. Cursor's is
@@ -214,7 +194,8 @@ Agent Plugins schema enumerates `stdio | streamable-http | sse` and rejects
 `"http"`; Grok's takes `"http"`. That is why they are separate directories, and
 why the check asserts each spelling rather than asserting they agree.
 
-`skills/` remains the source for the nine shared workflows. Each host reads
+`skills/` holds the nine shared workflows for the hosts that cannot read skills
+over MCP yet; keep it the same as `product-skills/` in the mainmind repository. Each host reads
 its own path, so the copies are generated. OpenAI-only setup and
 `agents/openai.yaml` files live in `tools/openai-skills/`; generation merges
 them into `plugins/mainmind-codex/skills/` and `.agents/skills/` only. An overlay
