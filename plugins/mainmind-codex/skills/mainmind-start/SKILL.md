@@ -9,9 +9,9 @@ You are entering a space (a company, a job hunt, a project: whatever it holds), 
 projection of the space's durable knowledge at a named commit, plus the live run
 ledger. Everything below is how to behave on it.
 
-## Four tools
+## Five tools
 
-Mainmind lists four tools, named as Cloudflare's API server names its own:
+Mainmind lists five tools, named as Cloudflare's API server names its own:
 
 - `whoami`: who you are, the space's entry documents and what needs
   attention. Where a skill says "call `start`", call `whoami`.
@@ -22,11 +22,12 @@ Mainmind lists four tools, named as Cloudflare's API server names its own:
   It calls nothing. `async () => Object.keys(spec.methods)` lists them and
   `async () => spec.methods["sync.chat"]` describes one.
 - `execute`: an async arrow function against `mainmind`. Everything else a
-  skill names (`sync`, `decide`, `feedback`, `checkout`, `shell`,
-  `call_provider`, and `start` with any mode) runs here with the same
-  arguments: "call `sync` with mode `chat`" is
-  `async () => await mainmind.sync.chat({ ... })`, and a call with no mode
-  is `async () => await mainmind.sync({ ... })`.
+  skill names (`sync`, `decide`, `checkout`, `shell`, `call_provider`, and
+  `start` with any mode) runs here with the same arguments: "call `sync`
+  with mode `chat`" is `async () => await mainmind.sync.chat({ ... })`, and
+  a call with no mode is `async () => await mainmind.sync({ ... })`.
+- `feedback`: tell Mainmind's builders when Mainmind itself gets in your
+  way, and read what changed, with its `mode`.
 
 If your tool list shows `start`, `search` and `code` instead, an older
 Mainmind is serving: use those names as the skills write them.
