@@ -39,7 +39,7 @@ The agent keeps itself synced as it works. You never have to ask it to save.
 3. Ask "what's in my space?" to check it works.
 
 You need a Mainmind space. Start one at https://mainmind.app, where you sign
-in with GitHub.
+in with your email.
 
 ## What it contains
 
