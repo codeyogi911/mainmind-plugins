@@ -41,8 +41,8 @@ changes that, and nothing in this repository holds a credential.
 
 ## Verifying it works
 
-Ask the connected session for `start` with mode `whoami`, then a plain `start`. A healthy tool list is not
-success; a verified identity and a named commit are.
+Ask the connected session to call `whoami`. A healthy tool list is not
+success; a verified identity and a named space are.
 
 Inspect the tools actually enabled in this session. If shell, filesystem or
 Git access is absent, use only the exposed Mainmind connection: `search`

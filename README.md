@@ -36,15 +36,15 @@ hand instead? Prefer the complete per-space URL,
 `https://mainmind.app/mcp/<space>`, which fixes the space before
 authorization begins.
 
-The connector is one entry, `https://mainmind.app/mcp`. The Founder signs in
-with GitHub in the browser. No secret is pasted into the plugin or into chat.
+The connector is one entry, `https://mainmind.app/mcp`. You sign in with
+your email in the browser. No secret is pasted into the plugin or into chat.
 
 For a host that accepts only a static bearer — the xAI API's remote MCP tool,
 for one — a plugin is the wrong shape. This route requires an existing bot key;
 creating an agent profile does not establish the API connection.
-`start` with mode `invite` and `kind: machine`
+`mainmind.start.invite` with `kind: machine`
 is refused (HTTP 403). A new agent joins through its owner with
-`sync` with mode `register`, from that person's own signed-in connection. Do not hand
+`mainmind.sync.register`, from that person's own signed-in connection. Do not hand
 over a person's token.
 
 ## What it ships

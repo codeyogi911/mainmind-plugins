@@ -113,8 +113,8 @@ Mainmind key. Creating an agent profile does not establish that API connection.
 Without an existing bot key, stop at this boundary and use a supported
 interactive sign-in route instead.
 
-`start` with mode `invite` and `kind: machine` is refused (HTTP 403). A new agent joins
-through its owner with `sync` with mode `register`, from that person's own signed-in
+`mainmind.start.invite` with `kind: machine` is refused (HTTP 403). A new agent joins
+through its owner with `mainmind.sync.register`, from that person's own signed-in
 connection. Never Mainmind's deployment credential, and never a person's
 token. Start by naming the read set and widen it once the bot behaves — that
 field is `allowed_tools` on the
@@ -123,8 +123,8 @@ SDK, so check which one your client speaks rather than assuming.
 
 ## Verifying it works
 
-Ask the connected session for `start` with mode `whoami`, then a plain `start`. A healthy tool list is not
-success; a verified identity and a named commit are.
+Ask the connected session to call `whoami`. A healthy tool list is not
+success; a verified identity and a named space are.
 
 ## Sources
 
