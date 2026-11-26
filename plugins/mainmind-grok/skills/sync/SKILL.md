@@ -34,9 +34,8 @@ do anything for it.
     or a long pause after the work;
   - before switching apps, or when the person says they are moving to another
     app;
-  - when this app reminds you (in Claude Code, the Mainmind plugin reminds you
-    when a session has gone on without it, and names this session's task list
-    when it has changed: send those as `tasks` in that sync).
+  - when this app reminds you (if it names this session's task list, send
+    those as `tasks` in that sync).
 - **When Mainmind got in your way** (a tool refused, failed, timed out,
   was slow, or had no way to do what you needed): send it as `friction` with
   your next sync. Don't wait to be asked, and don't bury it in `stopped`.
